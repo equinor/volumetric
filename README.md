@@ -1,3 +1,3 @@
 # Volumetric
 
-[see wiki](wikis)
+[see wiki](https://git.statoil.no/volumetric/doc/wikis/)
