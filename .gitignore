@@ -1,0 +1,5 @@
+secrets.env
+venv/
+.idea/
+data/
+ca-certificates.crt
