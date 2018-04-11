@@ -2,13 +2,17 @@ version: "3.4"
 services:
 
   api:
-    image:
+    image: vlmtrc-api
     container_name: volumetric-api
     ports:
-       "80:80"
+      - "80:80"
     env_file: secrets.env
     environment:
       - NO_PROXY=postgresql
+      - DATABASE=postgresql
+      - DATABASE_PORT=5432
+      - POSTGRES_USER=volumetric
+      - POSTGRES_DB=volumetric
     depends_on:
       - postgresql
     restart: unless-stopped
@@ -16,13 +20,10 @@ services:
   postgresql:
     image: postgres:10.2-alpine
     container_name: volumetric-db
-    ports:
-      - "8086:8086"
     volumes:
       - ./data/postgres:/var/lib/postgres
     env_file: secrets.env
     environment:
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
-      - POSTGRES_INITDB_ARGS=
     restart: unless-stopped
