@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+  proxy:
+    build: proxy
+    ports:
+      - 80:80
+    depends_on:
+      - web
+      - api
+
+  web:
+    build: web
+    image: volumetric-web
+    volumes:
+      - ./web/src:/code/src
+      - ./web/public:/code/public
+    command: npm start
+
+  api:
+    image: volumetric-api
+    build: api
+    env_file: ./api/secrets.env
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:10.2-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgres
+    env_file: ./api/secrets.env
+    environment:
+      - POSTGRES_USER=volumetric
+      - POSTGRES_DB=volumetric
+    restart: unless-stopped

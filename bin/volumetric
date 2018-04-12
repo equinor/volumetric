@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+docker-compose -p "volumetric_$ENVIRONMENT" \
+    -f "$PROJECT_MAIN_HOME/docker-compose.yml" \
+    $@

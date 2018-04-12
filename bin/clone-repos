@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+GIT_URL=git@git.statoil.no
+REPOS=(
+    volumetric/web
+    volumetric/api
+)
+for repo in ${REPOS[@]}; do
+    repo_shortname=$(echo "$repo" | rev | cut -d"/" -f1 | rev)
+
+    repo_destination="$PROJECT_MAIN_HOME/$repo_shortname"
+    if [ ! -d $repo_destination ]; then
+        echo "Cloning $repo into $repo_destination"
+        git clone $GIT_URL:/$repo.git $repo_destination
+    else
+        echo "Directory $repo_destination already exists"
+    fi
+done
