@@ -5,6 +5,12 @@ REPOS=(
     volumetric/web
     volumetric/api
 )
+
+if [ -z $PROJECT_MAIN_HOME ]; then
+    echo "You need to activate the project before cloning!"
+    exit 0
+fi
+
 for repo in ${REPOS[@]}; do
     repo_shortname=$(echo "$repo" | rev | cut -d"/" -f1 | rev)
 
