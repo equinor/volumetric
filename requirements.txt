@@ -1,5 +1,6 @@
 sqlalchemy
 psycopg2
-psycopg2-binary
-#sqlalchemy.orm
-#sqlalchemy.ext.declarative
+flask
+flask_sqlalchemy
+flask_migrate
+flask_restful

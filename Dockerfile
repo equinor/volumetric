@@ -10,7 +10,7 @@ ADD ./requirements.txt /
 # These packages are for development and debugging purposes only.
 RUN apk update && apk add --no-cache curl bind-tools net-tools bash
 #RUN apk update
-RUN apk add postgresql-dev
-RUN pip3 install --no-cache-dir --requirement requirements.txt
-ADD ./src /src
-ENTRYPOINT ["python3", "/src/app.py"]
+RUN apk add postgresql-dev gcc python3-dev musl-dev
+RUN pip3 install -U pip && pip3 install --no-cache-dir --requirement requirements.txt
+#ADD . /
+ENTRYPOINT ["python3", "./src/api.py"]

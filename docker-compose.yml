@@ -1,4 +1,4 @@
-version: "3.4"
+version: "3.6"
 services:
 
   api:
@@ -6,10 +6,13 @@ services:
     container_name: volumetric-api
     ports:
       - "80:80"
+      # For live debugging
+    volumes:
+      - .:/src
     env_file: secrets.env
     environment:
-      - NO_PROXY=postgresql
-      - DATABASE=postgresql
+      - PORT=80
+      - DATABASE_HOST=postgresql
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
@@ -20,6 +23,8 @@ services:
   postgresql:
     image: postgres:10.2-alpine
     container_name: volumetric-db
+    ports:
+      - "5432:5432"
     volumes:
       - ./data/postgres:/var/lib/postgres
     env_file: secrets.env
