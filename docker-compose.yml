@@ -1,12 +1,12 @@
-version: "3.6"
+version: "2.4"
 services:
 
   api:
-    image: vlmtrc-api
+    image: git.statoil.no:4567/volumetric/api
     container_name: volumetric-api
     ports:
       - "80:80"
-      # For live debugging
+    # For live debugging
     volumes:
       - .:/src
     env_file: secrets.env
@@ -22,9 +22,10 @@ services:
 
   postgresql:
     image: postgres:10.2-alpine
+    command: postgres -c 'log_statement=mod'
     container_name: volumetric-db
-    ports:
-      - "5432:5432"
+    #ports:
+    #  - "5432:5432"
     volumes:
       - ./data/postgres:/var/lib/postgres
     env_file: secrets.env

@@ -1,9 +1,5 @@
 from flask_restful import Api, Resource
-from sqlalchemy import create_engine
-from config import Config
 from sqlalchemy.orm import sessionmaker
-from flask import jsonify
-from app.models.user import User
 from app.app import db
 
 
@@ -16,8 +12,15 @@ class HelloWorld(Resource):
 
         return "Hello World!"
 
+class Import(Resource):
+    def get(self):
+        import import_test
+        import_test()
+        return "Hello World!"
+
 def create_api(app):
     api = Api(app)
     api.add_resource(HelloWorld, '/')
+    api.add_resource(HelloWorld, '/MakeDB')
 
     return api
