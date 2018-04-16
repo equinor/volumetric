@@ -1,5 +1,6 @@
-Flask>=0.10.1
-Flask-GraphQL>=1.4.1
-
-graphql-core>=2.0
-graphene>=2.0
+sqlalchemy
+psycopg2
+flask
+flask_sqlalchemy
+flask_migrate
+flask_restful
