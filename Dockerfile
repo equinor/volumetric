@@ -13,4 +13,5 @@ RUN apk update && apk add --no-cache curl bind-tools net-tools bash
 RUN apk add postgresql-dev gcc python3-dev musl-dev
 RUN pip3 install -U pip && pip3 install --no-cache-dir --requirement requirements.txt
 #ADD . /
-ENTRYPOINT ["python3", "./src/api.py"]
+#ENTRYPOINT ["python3", "./src/api.py"]
+CMD ["python3", "./src/api.py"]
