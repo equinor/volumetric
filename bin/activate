@@ -11,6 +11,8 @@ $PROJECT_MAIN_BIN/clone-repos
 export ENVIRONMENT=${ENVIRONMENT:=local}
 export WEB_CONTEXT_PATH=web/
 export API_CONTEXT_PATH=api/
+export DOCKER_USER=$(id -u)
+export DOCKER_GROUP=$(id -g)
 
 echo "Running in ${ENVIRONMENT} environment"
 
