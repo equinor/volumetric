@@ -8,16 +8,15 @@ RUN deluser --remove-home node \
  && mkdir /code \
  && chown volumetric:volumetric /code
 
+USER volumetric
 WORKDIR /code
 
-USER volumetric
-
-COPY --chown=volumetric:volumetric package.json package-lock.json ./
-
-RUN npm install
+COPY --chown=volumetric:volumetric package.json yarn.lock ./
+ENV PATH=$PATH:/code/node_modules/.bin
+RUN yarn --pure-lockfile
 
 COPY --chown=volumetric:volumetric . ./
 
-ENV PATH="/code/node_modules/.bin:${PATH}"
+EXPOSE 3000
 
-EXPOSE 80
+CMD ["yarn", "start"]

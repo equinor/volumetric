@@ -8,13 +8,15 @@ Activate the project by running activate script in main repo
 
 ### Pre-commit hook:
 
+Install yarn locally
+
+Install packages locally:
+
+`yarn --pure-lockfile`
+
 Make sure the project is activated.
 
-Install the node_modules:
-
-`volumetric-npm install`
-
-If you don't have node/npm installed, or you want to use the npm-version in the docker image instead (recommended):
+Add the pre-commit hook:
 
 `cp pre-commit.template .git/hooks/pre-commit`
 

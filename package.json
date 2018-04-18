@@ -1,32 +1,30 @@
 {
-    "name": "web",
-    "version": "0.1.0",
-    "private": true,
-    "dependencies": {
-        "apollo-boost": "^0.1.4",
-        "graphql": "^0.13.2",
-        "react": "^16.3.1",
-        "react-apollo": "^2.1.0-beta.3",
-        "react-dom": "^16.3.1",
-        "react-scripts": "1.1.4",
-        "recompose": "^0.26.0"
-    },
-    "scripts": {
-        "start": "PORT=80 react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test --env=jsdom",
-        "eject": "react-scripts eject",
-        "precommit": "lint-staged"
-    },
-    "lint-staged": {
-        "*.{js,json,css,md}": [
-            "prettier --single-quote --tab-width 4 --trailing-comma all --write",
-            "git add"
-        ]
-    },
-    "devDependencies": {
-        "husky": "^0.14.3",
-        "lint-staged": "^7.0.4",
-        "prettier": "^1.12.1"
-    }
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "apollo-boost": "^0.1.4",
+    "graphql": "^0.13.2",
+    "react": "^16.3.2",
+    "react-apollo": "^2.1.0-beta.3",
+    "react-dom": "^16.3.2",
+    "react-scripts": "1.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": [
+      "prettier --single-quote --trailing-comma all --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "lint-staged": "^7.0.4",
+    "prettier": "^1.12.1"
+  }
 }
