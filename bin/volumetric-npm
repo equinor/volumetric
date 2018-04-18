@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+docker run -it --rm \
+    -v "$PROJECT_MAIN_HOME/../web:/code" \
+    volumetric-web \
+    npm $@
