@@ -15,7 +15,6 @@ services:
     volumes:
       - ./../web/src:/code/src
       - ./../web/public:/code/public
-    command: npm start
 
   api:
     image: volumetric-api
