@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import Hello from './Hello';
 
 class App extends Component {
   render() {
@@ -8,9 +9,8 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Volumetric</h1>
         </header>
-        <p className="App-intro">
-          Vælkommin t volumetric.
-        </p>
+        <p className="App-intro">Vælkommin t volumetric.</p>
+        <Hello />
       </div>
     );
   }
