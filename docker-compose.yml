@@ -26,6 +26,12 @@ services:
     env_file: ./../api/secrets.env
     depends_on:
       - db
+    environment:
+      - PORT=80
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - POSTGRES_USER=volumetric
+      - POSTGRES_DB=volumetric
     restart: unless-stopped
 
   db:
