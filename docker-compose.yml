@@ -24,6 +24,8 @@ services:
     image: volumetric-api
     build: ../api
     env_file: ./../api/secrets.env
+    volumes:
+      - ./../api:/code
     depends_on:
       - db
     environment:
@@ -32,7 +34,6 @@ services:
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
-    restart: unless-stopped
 
   db:
     image: postgres:10.2-alpine
@@ -44,4 +45,3 @@ services:
     environment:
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
-    restart: unless-stopped
