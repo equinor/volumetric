@@ -1,0 +1,50 @@
+#Validate .gitlab-ci.yml at https://git.statoil.no/ci/lint
+#image: docker:git
+stages:
+  - build
+  - publish
+  - deploy
+ # - cleanup
+
+variables:
+  API_IMAGE: $CI_REGISTRY/volumetric/api
+
+build_api:
+  stage: build
+  before_script:
+    - touch secrets.env
+    - docker-compose down
+    - docker-compose rm -f
+  script:
+    - docker build --force-rm -t $API_IMAGE .
+    - docker tag $API_IMAGE $API_IMAGE:$CI_COMMIT_REF_NAME
+
+publish_image:
+  stage: publish
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - docker push $API_IMAGE
+    - docker push $API_IMAGE:$CI_COMMIT_REF_NAME
+
+deploy_develop:
+  stage: deploy
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" > secrets.env
+    - echo "FLASK_SECRET_KEY=$FLASK_SECRET_KEY" >> secrets.env
+  script:
+    - docker-compose --compatibility -f ./docker-compose.yml up -d
+
+#docker_cleanup:
+ # stage: cleanup
+ # when: always
+ # before_script:
+ #   - touch secrets.env
+ # script:
+#   - docker-compose rm -f
+
+#trigger_build:
+ # stage: deploy
+  #script:
+   # - "curl -X POST -F token=TOKEN -F ref=REF_NAME https://git.statoil.no/api/v4/projects/1860/trigger/pipeline"

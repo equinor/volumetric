@@ -3,3 +3,6 @@ venv/
 .idea/
 data/
 .vscode
+commands
+__pycache__/
+pycharm-debug-py3k.egg
