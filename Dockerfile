@@ -16,5 +16,5 @@ RUN pip3 install -U pip && pip3 install --no-cache-dir --requirement requirement
 
 ADD . /code
 WORKDIR /code
-ENTRYPOINT ["python3", "app.py"]
-
+ENTRYPOINT ["/code/entrypoint.sh"]
+CMD ["api"]
