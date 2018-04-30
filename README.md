@@ -12,6 +12,8 @@ Then run docker-compose up -d
 
 NOTE: Make sure to enable remote debugging in config.py
 
+https://gitlab.com/gitlab-org/gitlab-ce/-/jobs/artifacts/master/raw/coverage/index.html?job=coverage
+
 ## Database operations
 
 ### Alembic
@@ -23,3 +25,9 @@ The flask-migrate commands can be accessed by executing the manage.py script "db
 
 * Upgrade db to latest revision
 ```volumetric run --rm api manage db upgrade```
+
+## Database
+
+![ERD schema][erd]
+
+[erd]: https://git.statoil.no/volumetric/api/-/jobs/artifacts/master/raw/data/build/schema.png?job=create_erd
