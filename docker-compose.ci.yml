@@ -1,0 +1,31 @@
+version: "3"
+
+networks:
+  ci:
+    external:
+      name: vlmtrc-ci-net
+
+
+services:
+  api:
+    image: git.statoil.no:4567/volumetric/api
+    networks:
+      - ci
+    environment:
+      - PORT=80
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - POSTGRES_USER=volumetric
+      - POSTGRES_DB=volumetric
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+    depends_on:
+      - db
+
+  db:
+    image: postgres:10.2-alpine
+    networks:
+      - ci
+    environment:
+      - POSTGRES_USER=volumetric
+      - POSTGRES_DB=volumetric
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD

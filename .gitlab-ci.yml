@@ -2,6 +2,7 @@
 stages:
   - build
   - publish
+  - document
   - deploy
 
 variables:
@@ -10,7 +11,6 @@ variables:
 
 build_api:
   stage: build
-  before_script:
   script:
     - docker build --force-rm -t $API_IMAGE .
     - docker tag $API_IMAGE $API_IMAGE:$CI_COMMIT_REF_NAME
@@ -22,6 +22,24 @@ publish_image:
   script:
     - docker push $API_IMAGE
     - docker push $API_IMAGE:$CI_COMMIT_REF_NAME
+
+create_erd:
+  stage: document
+  variables:
+    COMPOSE_PROJECT_NAME: api$CI_JOB_ID
+  before_script:
+    - docker network create vlmtrc-ci-net
+    - docker-compose -f docker-compose.ci.yml run --rm api manage db upgrade
+    - mkdir -p data/build
+  script:
+    - docker run --rm -v "$PWD/data/build:/share" --net vlmtrc-ci-net --name schemacrawler --user $(id -u) --entrypoint /opt/schemacrawler/schemacrawler.sh schemacrawler/schemacrawler -server=postgresql -host=db -user=volumetric -password=$POSTGRES_PASSWORD -database=volumetric -infolevel=standard -routines -command=schema -outputformat=png -o /share/schema.png
+  after_script:
+    - docker-compose -f docker-compose.ci.yml down
+    - docker network rm vlmtrc-ci-net
+  artifacts:
+    paths:
+      - data/build/
+    expire_in: 1 week
 
 deploy_develop:
   stage: deploy

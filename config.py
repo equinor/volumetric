@@ -24,4 +24,3 @@ class Config(object):
     print("Postgres Database: " + POSTGRES_DB)
     print("Postgres User: " + POSTGRES_USER)
     print("Postgres Password: [OMITTED] ")
-
