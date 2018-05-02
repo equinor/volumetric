@@ -23,5 +23,13 @@ class Metric(db.Model):
 
     def __repr__(self):
         return "<Metrics(id={id}, model={model}, realization={realization}, faultblock={faultblock}, zone={zone}, grv={grv}, nrv={nrv}, npv={npv}, hcpv={hcpv}, stoiip={stoiip})".format(
-            id=self.id, model=self.model, realization=self.realization, faultblock=self.faultblock, zone=self.zone,
-            grv=self.grv, nrv=self.nrv, npv=self.npv, hcpv=self.hcpv, stoiip=self.stoiip)
+            id=self.id,
+            model=self.model,
+            realization=self.realization,
+            faultblock=self.faultblock,
+            zone=self.zone,
+            grv=self.grv,
+            nrv=self.nrv,
+            npv=self.npv,
+            hcpv=self.hcpv,
+            stoiip=self.stoiip)

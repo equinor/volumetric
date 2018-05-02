@@ -7,7 +7,7 @@ from models import Metric as MetricModel
 class Metric(SQLAlchemyObjectType):
     class Meta:
         model = MetricModel
-        interfaces = (relay.Node,)
+        interfaces = (relay.Node, )
 
 
 class Query(graphene.ObjectType):
