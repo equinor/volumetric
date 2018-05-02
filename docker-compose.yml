@@ -7,8 +7,8 @@ services:
     ports:
       - "80:80"
     # For live debugging
-    volumes:
-      - .:/src
+    #volumes:
+     # - .:/code
     env_file: secrets.env
     environment:
       - PORT=80
@@ -23,8 +23,8 @@ services:
     image: postgres:10.2-alpine
     command: postgres -c 'log_statement=mod'
     container_name: volumetric-db
-    #ports:
-    #  - "5432:5432"
+    ports:
+      - "5432:5432"
     volumes:
       - ./data/postgres:/var/lib/postgres
     env_file: secrets.env
