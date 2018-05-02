@@ -14,10 +14,12 @@ echo "Location $PWD"
 echo "Changed files: ${changed_files}"
 for file in ${changed_files}
 do
-    echo "Modifying ${file}"
-    docker run --rm -v "$PWD:/code" git.statoil.no:4567/volumetric/api yapf ${file} -i || {
-        echo "yapf failed"
-        exit 1
-    }
-    git add ${file}
+    if [ -f $file ]; then
+        echo "Modifying ${file}"
+        docker run --rm -v "$PWD:/code" git.statoil.no:4567/volumetric/api yapf ${file} -i || {
+            echo "yapf failed"
+            exit 1
+        }
+        git add ${file}
+    fi
 done
