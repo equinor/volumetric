@@ -2,12 +2,7 @@ from flask import Flask
 from flask_graphql import GraphQLView
 
 from config import Config
-from graphqlapi.schema import schema
-
-# import logging
-
-# logging.basicConfig()
-# logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+#from graphqlapi.schema import schema
 
 
 def create_app():
@@ -30,9 +25,9 @@ if hasattr(Config, 'REMOTE_DEBUG') and Config.REMOTE_DEBUG:
 app = create_app()
 
 # GraphQL
-app.add_url_rule(
-    '/graphql',
-    view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
+#app.add_url_rule(
+ #   '/graphql',
+  #  view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
 
 # Start the application
 if __name__ == '__main__':

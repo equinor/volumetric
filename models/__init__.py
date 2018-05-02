@@ -1,4 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
-from models.metric import Metric
+from models.model import Model
+from models.zone import Zone
+from models.faultblock import Faultblock
+from models.location import Location
+from models.volumetric import Volumetrics
+
