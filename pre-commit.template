@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ "$(docker images -q git.statoil.no:4567/volumetric/api:latest 2> /dev/null)" = "" ]; then
+    echo
+    echo "WARNING: Could not find docker image, skipping pre-commit hook"
+    echo
+    exit 0
+fi
+
+
+# capture the changed files that have been staged
+changed_files=$(git diff --staged --name-only | grep '\.py')
+echo "Location $PWD"
+echo "Changed files: ${changed_files}"
+for file in ${changed_files}
+do
+    echo "Modifying ${file}"
+    docker run --rm -v "$PWD:/code" git.statoil.no:4567/volumetric/api yapf ${file} -i || {
+        echo "yapf failed"
+        exit 1
+    }
+    git add ${file}
+done

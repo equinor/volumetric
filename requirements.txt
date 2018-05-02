@@ -28,3 +28,4 @@ typing==3.6.4
 Werkzeug==0.14.1
 pydevd
 flask-script
+yapf

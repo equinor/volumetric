@@ -18,7 +18,9 @@ service_is_ready() {
     done
 }
 
-service_is_ready "DATABASE" ${DATABASE_HOST} ${DATABASE_PORT}
+if [ ! -z $DATABASE_HOST ]; then
+    service_is_ready "DATABASE" ${DATABASE_HOST} ${DATABASE_PORT}
+fi
 
 first_arg="$1"
 
