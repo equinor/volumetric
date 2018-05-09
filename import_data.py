@@ -1,7 +1,9 @@
 from utils.file import read_file
+from utils.timer import timeit
 from models import Model, Faultblock, Zone, Location, Volumetrics, db, Field
 
 
+@timeit
 def import_file(filename, user_name='test', field_name='Tordis'):
     # Store which indices have been added
     lines_as_ordered_dicts = read_file(filename)
@@ -49,8 +51,7 @@ def import_file(filename, user_name='test', field_name='Tordis'):
             db.session.commit()
 
         location = Location()
-        faultblock_id = (
-            Faultblock.query.filter_by(name=faultblock_name).first()).id
+        faultblock_id = (Faultblock.query.filter_by(name=faultblock_name).first()).id
         location.faultblock_id = faultblock_id
         zone_id = (Zone.query.filter_by(name=zone_name).first()).id
         location.zone_id = zone_id

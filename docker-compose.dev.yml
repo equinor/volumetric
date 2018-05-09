@@ -1,0 +1,33 @@
+version: "2.4"
+services:
+
+  api:
+    image: git.statoil.no:4567/volumetric/api
+    container_name: volumetric-api
+    ports:
+      - "80:80"
+    # For live debugging
+    volumes:
+      - .:/code
+    env_file: secrets.env
+    environment:
+      - API_PORT=80
+      - DATABASE_HOST=postgresql
+      - DATABASE_PORT=5432
+      - POSTGRES_USER=volumetric
+      - POSTGRES_DB=volumetric
+    depends_on:
+      - postgresql
+
+  postgresql:
+    image: postgres:10.2-alpine
+    command: postgres -c 'log_statement=mod'
+    container_name: volumetric-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgres
+    env_file: secrets.env
+    environment:
+      - POSTGRES_USER=volumetric
+      - POSTGRES_DB=volumetric
