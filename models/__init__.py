@@ -6,3 +6,4 @@ from models.zone import Zone
 from models.faultblock import Faultblock
 from models.location import Location
 from models.volumetrics import Volumetrics
+from models.field import Field

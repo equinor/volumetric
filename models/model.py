@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, UniqueConstraint
+from sqlalchemy import Column, Integer, String, UniqueConstraint, ForeignKey
 from sqlalchemy.orm import relationship
 
 from models import db
@@ -11,6 +11,10 @@ class Model(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     user = Column(String)
+    field_id = Column(
+        Integer,
+        ForeignKey('field.id', ondelete='CASCADE', onupdate='CASCADE'),
+        nullable=False)
     faultblocks = relationship('Faultblock', passive_deletes=True)
     zones = relationship('Zone', passive_deletes=True)
 
