@@ -6,9 +6,6 @@ services:
     container_name: volumetric-api
     ports:
       - "80:80"
-    # For live debugging
-    #volumes:
-     # - .:/code
     env_file: secrets.env
     environment:
       - DATABASE_HOST=postgresql

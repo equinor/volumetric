@@ -20,7 +20,6 @@ publish_image:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
   script:
-    - docker push $API_IMAGE
     - docker push $API_IMAGE:$CI_COMMIT_REF_NAME
 
 create_erd:
@@ -43,6 +42,8 @@ create_erd:
 
 deploy_develop:
   stage: deploy
+  only:
+    - master
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" > $API_PATH/secrets.env
