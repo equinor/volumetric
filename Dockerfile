@@ -11,8 +11,10 @@ ENV TZ=Europe/Oslo
 RUN apk update && apk add --no-cache curl bind-tools net-tools bash
 RUN apk add --no-cache postgresql-dev gcc python3-dev musl-dev
 
-ADD ./requirements.txt /
-RUN pip3 install -U pip && pip3 install --no-cache-dir --requirement requirements.txt
+ADD ./requirements.txt ./dev-requirements.txt /
+RUN pip3 install -U pip && \
+    pip3 install --no-cache-dir --requirement requirements.txt && \
+    pip3 install --no-cache-dir --requirement dev-requirements.txt
 
 ADD . /code
 WORKDIR /code
