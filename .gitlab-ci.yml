@@ -49,6 +49,7 @@ deploy_develop:
     - echo "FLASK_SECRET_KEY=$FLASK_SECRET_KEY" >> $API_PATH/secrets.env
     - cp docker-compose.yml $API_PATH/
   script:
+    - docker-compose --compatibility -f $API_PATH/docker-compose.yml run api manage import_test --test_file='TestData_all.txt'
     - docker-compose --compatibility -f $API_PATH/docker-compose.yml up -d
 
 # Might add something like this so volumetric/main pipeline gets triggered by a successful api pipeline
