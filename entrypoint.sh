@@ -5,14 +5,14 @@
 service_is_ready() {
     NAME=$1
     HOST=$2
-    PORT=$3
+    DB_PORT=$3
     # echo "Using service $NAME: $HOST:$PORT"
     i=1
-    while ! nc -z $HOST $PORT; do
+    while ! nc -z $HOST $DB_PORT; do
         sleep 1
         i=$((i+1));
         if [ $i -eq 600 ]; then
-            echo "Service $NAME '$HOST:$PORT' not responding. Exiting..."
+            echo "Service $NAME '$HOST:$DB_PORT' not responding. Exiting..."
             exit 1
         fi;
     done
