@@ -23,22 +23,18 @@ def import_file(filename, user_name='test', field_name='Tordis'):
             db.session.commit()
             fields.append(field_name)
 
-        field_id = Field.query.filter(Field.name == field_name).first().id
-
         model_name = line_dict['Model']
         if model_name not in models:
             models.append(model_name)
-            model = Model(name=model_name, user=user_name, field_id=field_id)
+            model = Model(name=model_name, user=user_name, field_id=field.id)
             db.session.add(model)
             db.session.commit()
-
-        model_id = (Model.query.filter_by(name=model_name).first()).id
 
         faultblock_name = line_dict['Faultblock']
         if faultblock_name not in faultblocks:
             faultblocks.append(faultblock_name)
             faultblock = Faultblock(name=faultblock_name)
-            faultblock.model_id = model_id
+            faultblock.model_id = model.id
             db.session.add(faultblock)
             db.session.commit()
 
@@ -46,15 +42,13 @@ def import_file(filename, user_name='test', field_name='Tordis'):
         if zone_name not in zones:
             zones.append(zone_name)
             zone = Zone(name=zone_name)
-            zone.model_id = model_id
+            zone.model_id = model.id
             db.session.add(zone)
             db.session.commit()
 
         location = Location()
-        faultblock_id = (Faultblock.query.filter_by(name=faultblock_name).first()).id
-        location.faultblock_id = faultblock_id
-        zone_id = (Zone.query.filter_by(name=zone_name).first()).id
-        location.zone_id = zone_id
+        location.faultblock_id = faultblock.id
+        location.zone_id = zone.id
         location.facies = None
         if location not in locations:
             locations.append(location)
