@@ -25,7 +25,7 @@ RUN pip3 install -U pip pipenv && \
 USER volumetric
 WORKDIR /code
 
-
+ENV FLASK_APP=app.py FLASK_RUN_PORT=8080 FLASK_RUN_HOST=0.0.0.0
 COPY --chown=volumetric:volumetric . ./
 ENTRYPOINT ["/code/entrypoint.sh"]
 CMD ["api"]

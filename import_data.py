@@ -12,8 +12,7 @@ def import_file(filename, user_name='test', field_name='Tordis'):
     locations = []
     for line_dict in lines_as_ordered_dicts:
         # Don't add totals, as that is something we should be able to compute from the rest of the data
-        if line_dict['Zone'] == 'Totals' or line_dict['Faultblock' ==
-                                                      'Totals']:
+        if line_dict['Zone'] == 'Totals' or line_dict['Faultblock'] == 'Totals':
             continue
 
         if field_name not in fields:

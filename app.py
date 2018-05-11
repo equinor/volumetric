@@ -1,9 +1,14 @@
+import contextlib
+
+import click
 from flask import Flask
-from flask_graphql import GraphQLView
+from flask_migrate import Migrate
 
 from config import Config
+from graphqlapi import create_api
+from import_data import import_file
 
-from graphqlapi.schema import schema
+from models import db, Volumetrics, Model, Faultblock, Location, Zone, Field
 
 
 def create_app():
@@ -12,8 +17,8 @@ def create_app():
     # Set Flask config from config.py file
     app.config.from_object(Config)
 
-    from models import db
     db.init_app(app)
+    create_api(app)
 
     return app
 
@@ -24,13 +29,35 @@ if hasattr(Config, 'REMOTE_DEBUG') and Config.REMOTE_DEBUG:
     enable_remote_debugging()
 
 app = create_app()
+migrate = Migrate(app, db)
 
-# GraphQL
-app.add_url_rule(
-    '/graphql',
-    view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
 
-# Start the application
-if __name__ == '__main__':
-    print(f'Starting the Flask application on port {Config.PORT}')
-    app.run(debug=True, host='0.0.0.0', port=Config.PORT)
+@app.shell_context_processor
+def make_shell_context():
+    return dict(
+        app=app,
+        db=db,
+        Volumetrics=Volumetrics,
+        Model=Model,
+        Faultblock=Faultblock,
+        Location=Location,
+        Zone=Zone,
+        Field=Field)
+
+
+@app.cli.command()
+def empty_database():
+    meta = db.Model.metadata
+
+    with contextlib.closing(db.engine.connect()) as con:
+        trans = con.begin()
+        for table in reversed(meta.sorted_tables):
+            con.execute(table.delete())
+        trans.commit()
+
+
+@app.cli.command()
+@click.pass_context
+def import_test(ctx):
+    ctx.invoke(empty_database)
+    import_file('TestData.txt')

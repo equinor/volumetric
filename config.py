@@ -2,7 +2,6 @@ import os
 
 
 class Config(object):
-    PORT = int(os.environ.get('API_PORT', '80'))
     POSTGRES_HOSTNAME = os.environ.get('DATABASE_HOST', 'db')
     POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
     POSTGRES_USER = os.environ.get('POSTGRES_USER', 'volumetric')
@@ -18,7 +17,6 @@ class Config(object):
     REMOTE_DEBUG = False
 
     print("These ENVIRONMENTS are set from docker-compose:")
-    print("API PORT: " + str(PORT))
     print("Postgres Hostname: " + POSTGRES_HOSTNAME)
     print("Postgres Port: " + POSTGRES_PORT)
     print("Postgres Database: " + POSTGRES_DB)

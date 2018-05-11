@@ -11,11 +11,11 @@ services:
      # - .:/code
     env_file: secrets.env
     environment:
-      - PORT=80
       - DATABASE_HOST=postgresql
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
+      - FLASK_ENV=production
     depends_on:
       - postgresql
 

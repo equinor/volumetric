@@ -13,7 +13,6 @@ Flask-GraphQL = "*"
 Flask-Migrate = "*"
 Flask-SQLAlchemy = "*"
 SQLAlchemy = "*"
-Flask-Script = "*"
 Flask-RESTful = "*"
 
 [dev-packages]
