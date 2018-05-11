@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+alembic = "*"
+graphene = "*"
+graphene-sqlalchemy = "*"
+"psycopg2" = "*"
+Flask = "*"
+Flask-GraphQL = "*"
+Flask-Migrate = "*"
+Flask-SQLAlchemy = "*"
+SQLAlchemy = "*"
+Flask-RESTful = "*"
+
+[dev-packages]
+pydevd = "*"
+yapf = "*"
+
+[requires]
+python_version = "3.6"
