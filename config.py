@@ -2,7 +2,7 @@ import os
 
 
 class Config(object):
-    PORT = int(os.environ.get('PORT', '80'))
+    PORT = int(os.environ.get('API_PORT', '80'))
     POSTGRES_HOSTNAME = os.environ.get('DATABASE_HOST', 'db')
     POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
     POSTGRES_USER = os.environ.get('POSTGRES_USER', 'volumetric')
