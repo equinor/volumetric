@@ -8,7 +8,10 @@ stages:
 variables:
   API_IMAGE: $CI_REGISTRY/volumetric/api
   API_PATH: /data/vlmtrc/api
-  IMPORT_DATA: TestData_all.txt
+# Vars from group/Secret variables
+# FLASK_SECRET_KEY:
+# POSTGRES_PASSWORD:
+# IMPORT_DATA:
 
 build_api:
   stage: build
@@ -49,7 +52,7 @@ deploy_develop:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" > $API_PATH/secrets.env
     - echo "FLASK_SECRET_KEY=$FLASK_SECRET_KEY" >> $API_PATH/secrets.env
-    - cp docker-compose.yml $API_PATH/
+    - cp docker-compose.yml init-user-db.sh $API_PATH/
   script:
     - docker-compose --compatibility -f $API_PATH/docker-compose.yml run api flask db upgrade
     - docker-compose --compatibility -f $API_PATH/docker-compose.yml run api flask import_test $IMPORT_DATA
