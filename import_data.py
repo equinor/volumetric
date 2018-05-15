@@ -5,7 +5,7 @@ from models import Model, Faultblock, Zone, Location, Volumetrics, db, Field
 
 @timeit
 def import_file(filename, user_name='test', field_name='Tordis'):
-    # Keep track which indices have been added
+    # Keep track of which indices have been added
     lines_as_ordered_dicts = read_file(filename)
     fields = []
     models = []

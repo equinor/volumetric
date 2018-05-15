@@ -51,6 +51,7 @@ deploy_develop:
     - echo "FLASK_SECRET_KEY=$FLASK_SECRET_KEY" >> $API_PATH/secrets.env
     - cp docker-compose.yml $API_PATH/
   script:
+    - docker-compose --compatibility -f $API_PATH/docker-compose.yml run api flask db upgrade
     - docker-compose --compatibility -f $API_PATH/docker-compose.yml run api flask import_test $IMPORT_DATA
     - docker-compose --compatibility -f $API_PATH/docker-compose.yml up -d
 
