@@ -5,13 +5,12 @@ services:
     image: git.statoil.no:4567/volumetric/api
     container_name: volumetric-api
     ports:
-      - "80:80"
+      - "80:8080"
     # For live debugging
     volumes:
       - .:/code
     env_file: secrets.env
     environment:
-      - API_PORT=8080
       - DATABASE_HOST=postgresql
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
