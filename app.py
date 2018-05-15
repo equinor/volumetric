@@ -58,6 +58,7 @@ def empty_database():
 
 @app.cli.command()
 @click.pass_context
-def import_test(ctx):
+@click.argument('data', default='TestData.txt')
+def import_test(ctx, data):
     ctx.invoke(empty_database)
-    import_file('TestData.txt')
+    import_file(data)

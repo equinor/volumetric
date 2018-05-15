@@ -8,6 +8,7 @@ stages:
 variables:
   API_IMAGE: $CI_REGISTRY/volumetric/api
   API_PATH: /data/vlmtrc/api
+  IMPORT_DATA: TestData_all.txt
 
 build_api:
   stage: build
@@ -20,7 +21,6 @@ publish_image:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
   script:
-    - docker push $API_IMAGE
     - docker push $API_IMAGE:$CI_COMMIT_REF_NAME
 
 create_erd:
@@ -43,12 +43,15 @@ create_erd:
 
 deploy_develop:
   stage: deploy
+  only:
+    - master
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" > $API_PATH/secrets.env
     - echo "FLASK_SECRET_KEY=$FLASK_SECRET_KEY" >> $API_PATH/secrets.env
     - cp docker-compose.yml $API_PATH/
   script:
+    - docker-compose --compatibility -f $API_PATH/docker-compose.yml run api flask import_test $IMPORT_DATA
     - docker-compose --compatibility -f $API_PATH/docker-compose.yml up -d
 
 # Might add something like this so volumetric/main pipeline gets triggered by a successful api pipeline

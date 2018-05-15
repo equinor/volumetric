@@ -6,18 +6,21 @@ services:
     container_name: volumetric-api
     ports:
       - "80:8080"
+    # For live debugging
+    volumes:
+      - .:/code
     env_file: secrets.env
     environment:
       - DATABASE_HOST=postgresql
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
-      - FLASK_ENV=production
     depends_on:
       - postgresql
 
   postgresql:
     image: postgres:10.2-alpine
+    command: postgres -c 'log_statement=mod'
     container_name: volumetric-db
     ports:
       - "5432:5432"
