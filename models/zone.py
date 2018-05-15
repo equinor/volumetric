@@ -10,11 +10,8 @@ class Zone(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    model_id = Column(
-        Integer,
-        ForeignKey('model.id', ondelete='CASCADE', onupdate='CASCADE'),
-        nullable=False)
-    locations = relationship('Location', passive_deletes=True)
+    model_id = Column(Integer, ForeignKey('model.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    locations = relationship('Location', passive_deletes=True, backref='zone')
 
     def __repr__(self):
         return "<Zone(id={id}, model={model_id} , name={name}".format(

@@ -11,13 +11,9 @@ class Model(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     user = Column(String)
-    field_id = Column(
-        Integer,
-        ForeignKey('field.id', ondelete='CASCADE', onupdate='CASCADE'),
-        nullable=False)
-    faultblocks = relationship('Faultblock', passive_deletes=True)
-    zones = relationship('Zone', passive_deletes=True)
+    field_id = Column(Integer, ForeignKey('field.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    faultblocks = relationship('Faultblock', passive_deletes=True, backref='model')
+    zones = relationship('Zone', passive_deletes=True, backref='model')
 
     def __repr__(self):
-        return "<Model(id={id}, name={name}, user={user}".format(
-            id=self.id, name=self.name, user=self.user)
+        return "<Model(id={id}, name={name}, user={user}".format(id=self.id, name=self.name, user=self.user)

@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 
 from config import Config
 from graphqlapi import create_api
-from import_data import import_file
+from import_data import import_model
 
 from models import db, Volumetrics, Model, Faultblock, Location, Zone, Field
 
@@ -58,7 +58,7 @@ def empty_database():
 
 @app.cli.command()
 @click.pass_context
-@click.argument('data', default='TestData.txt')
+@click.argument('data', default='TestData_all.txt')
 def import_test(ctx, data):
     ctx.invoke(empty_database)
-    import_file(data)
+    import_model(data)
