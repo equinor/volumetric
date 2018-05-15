@@ -12,8 +12,6 @@ Then run docker-compose up -d
 
 NOTE: Make sure to enable remote debugging in config.py
 
-https://gitlab.com/gitlab-org/gitlab-ce/-/jobs/artifacts/master/raw/coverage/index.html?job=coverage
-
 ## Database operations
 
 ### Alembic
