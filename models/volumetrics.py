@@ -7,13 +7,8 @@ class Volumetrics(db.Model):
     __table_args__ = (UniqueConstraint('location_id', 'realization'), )
 
     id = Column(Integer, primary_key=True)
-    location_id = Column(
-        Integer,
-        ForeignKey('location.id', ondelete='CASCADE', onupdate='CASCADE'),
-        nullable=False)
-    realization = Column(
-        Integer, nullable=False,
-        default=0)  # TODO: Should we have None in addition to 0?
+    location_id = Column(Integer, ForeignKey('location.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    realization = Column(Integer, nullable=True)  # TODO: Should we have None in addition to 0?
     grv = Column(Numeric(20, 2))
     nrv = Column(Numeric(20, 2))
     npv = Column(Numeric(20, 2))

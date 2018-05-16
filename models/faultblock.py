@@ -9,12 +9,9 @@ class Faultblock(db.Model):
     __table_args__ = (UniqueConstraint('model_id', 'name'), )
 
     id = Column(Integer, primary_key=True)
-    model_id = Column(
-        Integer,
-        ForeignKey('model.id', ondelete='CASCADE', onupdate='CASCADE'),
-        nullable=False)
+    model_id = Column(Integer, ForeignKey('model.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     name = Column(String)
-    locations = relationship('Location', passive_deletes=True)
+    locations = relationship('Location', passive_deletes=True, backref='faultblock')
 
     def __repr__(self):
         return "<Faultblock(id={id}, model={model_id}, name={name}".format(
