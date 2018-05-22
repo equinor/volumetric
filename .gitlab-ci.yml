@@ -55,7 +55,7 @@ deploy_develop:
     - cp docker-compose.yml init-user-db.sh $API_PATH/
   script:
     - docker-compose --compatibility -f $API_PATH/docker-compose.yml run api flask db upgrade
-    - docker-compose --compatibility -f $API_PATH/docker-compose.yml run api flask import_test $IMPORT_DATA
+    - docker-compose --compatibility -f $API_PATH/docker-compose.yml run api flask import_test --filename $IMPORT_DATA
     - docker-compose --compatibility -f $API_PATH/docker-compose.yml up -d
 
 # Might add something like this so volumetric/main pipeline gets triggered by a successful api pipeline

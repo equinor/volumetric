@@ -5,7 +5,7 @@ from models import Model, Faultblock, Zone, Location, Volumetrics, db, Field
 
 
 def _should_ignore(line_dict):
-    return line_dict['Zone'] == 'Totals' or line_dict['Faultblock'] == 'Totals'
+    return line_dict['zone'] == 'Totals' or line_dict['faultblock'] == 'Totals'
 
 
 def _add_faultblocks_or_zones(data_dicts, model, database_model, column_name):
@@ -18,9 +18,9 @@ def _add_faultblocks_or_zones(data_dicts, model, database_model, column_name):
 
 
 def _get_location_info(data_dict, faultblocks, zones):
-    facies = data_dict['Facies'] if 'Facies' in data_dict else None
-    faultblock = faultblocks[data_dict['Faultblock']]
-    zone = zones[data_dict['Zone']]
+    facies = data_dict.get('facies')
+    faultblock = faultblocks[data_dict['faultblock']]
+    zone = zones[data_dict['zone']]
     return f'{zone.name}{faultblock.name}{facies}', facies, faultblock, zone
 
 
@@ -39,12 +39,12 @@ def _add_volumetrics(data_dicts, faultblocks, zones, locations):
         location = locations[location_key]
         location.volumetrics.append(
             Volumetrics(
-                grv=data_dict['GRV'],
-                nrv=data_dict['NRV'],
-                npv=data_dict['NPV'],
-                hcpv=data_dict['HCPV'],
-                stoiip=data_dict['STOIIP'],
-                realization=data_dict['Realization'] if 'Realization' in data_dict else None))
+                grv=data_dict.get('grv'),
+                nrv=data_dict.get('nrv'),
+                npv=data_dict.get('npv'),
+                hcpv=data_dict.get('hcpv'),
+                stoiip=data_dict.get('stoiip'),
+                realization=data_dict.get('realization')))
 
 
 @timeit
@@ -61,12 +61,12 @@ def import_model(filename, user='test', field_name='Tordis'):
 
     data_dicts = [line_dict for line_dict in lines_as_ordered_dicts if not _should_ignore(line_dict)]
 
-    model_name = data_dicts[0]['Model']
+    model_name = data_dicts[0]['model']
     model = Model(name=model_name, user=user, field=field)
 
-    faultblocks = _add_faultblocks_or_zones(data_dicts, model, database_model=Faultblock, column_name='Faultblock')
+    faultblocks = _add_faultblocks_or_zones(data_dicts, model, database_model=Faultblock, column_name='faultblock')
 
-    zones = _add_faultblocks_or_zones(data_dicts, model, database_model=Zone, column_name='Zone')
+    zones = _add_faultblocks_or_zones(data_dicts, model, database_model=Zone, column_name='zone')
 
     locations = _add_locations(data_dicts, faultblocks=faultblocks, zones=zones)
 

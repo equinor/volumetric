@@ -1,4 +1,5 @@
 import contextlib
+import os
 
 import click
 from flask import Flask
@@ -56,9 +57,23 @@ def empty_database():
         trans.commit()
 
 
+def parse_field_name(filename):
+    return os.path.splitext(filename.split('_')[-1].capitalize())[0]
+
+
+def process_model_file(basename, import_dir):
+    filepath = os.path.join(import_dir, basename)
+    import_model(filepath, field_name=parse_field_name(basename))
+
+
 @app.cli.command()
 @click.pass_context
-@click.argument('data', default='TestData_all.txt')
-def import_test(ctx, data):
-    ctx.invoke(empty_database)
-    import_model(data)
+@click.option('--filename', '-f', type=click.Path(), default=None)
+def import_test(ctx, filename):
+    import_dir = os.path.join(app.instance_path, 'import')
+    if filename:
+        process_model_file(filename, import_dir)
+    else:
+        ctx.invoke(empty_database)
+        for basename in os.listdir(import_dir):
+            process_model_file(basename, import_dir)
