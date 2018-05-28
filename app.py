@@ -71,9 +71,9 @@ def process_model_file(basename, import_dir):
 @click.option('--filename', '-f', type=click.Path(), default=None)
 def import_test(ctx, filename):
     import_dir = os.path.join(app.instance_path, 'import')
+    ctx.invoke(empty_database)
     if filename:
         process_model_file(filename, import_dir)
     else:
-        ctx.invoke(empty_database)
         for basename in os.listdir(import_dir):
             process_model_file(basename, import_dir)
