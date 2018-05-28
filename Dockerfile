@@ -13,6 +13,11 @@ RUN addgroup -S volumetric -g $GID \
 #ENV HTTPS_PROXY=$PROXY
 ENV PYTHONUNBUFFERED=1 TZ=Europe/Oslo
 
+# Add Equinor crt for pip to work
+ADD ./ca-bundle.trust.crt /usr/local/share/ca-certificates/ca-bundle.trust.crt
+RUN update-ca-certificates
+ENV PIP_CERT=/usr/local/share/ca-certificates/ca-bundle.trust.crt
+
 # These packages are for development and debugging purposes only.
 RUN apk update && apk add --no-cache curl bind-tools net-tools bash
 RUN apk add --no-cache postgresql-dev gcc python3-dev musl-dev
