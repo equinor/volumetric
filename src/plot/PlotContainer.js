@@ -2,7 +2,8 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import LocationSelector from './locationSelector/LocationSelector';
 import { GET_METRICS, GET_MODELS } from './ModelQueries';
-import BarChart from './BarChart';
+import VisToggler from './VisToggler';
+import styled from 'styled-components';
 
 const hasSelectedAll = state =>
   Object.keys(state).reduce(
@@ -10,20 +11,29 @@ const hasSelectedAll = state =>
     true,
   );
 
+const LocationSelectorStyled = styled.div`
+  margin-top: 30px;
+  margin-bottom: 30px;
+`;
+
 const initialState = {
   model: {
-    selectedOption: null,
+    selectedOption: null
   },
   faultblock: {
-    selectedOption: null,
+    selectedOption: null
   },
   zone: {
-    selectedOption: null,
+    selectedOption: null
   },
   facies: {
-    selectedOption: null,
-  },
+    selectedOption: null
+  }
 };
+
+const PlotContainerStyled = styled.div`
+  margin-bottom: 50px;
+`;
 
 class PlotContainer extends React.Component {
   constructor() {
@@ -61,6 +71,7 @@ class PlotContainer extends React.Component {
   }
 
   render() {
+    console.log(this.state);
     return (
       <Query query={GET_MODELS}>
         {({ loading, error, data }) => {
@@ -77,8 +88,8 @@ class PlotContainer extends React.Component {
           const selectedAll = hasSelectedAll(this.state);
 
           return (
-            <div>
-              <div>
+            <PlotContainerStyled>
+              <LocationSelectorStyled>
                 <LocationSelector
                   handleChange={this.handleChange}
                   models={data.model}
@@ -89,7 +100,7 @@ class PlotContainer extends React.Component {
                   {hasSelectedModel && <LocationSelector.FaultblockSelector />}
                   {shouldRenderFacies && <LocationSelector.FaciesSelector />}
                 </LocationSelector>
-              </div>
+              </LocationSelectorStyled>
               {selectedAll && (
                 <Query
                   query={GET_METRICS}
@@ -101,11 +112,11 @@ class PlotContainer extends React.Component {
                     if (loading) {
                       return <div>Loading...</div>;
                     }
-                    return <BarChart metrics={data.volumetric} />;
+                    return <VisToggler data={data} />;
                   }}
                 </Query>
               )}
-            </div>
+            </PlotContainerStyled>
           );
         }}
       </Query>

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  XYPlot,
+  FlexibleXYPlot,
   XAxis,
   YAxis,
   VerticalBarSeries,
@@ -8,14 +8,10 @@ import {
   VerticalGridLines,
 } from 'react-vis';
 import { format } from 'd3-format';
+import styled from 'styled-components';
 
 const ignoreKeys = ['__typename', 'id', 'realization'];
 const filterKeys = key => !ignoreKeys.includes(key);
-
-const getYRange = data => {
-  const yArray = data.map(({ x, y }) => y);
-  return { min: Math.min(...yArray), max: Math.max(...yArray) };
-};
 
 const CustomAxisLabel = (
   props /*: {
@@ -34,7 +30,7 @@ const CustomAxisLabel = (
   };
 
   const xLabelOffset = {
-    x: props.innerWidth / 2,
+    x: props.innerWidth / 2 + props.rightOffset - props.title.length * 3,
     y: 1.2 * props.innerHeight, // 1.2 was enough for me to get it below x axis. you may need a diff't #
   };
   const transform = props.xAxis
@@ -51,27 +47,37 @@ const CustomAxisLabel = (
 CustomAxisLabel.displayName = 'CustomAxisLabel';
 CustomAxisLabel.requiresSVG = true;
 
+const PlotStyled = styled.div`
+  flex-grow: 1;
+  height: 400px;
+  min-width: 600px;
+`;
+
 export default ({ metrics }) => {
-  const row = metrics[0];
-  const data = Object.keys(row)
-    .filter(filterKeys)
-    .map(key => ({ x: key, y: row[key] }));
+  const verticalBarSeriesList = metrics.map((row, index) => {
+    const data = Object.keys(row)
+      .filter(filterKeys)
+      .map(key => ({ x: key, y: row[key] }));
+    return <VerticalBarSeries key={`bar-series-${index}`} data={data} />;
+  });
+
+  const marginLeft = 75;
 
   return (
-    <XYPlot
-      style={{ padding: '5px' }}
-      xType={'ordinal'}
-      width={800}
-      height={400}
-      margin={{ left: 75, bottom: 100 }}
-    >
-      <VerticalGridLines />
-      <HorizontalGridLines />
-      <VerticalBarSeries data={data} />
-      <XAxis />
-      <YAxis tickFormat={tick => format('2.1s')(tick)} />
-      <CustomAxisLabel title={'Value'} />
-      <CustomAxisLabel title={'Metric'} xAxis />
-    </XYPlot>
+    <PlotStyled>
+      <FlexibleXYPlot
+        style={{ padding: '5px' }}
+        xType={'ordinal'}
+        margin={{ left: marginLeft, bottom: 100 }}
+      >
+        <VerticalGridLines />
+        <HorizontalGridLines />
+        {verticalBarSeriesList}
+        <XAxis />
+        <YAxis tickFormat={tick => format('2.1s')(tick)} />
+        <CustomAxisLabel title={'Value'} />
+        <CustomAxisLabel rightOffset={marginLeft} title={'Metric'} xAxis />
+      </FlexibleXYPlot>
+    </PlotStyled>
   );
 };

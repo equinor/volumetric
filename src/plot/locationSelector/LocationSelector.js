@@ -17,7 +17,7 @@ const FlexWrapper = styled.div`
 `;
 
 const LocationSelectorSelectStyled = styled.div`
-  min-width: '200px';
+  min-width: 200px;
   padding-right: 10px;
   margin-top: 20px;
   flex-grow: ${props => props.grow || '1'};
