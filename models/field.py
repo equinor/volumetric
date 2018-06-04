@@ -10,4 +10,4 @@ class Field(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    field = relationship('Model', passive_deletes=True, backref='field')
+    models = relationship('Model', passive_deletes=True, backref='field')

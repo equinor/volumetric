@@ -16,10 +16,9 @@ class Volumetrics(db.Model):
     stoiip = Column(Numeric(20, 2))
 
     def __repr__(self):
-        return "<Volumetrics(id={id}, location_id={location_id}, Facies={facies}, Realization={realization}, grv={grv}, nrv={nrv}, npv={npv}, hcpv={hcpv}, stoiip={stoiip}>".format(
+        return "<Volumetrics(id={id}, location_id={location_id}, Realization={realization}, grv={grv}, nrv={nrv}, npv={npv}, hcpv={hcpv}, stoiip={stoiip}>".format(
             id=self.id,
             location_id=self.location_id,
-            facies=self.facies,
             realization=self.realization,
             grv=self.grv,
             nrv=self.nrv,
