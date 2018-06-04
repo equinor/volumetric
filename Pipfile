@@ -14,6 +14,7 @@ Flask-Migrate = "*"
 Flask-SQLAlchemy = "*"
 SQLAlchemy = "*"
 Flask-RESTful = "*"
+yapf = "*"
 
 [dev-packages]
 pydevd = "*"
