@@ -48,7 +48,9 @@ deploy_develop:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
   script:
     - cd $PROJECT_PATH/main
-    - git fetch
+    - git pull
     - ./bin/activate
+    - volumetric run --rm api manage db upgrade
+    - volumetric run api flask import_test --filename $IMPORT_DATA
     - volumetric up -d
 
