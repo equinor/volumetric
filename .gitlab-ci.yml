@@ -49,8 +49,7 @@ deploy_develop:
   script:
     - cd $PROJECT_PATH/main
     - git pull
-    - ./bin/activate
-    - volumetric run --rm api manage db upgrade
-    - volumetric run api flask import_test --filename $IMPORT_DATA
-    - volumetric up -d
+    - ./bin/activate volumetric run --rm api manage db upgrade
+    - ./bin/activate volumetric run api flask import_test --filename $IMPORT_DATA
+    - ./bin/activate volumetric up -d
 
