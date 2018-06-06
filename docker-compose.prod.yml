@@ -10,10 +10,10 @@ services:
       - api
 
   web:
-    image: git.statoil.no:4567/volumetric/web
+    image: git.statoil.no:4567/volumetric/web:$WEB_TAG
 
   api:
-    image: git.statoil.no:4567/volumetric/api
+    image: git.statoil.no:4567/volumetric/api:$API_TAG
     depends_on:
       - db
     environment:

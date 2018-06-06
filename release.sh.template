@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+API_TAG=
+WEB_TAG=
+ENVIRONMENT=
