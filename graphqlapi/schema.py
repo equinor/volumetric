@@ -13,10 +13,14 @@ def get_query_results(db_model, **kwargs):
 class Query(graphene.ObjectType):
     model = graphene.List(ModelType, name=graphene.String(), user=graphene.String(), faultblock=graphene.String())
     location = graphene.List(
-        LocationType, id=graphene.ID(), faultblock_id=graphene.ID(), zone_id=graphene.ID(), facies=graphene.String())
+        LocationType,
+        id=graphene.ID(),
+        faultblock_id=graphene.ID(),
+        zone_id=graphene.ID(),
+        facies=graphene.String())
     faultblock = graphene.List(FaultblockType, name=graphene.String(), id=graphene.Int(), model_id=graphene.Int())
     field = graphene.List(FieldType, name=graphene.String())
-    volumetric = graphene.List(VolumetricType, id=graphene.Int(), location_id=graphene.Int())
+    volumetric = graphene.List(VolumetricType, id=graphene.ID(), location_id=graphene.ID())
     zone = graphene.List(ZoneType, id=graphene.ID(), name=graphene.String(), model_id=graphene.ID())
 
     def resolve_faultblock(self, info, name=None, id=None, model_id=None):
