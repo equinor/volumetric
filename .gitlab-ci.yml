@@ -69,6 +69,8 @@ deploy_test:
   environment:
     name: test
     url: http://volumetric.test.equinor.com
+  variables:
+    COMPOSE_VERSION: ".prod"
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
   script:
