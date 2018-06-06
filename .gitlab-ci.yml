@@ -73,9 +73,12 @@ deploy_test:
     COMPOSE_VERSION: ".prod"
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - sed 's/^API_TAG=.*/API_TAG="$CI_COMMIT_REF_NAME"/' $PROJECT_PATH/main/release.sh
   script:
     - cd $PROJECT_PATH/main
     - git pull
+    - source release.sh
+    - ./bin/activate volumetric pull
     - ./bin/activate volumetric run --rm api manage db upgrade
     - ./bin/activate volumetric run api flask import_test
     - ./bin/activate volumetric up -d
