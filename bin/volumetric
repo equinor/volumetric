@@ -2,5 +2,5 @@
 
 source $PROJECT_MAIN_HOME/release.sh
 docker-compose -p "volumetric_$ENVIRONMENT" \
-    -f "$PROJECT_MAIN_HOME/docker-compose$COMPOSE_VERSION.yml" \
+    -f "$PROJECT_MAIN_HOME/docker-compose.$ENVIRONMENT.yml" \
     $@
