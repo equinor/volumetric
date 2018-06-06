@@ -15,10 +15,3 @@ class Config(object):
 
     # Remote debugging
     REMOTE_DEBUG = False
-
-    print("These ENVIRONMENTS are set from docker-compose:")
-    print("Postgres Hostname: " + POSTGRES_HOSTNAME)
-    print("Postgres Port: " + POSTGRES_PORT)
-    print("Postgres Database: " + POSTGRES_DB)
-    print("Postgres User: " + POSTGRES_USER)
-    print("Postgres Password: [OMITTED] ")

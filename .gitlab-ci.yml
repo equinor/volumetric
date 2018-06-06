@@ -70,8 +70,7 @@ deploy_test:
     name: test
     url: http://volumetric.test.equinor.com
   variables:
-    COMPOSE_VERSION: ".prod"
-    ENVRIONMENT: "test"
+    ENVIRONMENT: "test"
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - sed -i "/^API_TAG=.*/c\API_TAG=$CI_COMMIT_REF_NAME" $PROJECT_PATH/main/release.sh
@@ -79,7 +78,6 @@ deploy_test:
   script:
     - cd $PROJECT_PATH/main
     - git pull
-    - source release.sh
     - ./bin/activate volumetric pull
     - ./bin/activate volumetric run --rm api manage db upgrade
     - ./bin/activate volumetric run api flask import_test
