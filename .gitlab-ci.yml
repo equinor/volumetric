@@ -74,8 +74,8 @@ deploy_test:
     ENVRIONMENT: "test"
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - sed -i "/^API_TAG=.*/c\API_TAG=$CI_COMMIT_REF_NAME/" $PROJECT_PATH/main/release.sh
-    - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT/" $PROJECT_PATH/main/release.sh
+    - sed -i "/^API_TAG=.*/c\API_TAG=$CI_COMMIT_REF_NAME" $PROJECT_PATH/main/release.sh
+    - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT" $PROJECT_PATH/main/release.sh
   script:
     - cd $PROJECT_PATH/main
     - git pull
