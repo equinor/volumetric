@@ -2,7 +2,6 @@ version: '3.4'
 
 services:
   proxy:
-    build: proxy
     ports:
       - 80:80
     depends_on:
@@ -10,25 +9,10 @@ services:
       - api
 
   web:
-    build:
-      context: ../web
-      args:
-        UID: $DOCKER_USER
-        GID: $DOCKER_GROUP
     image: git.statoil.no:4567/volumetric/web
-    volumes:
-      - ./../web/src:/code/src
-      - ./../web/public:/code/public
 
   api:
-    build:
-      context: ../api
-      args:
-        UID: $DOCKER_USER
-        GID: $DOCKER_GROUP
     image: git.statoil.no:4567/volumetric/api
-    volumes:
-      - ./../api:/code
     depends_on:
       - db
     environment:
@@ -36,15 +20,14 @@ services:
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
-      - FLASK_ENV=development
 
   db:
     image: postgres:10.2-alpine
-    command: postgres -c 'log_statement=mod'
     ports:
       - "5432:5432"
     volumes:
       - ./../api/data/postgres:/var/lib/postgres
+      - ./../api/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
     environment:
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
