@@ -2,6 +2,7 @@ version: '3.4'
 
 services:
   proxy:
+    build: proxy
     ports:
       - 80:80
     depends_on:
