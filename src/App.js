@@ -1,6 +1,12 @@
-import React, { Component } from "react";
-import "./App.css";
-import Hello from './Hello';
+import React, { Component } from 'react';
+import './App.css';
+import PlotContainer from './plot/PlotContainer';
+import styled from 'styled-components';
+
+const AppContainer = styled.div`
+  margin-left: 50px;
+  margin-right: 50px;
+`;
 
 class App extends Component {
   render() {
@@ -9,8 +15,10 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Volumetric</h1>
         </header>
-        <p className="App-intro">Vælkommin t volumetric.</p>
-        <Hello />
+        <AppContainer>
+          <p className="App-intro">Vælkommin t volumetric.</p>
+          <PlotContainer />
+        </AppContainer>
       </div>
     );
   }
