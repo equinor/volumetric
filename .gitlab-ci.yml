@@ -1,0 +1,64 @@
+#Validate .gitlab-ci.yml at https://git.statoil.no/ci/lint
+stages:
+  - build
+  - publish
+  - deploy
+
+variables:
+  WEB_IMAGE: $CI_REGISTRY/volumetric/web
+  PROJECT_PATH: /data/vlmtrc
+
+build_web:
+  stage: build
+  script:
+    - docker build --force-rm -t $WEB_IMAGE .
+    - docker tag $WEB_IMAGE $WEB_IMAGE:$CI_COMMIT_REF_NAME
+
+
+publish_image:
+  stage: publish
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - docker push $WEB_IMAGE:$CI_COMMIT_REF_NAME
+
+
+deploy_develop:
+  stage: deploy
+  tags:
+    - dev
+  only:
+    - master
+  environment:
+    name: development
+    url: http://dev.volumetric.equinor.com
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - cd $PROJECT_PATH/main
+    - git pull
+    - ./bin/activate volumetric up -d
+
+
+deploy_test:
+  stage: deploy
+  tags:
+    - test
+  only:
+    - /^v.*$/
+  except:
+    - branches
+  environment:
+    name: test
+    url: http://test.volumetric.equinor.com
+  variables:
+    ENVIRONMENT: "test"
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - sed -i "/^WEB_TAG=.*/c\WEB_TAG=$CI_COMMIT_REF_NAME" $PROJECT_PATH/main/release.sh
+    - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT" $PROJECT_PATH/main/release.sh
+  script:
+    - cd $PROJECT_PATH/main
+    - git pull
+    - ./bin/activate volumetric pull
+    - ./bin/activate volumetric up -d
