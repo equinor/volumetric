@@ -1,6 +1,6 @@
 import graphene
 from models import Model as ModelModel, Faultblock as FaultblockModel, \
-    Volumetrics as VolumetricsModel, Location as LocationModel, Field as FieldModel
+    Volumetrics as VolumetricsModel, Location as LocationModel, Field as FieldModel, Zone
 from graphqlapi.types import ModelType, VolumetricType, FaultblockType, LocationType, FieldType, ZoneType
 
 
@@ -38,8 +38,8 @@ class Query(graphene.ObjectType):
     def resolve_field(self, info, name=None):
         return get_query_results(FieldModel, name=name)
 
-    def resolve_model(self, info, name=None, user=None, faultblocks=None, zones=None):
-        return get_query_results(ModelModel, name=name, user=user, faultblocks=faultblocks, zones=zones)
+    def resolve_zone(self, info, name=None, user=None, faultblocks=None, zones=None):
+        return get_query_results(Zone, name=name, user=user, faultblocks=faultblocks, zones=zones)
 
 
 schema = graphene.Schema(query=Query)
