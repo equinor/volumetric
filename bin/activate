@@ -13,12 +13,7 @@ export WEB_CONTEXT_PATH=web/
 export API_CONTEXT_PATH=api/
 export DOCKER_USER=$(id -u)
 export DOCKER_GROUP=$(id -g)
-
-# Get releases
-source $PROJECT_MAIN_HOME/release.sh
 export ENVIRONMENT=${ENVIRONMENT:=local}
-export API_TAG=${API_TAG:=latest}
-export WEB_TAG=${WEB_TAG:=latest}
 
 echo "Running in ${ENVIRONMENT} environment"
 
