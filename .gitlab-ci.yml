@@ -49,8 +49,11 @@ deploy_develop:
   environment:
     name: development
     url: http://volumetric.dev.equinor.com
+  variables:
+    ENVIRONMENT: "dev"
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT" $PROJECT_PATH/main/release
   script:
     - cd $PROJECT_PATH/main
     - git pull
@@ -73,8 +76,8 @@ deploy_test:
     ENVIRONMENT: "test"
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - sed -i "/^API_TAG=.*/c\API_TAG=$CI_COMMIT_REF_NAME" $PROJECT_PATH/main/release.sh
-    - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT" $PROJECT_PATH/main/release.sh
+    - sed -i "/^API_TAG=.*/c\API_TAG=$CI_COMMIT_REF_NAME" $PROJECT_PATH/main/release
+    - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT" $PROJECT_PATH/main/release
   script:
     - cd $PROJECT_PATH/main
     - git pull
