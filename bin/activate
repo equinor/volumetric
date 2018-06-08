@@ -6,9 +6,6 @@ export PROJECT_MAIN_HOME=$(echo $PROJECT_MAIN_BIN | rev | cut -d"/" -f2- | rev)
 export PATH="$PROJECT_MAIN_BIN:$PATH"
 echo $PROJECT_MAIN_BIN added to \$PATH
 
-$PROJECT_MAIN_BIN/clone-repos
-
-
 export WEB_CONTEXT_PATH=web/
 export API_CONTEXT_PATH=api/
 export DOCKER_USER=$(id -u)

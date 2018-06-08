@@ -4,9 +4,10 @@
 
 ## Development setup
 
-- Clone the repo + enter the repo ```git clone git@git.statoil.no:volumetric/main.git```
+- Clone the repo + enter the repo  
+```git clone git@git.statoil.no:volumetric/main.git```
 - Activate the project ```bin/activate```
-This will also clone the rest of the repos
+- If you are missing the API and Web repos, clone those by running "clone-repos"
 - Start the application by running ```volumetric up -d```
 
 ## Handling dependencies
