@@ -58,7 +58,7 @@ deploy_develop:
     - cd $PROJECT_PATH/main
     - git pull
     - ./bin/activate volumetric run --rm api manage db upgrade
-    - ./bin/activate volumetric run api flask import_test
+    - ./bin/activate volumetric run --rm api flask import_test
     - ./bin/activate volumetric up -d
 
 deploy_test:
@@ -83,5 +83,5 @@ deploy_test:
     - git pull
     - ./bin/activate volumetric pull
     - ./bin/activate volumetric run --rm api manage db upgrade
-    - ./bin/activate volumetric run api flask import_test
+    - ./bin/activate volumetric run --rm api flask import_test
     - ./bin/activate volumetric up -d
