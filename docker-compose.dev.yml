@@ -27,7 +27,7 @@ services:
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
-    restart: unless-stopped
+    restart: on-failure
 
   db:
     image: postgres:10.2-alpine
