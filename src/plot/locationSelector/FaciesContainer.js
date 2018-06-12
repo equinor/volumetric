@@ -19,6 +19,9 @@ export default props => {
       {({ loading, error, data }) => {
         if (loading) return <p>Loading...</p>;
         if (error) return <p>Error :(</p>;
+        if (!(data.location && data.location[0])) {
+          return null;
+        }
         const hasFacies = data.location[0].facies !== null;
 
         return (

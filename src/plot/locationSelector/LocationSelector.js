@@ -11,6 +11,19 @@ const FaciesSelector = () => null;
 
 const getFindId = id => element => element.id === id;
 
+const getOptions = (models, state, optionType) => {
+  const selectedModel = state.model.selectedOption.value;
+  if (models.length === 0) {
+    return [];
+  }
+  return models
+    .find(getFindId(selectedModel))
+    [optionType].map(({ name, id }) => ({
+      label: name,
+      value: id,
+    }));
+};
+
 const FlexWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -78,13 +91,8 @@ class LocationSelector extends React.Component {
       return null;
     }
     const { models, state, handleChange } = this.props;
-    const selectedModel = state.model.selectedOption.value;
-    const options = models
-      .find(getFindId(selectedModel))
-      .faultblocks.map(({ name, id }) => ({
-        label: name,
-        value: id,
-      }));
+    const options = getOptions(models, state, 'faultblocks');
+
     return (
       <LocationSelectorSelect
         labelName="Faultblock"
@@ -103,13 +111,7 @@ class LocationSelector extends React.Component {
       return null;
     }
     const { models, state, handleChange } = this.props;
-    const selectedModel = state.model.selectedOption.value;
-    const options = models
-      .find(getFindId(selectedModel))
-      .zones.map(({ name, id }) => ({
-        label: name,
-        value: id,
-      }));
+    const options = getOptions(models, state, 'zones');
 
     return (
       <LocationSelectorSelect

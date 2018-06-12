@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const GET_MODELS = gql`
-  {
+  query Models {
     model {
       id
       name
