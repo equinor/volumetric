@@ -18,36 +18,18 @@ const LocationSelectorStyled = styled.div`
 
 const initialState = {
   model: {
-    selectedOption: {
-      label: '20170127_sf01rms201314_faciesseed_COMPDEPTHUNC',
-      value: 1,
-    },
+    selectedOption: null,
   },
   faultblock: {
-    selectedOption: { label: '2015Tordis_Vest', value: 2 },
+    selectedOption: null,
   },
   zone: {
-    selectedOption: { label: 'Below_Brent_6', value: '3' },
+    selectedOption: null,
   },
   facies: {
-    selectedOption: { value: '17', label: 'Default facies' },
+    selectedOption: null,
   },
 };
-
-// const initialState = {
-//   model: {
-//     selectedOption: null,
-//   },
-//   faultblock: {
-//     selectedOption: null,
-//   },
-//   zone: {
-//     selectedOption: null,
-//   },
-//   facies: {
-//     selectedOption: null,
-//   },
-// };
 
 const PlotContainerStyled = styled.div`
   margin-bottom: 50px;
