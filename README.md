@@ -18,6 +18,11 @@ The flask-migrate commands can be accessed by executing the manage.py script "db
 * Upgrade db to latest revision
 ```volumetric run --rm api manage db upgrade```
 
+### Import test data
+
+* To import test data
+```volumetric run api manage import_test```
+
 ## Database
 
 ![ERD schema][erd]

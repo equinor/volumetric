@@ -18,6 +18,11 @@ Flask-RESTful = "*"
 [dev-packages]
 pydevd = "*"
 yapf = "*"
+behave = "*"
+colorclass = "*"
+terminaltables = "*"
+snapshottest = "*"
+deepdiff = "*"
 
 [requires]
 python_version = "3.6"

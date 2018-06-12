@@ -18,11 +18,13 @@ service_is_ready() {
     done
 }
 
-if [ ! -z $DATABASE_HOST ]; then
+first_arg="$1"
+
+# Feature tests are not depended on database service
+if [ ! -z $DATABASE_HOST ] && [ ${first_arg} != 'tests' ]; then
     service_is_ready "DATABASE" ${DATABASE_HOST} ${DATABASE_PORT}
 fi
 
-first_arg="$1"
 
 if [ ${first_arg} = 'api' ]; then
     flask db upgrade
@@ -33,6 +35,11 @@ fi
 if [ ${first_arg} = 'manage' ]; then
     shift  # shift the input arguments to the left, replacing the first argument with the second etc
     flask "$@"
+    exit $?
+fi
+
+if [ ${first_arg} = 'tests' ]; then
+    behave
     exit $?
 fi
 
