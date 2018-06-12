@@ -1,10 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const SELECTED_COLOR = 'rgb(18, 147, 154)';
+const DEFAULT_COLOR = 'white';
+const HOVER_COLOR = 'gray';
+
 const ToggleButtonStyled = styled.label`
   padding: 15px 45px;
   margin: 2px;
   min-width: 40px;
+  text-align: center;
 
   input {
     display: block;
@@ -24,16 +29,16 @@ const ToggleButtonStyled = styled.label`
       !props.selected &&
       `
         cursor: pointer;
-        background-color: gray;
-        border: 1px solid gray;
-        color: white;
+        background-color: ${HOVER_COLOR};
+        border: 1px solid ${HOVER_COLOR};
+        color: ${DEFAULT_COLOR};
       `};
   }
 
   background-color: ${props =>
-    props.selected ? 'rgb(18, 147, 154)' : 'white'};
-  border: 1px solid rgb(18, 147, 154);
-  color: ${props => (props.selected ? 'white' : 'rgb(18, 147, 154)')};
+    props.selected ? SELECTED_COLOR : DEFAULT_COLOR};
+  border: 1px solid ${SELECTED_COLOR};
+  color: ${props => (props.selected ? DEFAULT_COLOR : SELECTED_COLOR)};
 `;
 
 export default props => {

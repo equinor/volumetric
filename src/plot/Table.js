@@ -5,12 +5,10 @@ const HEADERS = ['Realization', 'grv', 'nrv', 'npv', 'hcpv', 'stoiip'];
 
 const Table = styled.table`
   border-collapse: collapse;
-  flex-grow: 1;
+  width: 100%;
   height: 400px;
   min-width: 600px;
 `;
-
-const TR = styled.tr``;
 
 const TD = styled.td`
   padding: 15px;
@@ -26,25 +24,25 @@ const TH = styled.th`
 const Headers = () => {
   return (
     <thead>
-      <TR>{HEADERS.map(name => <TH key={name}>{name}</TH>)}</TR>
+      <tr>{HEADERS.map(name => <TH key={name}>{name}</TH>)}</tr>
     </thead>
   );
 };
 
 const handleNull = item => (item === null ? '-' : item);
 
-const Body = ({ metrics, rows }) => {
+const Body = ({ metrics }) => {
   return (
     <tbody>
-      {rows.map((row, rowIndex) => {
+      {metrics.map((row, rowIndex) => {
         return (
-          <TR key={`table-row-${rowIndex}`}>
-            {row.map((key, index) => (
-              <TD key={`${key}-${index}`}>
-                {handleNull(metrics[rowIndex][key])}
+          <tr key={`table-row-${rowIndex}`}>
+            {HEADERS.map((header, index) => (
+              <TD key={`${header}-${index}`}>
+                {handleNull(metrics[rowIndex][header.toLowerCase()])}
               </TD>
             ))}
-          </TR>
+          </tr>
         );
       })}
     </tbody>
@@ -52,16 +50,10 @@ const Body = ({ metrics, rows }) => {
 };
 
 export default ({ metrics }) => {
-  const rows = metrics.map(row =>
-    Object.keys(row).filter(key =>
-      HEADERS.map(header => header.toLowerCase()).includes(key),
-    ),
-  );
-
   return (
     <Table>
       <Headers />
-      <Body rows={rows} metrics={metrics} />
+      <Body metrics={metrics} />
     </Table>
   );
 };

@@ -8,10 +8,9 @@ const AppContainer = styled.div`
 `;
 
 const AppHeader = styled.header`
-  vertical-align: center;
+  display: flex;
+  padding: 10px 20px;
   background-color: #222;
-  height: 40px;
-  padding: 20px;
   color: white;
 `;
 

@@ -18,18 +18,36 @@ const LocationSelectorStyled = styled.div`
 
 const initialState = {
   model: {
-    selectedOption: null
+    selectedOption: {
+      label: '20170127_sf01rms201314_faciesseed_COMPDEPTHUNC',
+      value: 1,
+    },
   },
   faultblock: {
-    selectedOption: null
+    selectedOption: { label: '2015Tordis_Vest', value: 2 },
   },
   zone: {
-    selectedOption: null
+    selectedOption: { label: 'Below_Brent_6', value: '3' },
   },
   facies: {
-    selectedOption: null
-  }
+    selectedOption: { value: '17', label: 'Default facies' },
+  },
 };
+
+// const initialState = {
+//   model: {
+//     selectedOption: null,
+//   },
+//   faultblock: {
+//     selectedOption: null,
+//   },
+//   zone: {
+//     selectedOption: null,
+//   },
+//   facies: {
+//     selectedOption: null,
+//   },
+// };
 
 const PlotContainerStyled = styled.div`
   margin-bottom: 50px;
@@ -44,34 +62,37 @@ class PlotContainer extends React.Component {
   }
 
   handleChange(key, selectedOption) {
-    if (key === 'model') {
-      this.setState(
-        Object.assign({}, initialState, {
+    switch (key) {
+      case 'model':
+        this.setState(
+          Object.assign({}, initialState, {
+            [key]: {
+              selectedOption: selectedOption,
+            },
+          }),
+        );
+        break;
+      case 'faultblock':
+      case 'zone':
+        this.setState({
           [key]: {
             selectedOption: selectedOption,
           },
-        }),
-      );
-    } else if (key === 'faultblock' || key === 'zone') {
-      this.setState({
-        [key]: {
-          selectedOption: selectedOption,
-        },
-        facies: {
-          selectedOption: null,
-        },
-      });
-    } else {
-      this.setState({
-        [key]: {
-          selectedOption: selectedOption,
-        },
-      });
+          facies: {
+            selectedOption: null,
+          },
+        });
+        break;
+      default:
+        this.setState({
+          [key]: {
+            selectedOption: selectedOption,
+          },
+        });
     }
   }
 
   render() {
-    console.log(this.state);
     return (
       <Query query={GET_MODELS}>
         {({ loading, error, data }) => {

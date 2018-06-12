@@ -1,5 +1,6 @@
 import React from 'react';
-import BarChart from './BarChart';
+import Histogram from './charts/Histogram';
+import BarChart from './charts/BarChart';
 import styled from 'styled-components';
 import Table from './Table';
 import ToggleButtonGroup from '../common/ToggleButtonGroup';
@@ -10,7 +11,6 @@ const initialState = {
 
 const VisStyled = styled.div`
   margin-top: 40px;
-  display: flex;
 `;
 
 class VisToggler extends React.Component {
@@ -22,12 +22,7 @@ class VisToggler extends React.Component {
   }
 
   handleChange(selectedVis) {
-    console.log(selectedVis);
-    if (selectedVis === 'table') {
-      this.setState({ showTable: true });
-    } else {
-      this.setState({ showTable: false });
-    }
+    this.setState({ showTable: selectedVis === 'table' });
   }
 
   render() {
@@ -44,7 +39,10 @@ class VisToggler extends React.Component {
           {this.state.showTable ? (
             <Table metrics={volumetric} />
           ) : (
-            <BarChart metrics={volumetric} />
+            <React.Fragment>
+              <Histogram metrics={volumetric} />
+              <BarChart metrics={volumetric} />
+            </React.Fragment>
           )}
         </VisStyled>
       </div>
