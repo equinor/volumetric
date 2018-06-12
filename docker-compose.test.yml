@@ -12,6 +12,7 @@ services:
 
   web:
     image: git.statoil.no:4567/volumetric/web
+    command: serve -s build
     env_file:
       - secrets.env
     restart: unless-stopped
