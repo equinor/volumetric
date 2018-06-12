@@ -17,6 +17,8 @@ RUN yarn --pure-lockfile
 
 COPY --chown=volumetric:volumetric . ./
 
+RUN yarn build
+
 EXPOSE 3000
 
 CMD ["yarn", "start"]
