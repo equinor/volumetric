@@ -2,5 +2,5 @@
 
 docker run --rm -it \
     -v "$PROJECT_MAIN_HOME/../web:/code" \
-    git.statoil.no:4567/volumetric/web \
+    git.equinor.com:4567/volumetric/web \
     yarn $@

@@ -11,14 +11,14 @@ services:
     restart: unless-stopped
 
   web:
-    image: git.statoil.no:4567/volumetric/web:$WEB_TAG
+    image: git.equinor.com:4567/volumetric/web:$WEB_TAG
     command: serve -s build
     env_file:
       - secrets.env
     restart: unless-stopped
 
   api:
-    image: git.statoil.no:4567/volumetric/api:$API_TAG
+    image: git.equinor.com:4567/volumetric/api:$API_TAG
     depends_on:
       - db
     env_file:

@@ -1,11 +1,11 @@
 # Volumetric
 
-[see wiki](https://git.statoil.no/volumetric/main/wikis/)
+[see wiki](https://git.equinor.com/volumetric/main/wikis/)
 
 ## Development setup
 
 - Clone the repo + enter the repo  
-```git clone git@git.statoil.no:volumetric/main.git```
+```git clone git@git.equinor.com:volumetric/main.git```
 - Activate the project ```bin/activate```
 - If you are missing the API and Web repos, clone those by running "clone-repos"
 - Start the application by running ```volumetric up -d```

@@ -15,7 +15,7 @@ services:
       args:
         UID: $DOCKER_USER
         GID: $DOCKER_GROUP
-    image: git.statoil.no:4567/volumetric/web
+    image: git.equinor.com:4567/volumetric/web
     volumes:
       - ./../web/src:/code/src
       - ./../web/public:/code/public
@@ -26,7 +26,7 @@ services:
       args:
         UID: $DOCKER_USER
         GID: $DOCKER_GROUP
-    image: git.statoil.no:4567/volumetric/api
+    image: git.equinor.com:4567/volumetric/api
     volumes:
       - ./../api:/code
     depends_on:

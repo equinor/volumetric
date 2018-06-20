@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-GIT_URL=git@git.statoil.no
+GIT_URL=git@git.equinor.com
 REPOS=(
     volumetric/web
     volumetric/api
