@@ -7,12 +7,14 @@ const AppContainer = styled.div`
   margin-right: 50px;
 `;
 
+
 const AppHeader = styled.header`
   display: flex;
   padding: 10px 20px;
   background-color: #222;
   color: white;
 `;
+
 
 const AppTitle = styled.h1`
   font-size: 1.5em;
@@ -26,7 +28,7 @@ class App extends Component {
           <AppTitle>Volumetric</AppTitle>
         </AppHeader>
         <AppContainer>
-          <PlotContainer />
+          <PlotContainer/>
         </AppContainer>
       </div>
     );
