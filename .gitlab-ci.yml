@@ -38,7 +38,7 @@ deploy_develop:
     name: development
     url: http://dev.volumetric.equinor.com
   variables:
-    ENVIRONMENT: "development"
+    ENVIRONMENT: "dev"
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT" $PROJECT_PATH/main/release

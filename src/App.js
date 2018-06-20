@@ -9,12 +9,10 @@ const AppContainer = styled.div`
 
 
 const AppHeader = styled.header`
-  background-color: #222;
-  height: 60px;
-  padding: 5px;
-  color: white;
   display: flex;
-  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #222;
+  color: white;
 `;
 
 
@@ -30,7 +28,6 @@ class App extends Component {
           <AppTitle>Volumetric</AppTitle>
         </AppHeader>
         <AppContainer>
-
           <PlotContainer/>
         </AppContainer>
       </div>
