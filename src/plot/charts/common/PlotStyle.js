@@ -4,7 +4,8 @@ export const PlotStyled = styled.div`
   flex-grow: 1;
   height: 400px;
   min-width: 600px;
-  margin-bottom: 70px;
+  padding-bottom: 70px;
+  margin-top: 75px;
 `;
 
 export const PlotHeader = styled.h4`

@@ -1,7 +1,7 @@
 import {GET_FACIES, GET_METRICS, GET_MODELS} from '../plot/ModelQueries';
 
 
-const modelMocks = [
+export const modelMocks = [
   {
     request: {
       query: GET_MODELS,
@@ -33,7 +33,7 @@ const modelMocks = [
   },
 ];
 
-const faciesMocks = [
+export const faciesMocks = [
   {
     request: {
       query: GET_FACIES,
@@ -54,7 +54,7 @@ const faciesMocks = [
   },
 ];
 
-const volumetricsMocks = [
+export const volumetricsMocks = [
   {
     request: {
       query: GET_METRICS,

@@ -18,7 +18,7 @@ build_web:
 test_web:
   stage: test
   script:
-    - docker-compose -f docker-compose.local.yml run --rm -e CI=true web yarn test
+    - WEB_IMAGE=$WEB_IMAGE docker-compose -f docker-compose.ci.yml run --rm -e CI=true web yarn test
 
 publish_image:
   stage: publish
