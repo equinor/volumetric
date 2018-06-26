@@ -4,6 +4,7 @@ import { format } from 'd3-format';
 import CenteredAxisLabel from './common/CenteredAxisLabel';
 import { PlotHeader, PlotStyled } from './common/PlotStyle';
 import MetricSelector from './common/MetricSelector';
+import { capitalize } from '../common/utils';
 
 const getMinMax = array => ({
   min: Math.min(...array),
@@ -88,10 +89,14 @@ const HistogramChart = ({ metrics, selectedMetric }) => {
 export default ({ ...props }) => {
   return (
     <PlotStyled>
-      <PlotHeader>Metric histogram</PlotHeader>
-      <MetricSelector>
-        <HistogramChart {...props} />
-      </MetricSelector>
+      <MetricSelector
+        renderHeader={selectedMetric => (
+          <PlotHeader>{`${capitalize(selectedMetric)} histogram`}</PlotHeader>
+        )}
+        renderVis={selectedMetric => (
+          <HistogramChart {...props} selectedMetric={selectedMetric} />
+        )}
+      />
     </PlotStyled>
   );
 };

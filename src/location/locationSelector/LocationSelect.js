@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import Select from '../../common/Select';
-import { capitalize } from './common/utils';
+import { capitalize } from './../common/utils';
 import { ALMOST_BLACK } from '../../common/variables';
 
 export const LocationSelectorSelectStyled = styled.label`

@@ -1,8 +1,12 @@
-import React, {Component} from 'react';
-import {LocationSelector} from './plot/locationSelector';
+import React, { Component } from 'react';
+import LocationContainer from './location/LocationContainer';
 import styled from 'styled-components';
-import VisContainer from './plot/VisContainer';
-import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+} from 'react-router-dom';
 
 const AppContainer = styled.div`
   margin-left: 50px;
@@ -21,25 +25,36 @@ const AppTitle = styled.h1`
   font-size: 1.5em;
 `;
 
+const NoMatch = ({ location }) => (
+  <div>
+    <h3>
+      No match for <code>{location.pathname}</code>
+    </h3>
+  </div>
+);
+
 class App extends Component {
-    render() {
-        return (
-            <div>
-                <AppHeader>
-                    <AppTitle>Volumetric</AppTitle>
-                </AppHeader>
-                <AppContainer>
-                    <Router>
-                        <div>
-                            <Redirect from="/" to="/location"/>
-                            <Route path="/location" component={LocationSelector}/>
-                            <Route path="/location/:locationId" component={VisContainer}/>
-                        </div>
-                    </Router>
-                </AppContainer>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div>
+        <AppHeader>
+          <AppTitle>Volumetric</AppTitle>
+        </AppHeader>
+        <AppContainer>
+          <Router>
+            <Switch>
+              <Redirect exact from="/" to="/location" />
+              <Route
+                path="/location/:locationId?"
+                render={props => <LocationContainer {...props} />}
+              />
+              <Route component={NoMatch} />
+            </Switch>
+          </Router>
+        </AppContainer>
+      </div>
+    );
+  }
 }
 
 export default App;
