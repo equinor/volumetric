@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {render} from 'react-dom';
 import './index.css';
 import ApolloClient from 'apollo-boost';
 import App from './App';
@@ -10,10 +10,10 @@ const client = new ApolloClient({uri: '/api/graphql'});
 
 const ApolloApp = App => (
     <ApolloProvider client={client}>
-        <App />
+        <App/>
     </ApolloProvider>
 );
 
-ReactDOM.render(ApolloApp(App), document.getElementById('root'));
+render(ApolloApp(App), document.getElementById('root'));
 
 registerServiceWorker();

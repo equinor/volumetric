@@ -1,6 +1,6 @@
 import App from './App'
 import {MockedProvider} from 'react-apollo/test-utils'
-import modelMocks from './utils/mockData'
+import {modelMocks} from './utils/mockData'
 
 
 it('renders without crashing', () => {
