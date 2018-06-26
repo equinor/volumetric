@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { ALMOST_BLACK } from '../../../common/variables';
 
 export const PlotStyled = styled.div`
   flex-grow: 1;
@@ -11,4 +12,5 @@ export const PlotStyled = styled.div`
 export const PlotHeader = styled.h4`
   text-align: center;
   margin-bottom: 10px;
+  color: ${ALMOST_BLACK};
 `;
