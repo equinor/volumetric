@@ -61,7 +61,7 @@ deploy_develop:
     - master
   environment:
     name: development
-    url: http://volumetric.dev.equinor.com
+    url: http://dev.volumetric.equinor.com
   variables:
     ENVIRONMENT: "dev"
   before_script:
