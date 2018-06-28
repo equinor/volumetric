@@ -8,20 +8,19 @@ export const GET_MODELS = gql`
       faultblocks {
         id
         name
+        locations {
+          id
+          facies
+        }
       }
       zones {
         id
         name
+        locations {
+          id
+          facies
+        }
       }
-    }
-  }
-`;
-
-export const GET_FACIES = gql`
-  query Locations($zoneId: ID!, $faultblockId: ID!) {
-    location(zoneId: $zoneId, faultblockId: $faultblockId) {
-      id
-      facies
     }
   }
 `;
