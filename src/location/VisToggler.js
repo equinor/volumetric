@@ -3,10 +3,12 @@ import Histogram from './charts/Histogram';
 import BarChart from './charts/BarChart';
 import styled from 'styled-components';
 import Table from './Table';
+import PTable from './P-Table';
+
 import ToggleButtonGroup from '../common/ToggleButtonGroup';
 
 const initialState = {
-  showTable: false,
+  showVis: 'plot',
 };
 
 const VisStyled = styled.div`
@@ -22,26 +24,33 @@ class VisToggler extends React.Component {
   }
 
   handleChange(selectedVis) {
-    this.setState({ showTable: selectedVis === 'table' });
+    this.setState({ showVis: selectedVis });
   }
 
   render() {
     const { data } = this.props;
-    const { volumetric } = data;
     return (
       <div>
         <ToggleButtonGroup
-          currentSelected={this.state.showTable ? 'table' : 'plot'}
+          currentSelected={this.state.showVis}
           onChange={this.handleChange}
-          buttons={['Table', 'Plot']}
+          buttons={['Table', 'Plot', 'p-Values']}
         />
         <VisStyled>
-          {this.state.showTable ? (
-            <Table metrics={volumetric} />
-          ) : (
+          {this.state.showVis === 'table' && (
+            <Table metrics={data.volumetrics} />
+          )}
+
+          {this.state.showVis === 'plot' && (
             <React.Fragment>
-              <Histogram metrics={volumetric} />
-              <BarChart metrics={volumetric} />
+              <Histogram {...data} />
+              <BarChart metrics={data.volumetrics} />
+            </React.Fragment>
+          )}
+
+          {this.state.showVis === 'p-values' && (
+            <React.Fragment>
+              <PTable pValues={data} />
             </React.Fragment>
           )}
         </VisStyled>
