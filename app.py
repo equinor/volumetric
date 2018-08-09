@@ -9,7 +9,7 @@ from config import Config
 from graphqlapi import create_api
 from import_data import import_model
 
-from models import db, Volumetrics, Model, Faultblock, Location, Zone, Field
+from models import db, Volumetrics, Model, Location, Field
 
 
 def create_app():
@@ -35,15 +35,7 @@ migrate = Migrate(app, db)
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(
-        app=app,
-        db=db,
-        Volumetrics=Volumetrics,
-        Model=Model,
-        Faultblock=Faultblock,
-        Location=Location,
-        Zone=Zone,
-        Field=Field)
+    return dict(app=app, db=db, Volumetrics=Volumetrics, Model=Model, Location=Location, Field=Field)
 
 
 @app.cli.command()

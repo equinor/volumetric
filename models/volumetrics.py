@@ -1,14 +1,16 @@
-from sqlalchemy import Column, Integer, Numeric, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, String, Integer, Numeric, ForeignKey, UniqueConstraint, ForeignKeyConstraint
 from models import db
 
 
 class Volumetrics(db.Model):
     __tablename__ = 'volumetrics'
-    __table_args__ = (UniqueConstraint('location_id', 'realization'), )
 
     id = Column(Integer, primary_key=True)
-    location_id = Column(Integer, ForeignKey('location.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     realization = Column(Integer)
+    location_id = Column(Integer, ForeignKey('location.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+
+    __table_args__ = (UniqueConstraint('realization', 'location_id'), )
+
     grv = Column(Numeric(20, 2))
     nrv = Column(Numeric(20, 2))
     npv = Column(Numeric(20, 2))
@@ -16,9 +18,12 @@ class Volumetrics(db.Model):
     stoiip = Column(Numeric(20, 2))
 
     def __repr__(self):
-        return "<Volumetrics(id={id}, location_id={location_id}, Realization={realization}, grv={grv}, nrv={nrv}, npv={npv}, hcpv={hcpv}, stoiip={stoiip}>".format(
-            id=self.id,
-            location_id=self.location_id,
+        return "<Volumetrics(Realization={realization}, " \
+               "grv={grv}, " \
+               "nrv={nrv}, " \
+               "npv={npv}, " \
+               "hcpv={hcpv}, " \
+               "stoiip={stoiip}>".format(
             realization=self.realization,
             grv=self.grv,
             nrv=self.nrv,

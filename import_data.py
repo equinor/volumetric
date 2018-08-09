@@ -1,14 +1,15 @@
 from utils.db import get_or_create
 from utils.file import read_file
 from utils.timer import timeit
-from models import Model, Faultblock, Zone, Location, Volumetrics, db, Field
+from models import Model, Location, Volumetrics, db, Field
 
 
 def _should_ignore(line_dict):
-    return line_dict['zone'] == 'Totals' or line_dict['faultblock'] == 'Totals'
+    is_facies_totals = line_dict['facies'] == 'Totals' if 'facies' in line_dict else False
+    return line_dict['zone'] == 'Totals' or line_dict['faultblock'] == 'Totals' or is_facies_totals
 
 
-def _add_faultblocks_or_zones(data_dicts, model, database_model, column_name):
+def _add_faultblocks_or_zones_or_facies(data_dicts, model, database_model, column_name):
     added = {}
     for data_dict in data_dicts:
         name = data_dict[column_name]
@@ -17,26 +18,27 @@ def _add_faultblocks_or_zones(data_dicts, model, database_model, column_name):
     return added
 
 
-def _get_location_info(data_dict, faultblocks, zones):
-    facies = data_dict.get('facies')
-    faultblock = faultblocks[data_dict['faultblock']]
-    zone = zones[data_dict['zone']]
-    return f'{zone.name}{faultblock.name}{facies}', facies, faultblock, zone
+def _get_location_info(data_dict, model_name):
+    faultblock = data_dict.get('faultblock', None)
+    zone = data_dict.get('zone', None)
+    facie = data_dict.get('facies', None)
+    return f'{zone}{faultblock}{facie}{model_name}', facie, faultblock, zone
 
 
-def _add_locations(data_dicts, faultblocks, zones):
+def _add_locations(data_dicts, model):
     added = {}
     for data_dict in data_dicts:
-        location_key, facies, faultblock, zone = _get_location_info(data_dict, faultblocks=faultblocks, zones=zones)
+        location_key, facie, faultblock, zone = _get_location_info(data_dict, model_name=model.name)
         if location_key not in added:
-            added[location_key] = Location(facies=facies, zone=zone, faultblock=faultblock)
+            added[location_key] = Location(facies_name=facie, zone_name=zone, faultblock_name=faultblock, model=model)
     return added
 
 
-def _add_volumetrics(data_dicts, faultblocks, zones, locations):
+def _add_volumetrics(data_dicts, locations, model):
     for data_dict in data_dicts:
-        location_key, facies, faultblock, zone = _get_location_info(data_dict, faultblocks=faultblocks, zones=zones)
+        location_key, facie, faultblock, zone = _get_location_info(data_dict, model_name=model.name)
         location = locations[location_key]
+
         location.volumetrics.append(
             Volumetrics(
                 grv=data_dict.get('grv'),
@@ -64,13 +66,9 @@ def import_model(filename, user='test', field_name='Tordis'):
     model_name = data_dicts[0]['model']
     model = Model(name=model_name, user=user, field=field)
 
-    faultblocks = _add_faultblocks_or_zones(data_dicts, model, database_model=Faultblock, column_name='faultblock')
+    locations = _add_locations(data_dicts, model=model)
 
-    zones = _add_faultblocks_or_zones(data_dicts, model, database_model=Zone, column_name='zone')
-
-    locations = _add_locations(data_dicts, faultblocks=faultblocks, zones=zones)
-
-    _add_volumetrics(data_dicts, faultblocks=faultblocks, zones=zones, locations=locations)
+    _add_volumetrics(data_dicts, locations=locations, model=model)
 
     db.session.add(field)
     db.session.commit()
