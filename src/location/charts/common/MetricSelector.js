@@ -37,7 +37,7 @@ class MetricSelector extends React.Component {
   }
 
   render() {
-    const { renderHeader, renderVis } = this.props;
+    const { renderHeader, renderVis, renderStats } = this.props;
 
     return (
       <React.Fragment>
@@ -65,6 +65,7 @@ class MetricSelector extends React.Component {
           })}
         </MetricSelectorStyled>
         {renderVis(this.state.selectedMetric)}
+        {renderStats && renderStats(this.state.selectedMetric)}
       </React.Fragment>
     );
   }

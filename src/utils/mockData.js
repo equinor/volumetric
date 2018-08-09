@@ -218,7 +218,35 @@ export const volumetricsMocks = [
 
 export const volumetrics = {
   data: {
-    volumetric: [
+    means: {
+      grv: 5576563.41,
+      hcpv: 911379.4,
+      npv: 1229485.44,
+      nrv: 4247652.27,
+      stoiip: 706495.68,
+    },
+    p10: {
+      grv: 0,
+      hcpv: 0,
+      npv: 0,
+      nrv: 0,
+      stoiip: 0,
+    },
+    p50: {
+      grv: 11108.01,
+      hcpv: 320.11,
+      npv: 1687.91,
+      nrv: 6301.48,
+      stoiip: 248.14,
+    },
+    p90: {
+      grv: 18620884.04,
+      hcpv: 3053792.8,
+      npv: 4018676.79,
+      nrv: 13814119.84,
+      stoiip: 2367281.31,
+    },
+    volumetrics: [
       {
         id: 3225638,
         realization: 0,

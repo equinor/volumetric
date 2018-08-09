@@ -1,10 +1,11 @@
 import React from 'react';
 import { FlexibleXYPlot, XAxis, YAxis, VerticalBarSeries } from 'react-vis';
-import { format } from 'd3-format';
+import { labelFormater } from '../../utils/text';
 import CenteredAxisLabel from './common/CenteredAxisLabel';
 import { PlotHeader, PlotStyled } from './common/PlotStyle';
 import MetricSelector from './common/MetricSelector';
 import { capitalize } from '../common/utils';
+import StatisticsDisplay from './common/StatisticsDisplay';
 
 const getMinMax = array => ({
   min: Math.min(...array),
@@ -27,8 +28,6 @@ const fillBuckets = (data, bucketCount, bucketSize, min) => {
   // Calculate percentage
   return buckets.map(nofValues => (nofValues / data.length) * 100);
 };
-
-const labelFormater = format('.4~s');
 
 const getBucketName = (bucketSize, index, bucketCount, min) => {
   const bottomBucketLimitLabel = labelFormater(bucketSize * index + min);
@@ -59,7 +58,7 @@ const getHistogramData = (data, bucketCount = 10) => {
   });
 };
 
-const HistogramChart = ({ metrics, selectedMetric }) => {
+const HistogramChart = ({ volumetrics: metrics, selectedMetric }) => {
   const marginLeft = 75;
   const data = metrics.map(metric => {
     return metric[selectedMetric];
@@ -86,7 +85,7 @@ const HistogramChart = ({ metrics, selectedMetric }) => {
   );
 };
 
-export default ({ ...props }) => {
+export default props => {
   return (
     <PlotStyled>
       <MetricSelector
@@ -95,6 +94,9 @@ export default ({ ...props }) => {
         )}
         renderVis={selectedMetric => (
           <HistogramChart {...props} selectedMetric={selectedMetric} />
+        )}
+        renderStats={selectedMetric => (
+          <StatisticsDisplay {...props} selectedMetric={selectedMetric} />
         )}
       />
     </PlotStyled>
