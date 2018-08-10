@@ -7,7 +7,7 @@ networks:
 
 services:
   api:
-    image: git.statoil.no:4567/volumetric/api
+    image: $API_IMAGE:$CI_COMMIT_REF_NAME
     networks:
       - ci
     environment:
