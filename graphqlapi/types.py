@@ -3,6 +3,7 @@ from utils.calculations import get_mean, get_pvalue_func
 
 
 class VolumetricType(graphene.ObjectType):
+    id = graphene.Int()
     realization = graphene.Int()
     grv = graphene.Float()
     nrv = graphene.Float()
@@ -49,19 +50,22 @@ class CalcOnVolumetricsType(graphene.ObjectType):
     def resolve_percentiles(self, info, percentile):
         volumetrics = self.volumetrics
         return PValuesType(
-            **{metric_name: calculate(volumetrics, metric_name, get_pvalue_func(percentile))
-               for metric_name in ['stoiip', 'grv', 'nrv', 'npv', 'hcpv']}
-        )
+            **{
+                metric_name: calculate(volumetrics, metric_name, get_pvalue_func(percentile))
+                for metric_name in ['stoiip', 'grv', 'nrv', 'npv', 'hcpv']
+            })
 
     def resolve_means(self, info):
         volumetrics = self.volumetrics
         return MeanType(
-            **{metric_name: calculate(volumetrics, metric_name, get_mean)
-               for metric_name in ['stoiip', 'grv', 'nrv', 'npv', 'hcpv']}
-        )
+            **{
+                metric_name: calculate(volumetrics, metric_name, get_mean)
+                for metric_name in ['stoiip', 'grv', 'nrv', 'npv', 'hcpv']
+            })
 
 
 class LocationType(graphene.ObjectType):
+    id = graphene.Int()
     faultblock_name = graphene.String()
     zone_name = graphene.String()
     facies_name = graphene.String()

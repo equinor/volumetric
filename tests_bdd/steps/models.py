@@ -1,5 +1,5 @@
 from behave import *
-from models import Model, Faultblock, Zone, Location, Volumetrics, db, Field
+from models import Model, Location, Volumetrics, db, Field
 
 
 @given(u'there are fields')
@@ -22,44 +22,10 @@ def step_impl(context):
     for row in context.table:
         name = row['name']
         user = row['user']
-        kwargs = {
-            'name': name,
-            'user': user,
-            'field': context.fields[row['field']]
-        }
+        kwargs = {'name': name, 'user': user, 'field': context.fields[row['field']]}
         model = Model(**kwargs)
         context.models[name] = model
         db.session.add(model)
-    db.session.commit()
-
-
-@given(u'there are fault blocks')
-def step_impl(context):
-    context.fault_blocks = {}
-    for row in context.table:
-        name = row['name']
-        kwargs = {
-            'name': name,
-            'model': context.models[row['model']]
-        }
-        fault_block = Faultblock(**kwargs)
-        context.fault_blocks[name] = fault_block
-        db.session.add(fault_block)
-    db.session.commit()
-
-
-@given(u'there are zones')
-def step_impl(context):
-    context.zones = {}
-    for row in context.table:
-        name = row['name']
-        kwargs = {
-            'name': name,
-            'model': context.models[row['model']]
-        }
-        zone = Zone(**kwargs)
-        context.zones[name] = zone
-        db.session.add(zone)
     db.session.commit()
 
 
@@ -69,9 +35,10 @@ def step_impl(context):
     id = 0
     for row in context.table:
         kwargs = {
-            'faultblock': context.fault_blocks[row['fault_block']],
-            'zone': context.zones[row['zone']],
-            'facies': row['facies']
+            'faultblock_name': row['faultblock_name'],
+            'zone_name': row['zone_name'],
+            'facies_name': row['facies_name'],
+            'model_name': row['model_name'],
         }
         location = Location(**kwargs)
         context.locations[str(id)] = location
