@@ -3,4 +3,4 @@ api
 data
 .idea/
 secrets.env
-release.sh
+release
