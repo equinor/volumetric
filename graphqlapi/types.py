@@ -1,5 +1,6 @@
 import graphene
 from utils.calculations import get_mean, get_pvalue_func
+from models.location import Location as LocationModel
 
 
 class VolumetricType(graphene.ObjectType):
@@ -90,20 +91,30 @@ class FaciesType(graphene.ObjectType):
     locations = graphene.List(LocationType)
 
 
-class ModelsType(graphene.ObjectType):
-    name = graphene.String()
-    user = graphene.String()
-    field_name = graphene.String()
-    faultblocks = graphene.List(FaultblockType)
-    zones = graphene.List(ZoneType)
-    facies = graphene.List(FaciesType)
+def get_distinct_location_keys(model_name, entity):
+    return LocationModel.query.filter_by(model_name=model_name).with_entities(entity).distinct()
 
 
 class ModelType(graphene.ObjectType):
     name = graphene.String()
+    user = graphene.String()
+    field_name = graphene.String()
     faultblocks = graphene.List(graphene.String)
     zones = graphene.List(graphene.String)
     facies = graphene.List(graphene.String)
+
+    def resolve_faultblocks(self, info):
+        faultblocks = [
+            faultblock.faultblock_name
+            for faultblock in get_distinct_location_keys(self.name, LocationModel.faultblock_name)
+        ]
+        return faultblocks
+
+    def resolve_zones(self, info):
+        return [zone.zone_name for zone in get_distinct_location_keys(self.name, LocationModel.zone_name)]
+
+    def resolve_facies(self, info):
+        return [facies.facies_name for facies in get_distinct_location_keys(self.name, LocationModel.facies_name)]
 
 
 class FieldType(graphene.ObjectType):
