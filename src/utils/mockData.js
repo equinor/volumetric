@@ -1,4 +1,4 @@
-import { GET_FACIES, GET_METRICS, GET_MODELS } from '../location/ModelQueries';
+import { GET_METRICS, GET_MODELS } from '../location/ModelQueries';
 
 export const modelMocks = [
   {
@@ -31,32 +31,6 @@ export const modelMocks = [
             },
           ],
         },
-      },
-    },
-  },
-];
-
-export const faciesMocks = [
-  {
-    request: {
-      query: GET_FACIES,
-    },
-    result: {
-      data: {
-        location: [
-          { id: '11845', facies: 'mudstone', __typename: 'LocationType' },
-          {
-            id: '11846',
-            facies: 'calcite',
-            __typename: 'LocationType',
-          },
-          { id: '11847', facies: 'CalcSlump', __typename: 'LocationType' },
-          {
-            id: '11848',
-            facies: 'Orange',
-            __typename: 'LocationType',
-          },
-        ],
       },
     },
   },

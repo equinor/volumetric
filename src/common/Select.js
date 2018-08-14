@@ -2,5 +2,5 @@ import React from 'react';
 import Select from 'react-select';
 
 export default props => {
-  return <Select {...props} isMulti/>;
+  return <Select {...props} isSearchable />;
 };

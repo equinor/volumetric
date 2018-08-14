@@ -11,6 +11,10 @@ const initialState = {
   showVis: 'plot',
 };
 
+const VisSelector = styled(ToggleButtonGroup)`
+  align-self: flex-end;
+`;
+
 const VisStyled = styled.div`
   margin-top: 40px;
 `;
@@ -31,11 +35,13 @@ class VisToggler extends React.Component {
     const { data } = this.props;
     return (
       <div>
-        <ToggleButtonGroup
-          currentSelected={this.state.showVis}
-          onChange={this.handleChange}
-          buttons={['Table', 'Plot', 'p-Values']}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <VisSelector
+            currentSelected={this.state.showVis}
+            onChange={this.handleChange}
+            buttons={['Table', 'Plot', 'p-Values']}
+          />
+        </div>
         <VisStyled>
           {this.state.showVis === 'table' && (
             <Table metrics={data.volumetrics} />

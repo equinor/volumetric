@@ -24,7 +24,7 @@ const RadioButtonGroupStyled = styled.div`
 `;
 
 const ToggleButtonGroup = props => {
-  const { currentSelected, onChange, buttons } = props;
+  const { className, currentSelected, onChange, buttons } = props;
 
   const radioButtons = buttons.map(button => {
     return createToggleButton({
@@ -35,9 +35,9 @@ const ToggleButtonGroup = props => {
   });
 
   return (
-    <form>
-      <RadioButtonGroupStyled>{radioButtons}</RadioButtonGroupStyled>
-    </form>
+    <RadioButtonGroupStyled className={className}>
+      {radioButtons}
+    </RadioButtonGroupStyled>
   );
 };
 
