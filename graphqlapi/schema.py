@@ -1,7 +1,9 @@
-from models import Model as ModelModel, Volumetrics as VolumetricsModel, Location as LocationModel, Field as FieldModel, \
-    db
-from graphqlapi.types import *
+import graphene
 from graphql import GraphQLError
+
+from graphqlapi.types import ModelType, CalcOnVolumetricsType, LocationType, FieldType, VolumetricType
+from models import Model as ModelModel, Volumetrics as VolumetricsModel, Field as FieldModel, Location as LocationModel, \
+    db
 
 
 def get_volumetrics(model_name, kwargs):
@@ -19,23 +21,7 @@ class Query(graphene.ObjectType):
         return ModelModel.query.filter_by(**kwargs).all()
 
     def resolve_model(self, info, model_name):
-
-        def get_distinct_location_keys(model_name, entitie):
-            return LocationModel.query.filter_by(model_name=model_name).with_entities(entitie).distinct()
-
-        facies = [fa.facies_name for fa in get_distinct_location_keys(model_name,
-                                                                      LocationModel.facies_name)]
-        zones = [fa[0] for fa in get_distinct_location_keys(model_name, LocationModel.zone_name)]
-
-        faultblocks = [fa[0] for fa in get_distinct_location_keys(model_name,
-                                                                  LocationModel.faultblock_name)]
-
-        return ModelType(
-            name=model_name,
-            facies=facies,
-            faultblocks=faultblocks,
-            zones=zones
-        )
+        return ModelType(name=model_name, )
 
     def resolve_locations(self, info, **kwargs):
         return LocationModel.query.filter_by(**kwargs).all()
@@ -69,15 +55,13 @@ class Query(graphene.ObjectType):
         )
 
     models = graphene.List(
-        ModelsType,
+        ModelType,
         name=graphene.String(),
         user=graphene.String(),
         faultblocks=graphene.String(),
         field_name=graphene.String())
 
-    model = graphene.Field(
-        ModelType,
-        model_name=graphene.String())
+    model = graphene.Field(ModelType, model_name=graphene.String())
 
     locations = graphene.List(
         LocationType,
