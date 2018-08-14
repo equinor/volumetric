@@ -85,7 +85,7 @@ deploy_test:
     - branches
   environment:
     name: test
-    url: http://volumetric.test.equinor.com
+    url: http://test.volumetric.equinor.com
   variables:
     ENVIRONMENT: "test"
   before_script:
