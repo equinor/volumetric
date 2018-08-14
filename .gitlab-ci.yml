@@ -45,6 +45,7 @@ deploy_develop:
   script:
     - cd $PROJECT_PATH/main
     - git pull
+    - ./bin/activate volumetric pull
     - ./bin/activate volumetric up -d
 
 
