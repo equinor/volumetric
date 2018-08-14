@@ -6,7 +6,8 @@ from models import Model, Location, Volumetrics, db, Field
 
 def _should_ignore(line_dict):
     is_facies_totals = line_dict['facies'] == 'Totals' if 'facies' in line_dict else False
-    return line_dict['zone'] == 'Totals' or line_dict['faultblock'] == 'Totals' or is_facies_totals
+    is_grv_zero = float(line_dict['grv']) == 0.0 if 'grv' in line_dict else False
+    return line_dict['zone'] == 'Totals' or line_dict['faultblock'] == 'Totals' or is_facies_totals or is_grv_zero
 
 
 def _add_faultblocks_or_zones_or_facies(data_dicts, model, database_model, column_name):
