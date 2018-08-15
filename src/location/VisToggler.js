@@ -1,15 +1,11 @@
 import React from 'react';
 import Histogram from './charts/Histogram';
-import BarChart from './charts/BarChart';
 import styled from 'styled-components';
 import Table from './Table';
-import PTable from './P-Table';
 
 import ToggleButtonGroup from '../common/ToggleButtonGroup';
-
-const initialState = {
-  showVis: 'plot',
-};
+import { StyledSpinner } from '../common/Spinner';
+import AsyncRender from '../common/AsyncRender';
 
 const VisSelector = styled(ToggleButtonGroup)`
   align-self: flex-end;
@@ -22,43 +18,40 @@ const VisStyled = styled.div`
 class VisToggler extends React.Component {
   constructor() {
     super();
-
-    this.state = initialState;
+    this.state = {
+      showVis: 'plot',
+    };
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(selectedVis) {
-    this.setState({ showVis: selectedVis });
+    this.setState({
+      showVis: selectedVis,
+    });
   }
 
   render() {
-    const { data } = this.props;
+    const { data, isLoading } = this.props;
+
     return (
       <div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <VisSelector
             currentSelected={this.state.showVis}
             onChange={this.handleChange}
-            buttons={['Table', 'Plot', 'p-Values']}
+            buttons={['Plot', 'Table']}
           />
         </div>
         <VisStyled>
-          {this.state.showVis === 'table' && (
-            <Table metrics={data.volumetrics} />
-          )}
+          <StyledSpinner isLoading={isLoading}>
+            {this.state.showVis === 'table' && (
+              <AsyncRender
+                render={() => <Table metrics={data.volumetrics} />}
+              />
+            )}
 
-          {this.state.showVis === 'plot' && (
-            <React.Fragment>
-              <Histogram {...data} />
-              <BarChart metrics={data.volumetrics} />
-            </React.Fragment>
-          )}
-
-          {this.state.showVis === 'p-values' && (
-            <React.Fragment>
-              <PTable pValues={data} />
-            </React.Fragment>
-          )}
+            {this.state.showVis === 'plot' && <Histogram {...data} />}
+          </StyledSpinner>
         </VisStyled>
       </div>
     );

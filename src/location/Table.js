@@ -11,9 +11,11 @@ const Table = styled.table`
   min-width: 600px;
 `;
 
-const TD = styled.td`
-  padding: 15px;
-  border: 1px solid lightgray;
+const TBody = styled.tbody`
+  td {
+    padding: 15px;
+    border: 1px solid lightgray;
+  }
 `;
 
 const TH = styled.th`
@@ -34,19 +36,19 @@ const handleNull = item => (item === null ? '-' : item);
 
 const Body = ({ metrics }) => {
   return (
-    <tbody>
+    <TBody>
       {metrics.map((row, rowIndex) => {
         return (
           <tr key={`table-row-${rowIndex}`}>
             {HEADERS.map((header, index) => (
-              <TD key={`${header}-${index}`}>
+              <td key={`${header}-${index}`}>
                 {handleNull(metrics[rowIndex][header.toLowerCase()])}
-              </TD>
+              </td>
             ))}
           </tr>
         );
       })}
-    </tbody>
+    </TBody>
   );
 };
 
