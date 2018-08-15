@@ -88,7 +88,7 @@ const SpinnerComponent = styled.div`
   }
 `;
 
-const Spinner = props => {
+export const Spinner = props => {
   const { isLoading } = props;
 
   return isLoading ? (
@@ -109,4 +109,10 @@ const Spinner = props => {
   );
 };
 
-export default Spinner;
+export const StyledSpinner = styled(Spinner)`
+  margin-top: 15vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;

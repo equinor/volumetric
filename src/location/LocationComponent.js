@@ -2,21 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { Query } from 'react-apollo';
 import { GET_METRICS } from './ModelQueries';
-import VisContainer from './VisContainer';
 import { Fields, Models, Filter } from './filters/Filters';
-import Spinner from '../common/Spinner';
+import VisToggler from './VisToggler';
 
 const FilterPage = styled.div`
   display: flex;
-  flex-flow: row wrap;
-`;
-
-const StyledSpinner = styled(Spinner)`
-  margin-top: 15vh;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-flow: row;
 `;
 
 const VisWithData = ({ model, facies, faultblocks, zones }) => {
@@ -31,11 +22,7 @@ const VisWithData = ({ model, facies, faultblocks, zones }) => {
       {({ loading, error, data }) => {
         if (error) return <p>Error :(</p>;
 
-        return (
-          <StyledSpinner isLoading={loading}>
-            <VisContainer data={data.calcOnVolumetrics} />
-          </StyledSpinner>
-        );
+        return <VisToggler data={data.calcOnVolumetrics} isLoading={loading} />;
       }}
     </Query>
   );
@@ -100,7 +87,6 @@ const ModelSelector = ({ handleChange, field, model, data }) => {
 
 const ContentWrapper = styled.div`
   flex-grow: 1;
-  min-width: 300px;
   margin-left: 50px;
 `;
 
