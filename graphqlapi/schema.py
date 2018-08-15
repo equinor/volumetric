@@ -12,6 +12,8 @@ def get_volumetrics(model_name, kwargs):
     for filter_query in filter_queries:
         location_query = location_query.filter(filter_query)
     location_ids = location_query.all()
+    if not location_ids:
+        return []
 
     return VolumetricsModel.query.filter(VolumetricsModel.location_id.in_(location_ids)).all()
 
