@@ -37,6 +37,9 @@ def calculate(volumetrics, metric_name, calculation_function):
             return None
         dataset.append(float(metric))
 
+    if not dataset:
+        return 0
+
     return calculation_function(dataset)
 
 
