@@ -118,8 +118,3 @@ class ModelType(graphene.ObjectType):
 
     def resolve_facies(self, info):
         return [facies.facies_name for facies in get_distinct_location_keys(self.name, LocationModel.facies_name)]
-
-
-class FieldType(graphene.ObjectType):
-    name = graphene.String()
-    models = graphene.List(ModelType)

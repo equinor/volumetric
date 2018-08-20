@@ -28,7 +28,7 @@ Feature: GraphQL API
     When i make a "POST" request
     """
     {
-      "query" : "{ field { name } }"
+      "query" : "{ fields { name } }"
     }
     """
     Then the response status should be "OK"
@@ -36,7 +36,7 @@ Feature: GraphQL API
     """
     {
       "data": {
-        "field": [
+        "fields": [
           {
             "name": "Field 1"
           },
@@ -53,7 +53,7 @@ Feature: GraphQL API
     When i make a "POST" request
     """
     {
-      "query" : "{ models { name } }"
+      "query" : "{ fields { name models { name } } }"
     }
     """
     Then the response status should be "OK"
@@ -61,42 +61,56 @@ Feature: GraphQL API
     """
     {
       "data": {
-        "models": [
+        "fields": [
           {
-            "name": "Model 1"
+            "name": "Field 1",
+            "models": [
+              {
+                "name": "Model 1"
+              }
+            ]
           },
           {
-            "name": "Model 2"
+            "name": "Field 2",
+            "models": [
+              {
+                "name": "Model 2"
+              }
+            ]
           }
         ]
       }
     }
     """
 
-  Scenario: Query for locations
-    Given i access the resource url "/graphql"
-    When i make a "POST" request
-    """
-    {
-      "query" : "{ locations { id  } }"
-    }
-    """
-    Then the response status should be "OK"
-    And the response should contain
-    """
-    {
-      "data": {
-        "locations": [
-          {
-            "id": 1
-          },
-          {
-            "id": 2
-          }
-        ]
-      }
-    }
-    """
+# TODO: I dunno how to test
+# Scenario: Query for volumetrics
+#    Given i access the resource url "/graphql"
+#    When i make a "POST" request
+#    """
+#    {
+#      "query": "calcOnVolumetrics { zoneName faciesName faultblockName volumetrics { id realization } }"
+#    }
+#    """
+#    Then the response status should be "OK"
+#    And the response should contain
+#    """
+#    {
+#      "data": {
+#        "calcOnVolumetrics": {
+#          "zoneName": "Zone 1",
+#          "faciesName": "Type Of Rock 1",
+#          "faultblockName": "Fault Block 1",
+#          "volumetrics": [
+#            {
+#              "id": 0,
+#              "realization": 1
+#            }
+#          ]
+#        }
+#      }
+#    }
+#    """
 
 # TODO: fix'em
 # Scenario: Query for volumetrics

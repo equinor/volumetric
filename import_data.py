@@ -51,9 +51,10 @@ def _add_volumetrics(data_dicts, locations, model):
 
 
 @timeit
-def import_model(filename, user='test', field_name='Tordis'):
+def import_model(filename, model_name, user='anon', field_name='Tordis'):
     """
     Import a file containing a single model
+    :param model_name: optional model name, read from file if not provided
     :param filename: path to file
     :param user: the name of the user that is importing the file
     :param field_name: the name of the field that the model is based on
@@ -64,7 +65,7 @@ def import_model(filename, user='test', field_name='Tordis'):
 
     data_dicts = [line_dict for line_dict in lines_as_ordered_dicts if not _should_ignore(line_dict)]
 
-    model_name = data_dicts[0]['model']
+    model_name = data_dicts[0]['model'] if not model_name else model_name
     model = Model(name=model_name, user=user, field=field)
 
     locations = _add_locations(data_dicts, model=model)
