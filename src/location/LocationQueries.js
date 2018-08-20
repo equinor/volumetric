@@ -1,18 +1,4 @@
-import gql from 'graphql-tag';
-
-export const GET_FIELDS = gql`
-  query Fields {
-    field {
-      name
-      models {
-        name
-        faultblocks
-        zones
-        facies
-      }
-    }
-  }
-`;
+import { gql } from 'apollo-boost';
 
 export const GET_METRICS = gql`
   query Metrics(

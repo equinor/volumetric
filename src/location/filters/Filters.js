@@ -49,7 +49,7 @@ export class Fields extends React.Component {
       <DatasetSelectorItem
         name="Fields"
         selectedOption={field}
-        data={data.field}
+        data={data.fields}
         onChange={value => handleChange('field', value.value)}
         category="fields"
       />

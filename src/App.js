@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
-import LocationContainer from './location/LocationContainer';
+import React from 'react';
+import { LocationContainer } from './location/';
 import styled from 'styled-components';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { Switch } from 'react-router';
-import Dictionary from './dictionary/Dictionary';
+import { Dictionary } from './dictionary/';
+import { ImportMetrics } from './import/';
 
 const AppContainer = styled.div`
   margin-left: 50px;
@@ -26,9 +27,14 @@ const AppTitle = styled.h1`
   font-size: 1.5em;
 `;
 
-const HeaderLink = styled.a`
+const HeaderLink = styled(Link)`
   text-decoration: none;
   color: white;
+  margin-right: 10px;
+
+  :hover {
+    text-decoration: underline;
+  }
 `;
 
 const HeaderLinks = styled.div`
@@ -37,29 +43,27 @@ const HeaderLinks = styled.div`
   margin-bottom: 12px;
 `;
 
-class App extends Component {
-  render() {
-    return (
-      <div>
-        <AppHeader>
-          <AppTitle>
-            <HeaderLink href="/">Volumetric</HeaderLink>
-          </AppTitle>
-          <HeaderLinks>
-            <HeaderLink href="dictionary">Dictionary</HeaderLink>
-          </HeaderLinks>
-        </AppHeader>
-        <AppContainer>
-          <Router>
-            <Switch>
-              <Route exact path="/" component={LocationContainer} />
-              <Route path="/dictionary" component={Dictionary} />
-            </Switch>
-          </Router>
-        </AppContainer>
-      </div>
-    );
-  }
-}
+const App = () => (
+  <Router>
+    <div>
+      <AppHeader>
+        <AppTitle>
+          <HeaderLink to="/">Volumetric</HeaderLink>
+        </AppTitle>
+        <HeaderLinks>
+          <HeaderLink to="dictionary">Dictionary</HeaderLink>
+          <HeaderLink to="import">Import</HeaderLink>
+        </HeaderLinks>
+      </AppHeader>
+      <AppContainer>
+        <Switch>
+          <Route exact path="/" component={LocationContainer} />
+          <Route path="/dictionary" component={Dictionary} />
+          <Route path="/import" component={ImportMetrics} />
+        </Switch>
+      </AppContainer>
+    </div>
+  </Router>
+);
 
 export default App;
