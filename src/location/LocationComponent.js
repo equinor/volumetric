@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Query } from 'react-apollo';
-import { GET_METRICS } from './ModelQueries';
+import { GET_METRICS } from './LocationQueries';
 import { Fields, Models, Filter } from './filters/Filters';
 import VisToggler from './VisToggler';
 
@@ -76,7 +76,7 @@ const ModelSelector = ({ handleChange, field, model, data }) => {
       <React.Fragment>
         <Fields field={field} data={data} handleChange={handleChange} />
         <Models
-          data={data.field.find(otherField => otherField.name === field)}
+          data={data.fields.find(otherField => otherField.name === field)}
           model={model}
           handleChange={handleChange}
         />
@@ -91,17 +91,21 @@ const ContentWrapper = styled.div`
 `;
 
 class LocationComponent extends React.Component {
-  state = {
-    field: this.props.data.field[0].name,
-    model: this.props.data.field[0].models[0].name,
-    faultblocks: [],
-    zones: [],
-    facies: [],
-  };
-
   constructor(props) {
     super(props);
     this.handleFilterChange = this.handleFilterChange.bind(this);
+
+    this.state = {
+      field:
+        (this.props.location.state && this.props.location.state.field) ||
+        this.props.data.fields[0].name,
+      model:
+        (this.props.location.state && this.props.location.state.model) ||
+        this.props.data.fields[0].models[0].name,
+      faultblocks: [],
+      zones: [],
+      facies: [],
+    };
   }
 
   handleFilterChange = (category, event) => {
@@ -135,7 +139,7 @@ class LocationComponent extends React.Component {
               facies: [],
             };
             if (key === 'field') {
-              stateChanges['model'] = data.field.find(
+              stateChanges['model'] = data.fields.find(
                 field => field.name === value,
               ).models[0].name;
             }
@@ -146,7 +150,7 @@ class LocationComponent extends React.Component {
         <FilterPage>
           <div>
             <LocationFilters
-              data={data.field
+              data={data.fields
                 .find(field => field.name === this.state.field)
                 .models.find(model => model.name === this.state.model)}
               model={this.state.model}
