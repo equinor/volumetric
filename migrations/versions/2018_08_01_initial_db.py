@@ -42,7 +42,8 @@ def schema_upgrades():
                     sa.Column('zone_name', sa.String(), nullable=True),
                     sa.Column('facies_name', sa.String(), nullable=True),
                     sa.ForeignKeyConstraint(['model_name'], ['model.name'], onupdate='CASCADE', ondelete='CASCADE'),
-                    sa.PrimaryKeyConstraint('id'), sa.UniqueConstraint('faultblock_name', 'zone_name', 'facies_name'))
+                    sa.PrimaryKeyConstraint('id'),
+                    sa.UniqueConstraint('model_name', 'faultblock_name', 'zone_name', 'facies_name'))
     op.create_table('volumetrics', sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('realization', sa.Integer(), nullable=True),
                     sa.Column('location_id', sa.Integer(), nullable=False),

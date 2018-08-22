@@ -15,3 +15,5 @@ class Config(object):
 
     # Remote debugging
     REMOTE_DEBUG = False
+
+    UPLOAD_FOLDER = 'uploads'

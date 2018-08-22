@@ -6,7 +6,7 @@ from models import db
 
 class Location(db.Model):
     __tablename__ = 'location'
-    __table_args__ = (UniqueConstraint('faultblock_name', 'zone_name', 'facies_name'), )
+    __table_args__ = (UniqueConstraint('model_name', 'faultblock_name', 'zone_name', 'facies_name'), )
 
     id = Column(Integer, primary_key=True)
     model_name = Column(String, ForeignKey('model.name', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
