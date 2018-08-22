@@ -27,7 +27,9 @@ export class FormatedText extends React.Component {
 
     return (
       <FormatedTextStyle
-        onClick={() => this.setState({ formatLabel: !this.state.formatLabel })}
+        onClick={() =>
+          this.setState(prevState => ({ formatLabel: !prevState.formatLabel }))
+        }
       >
         <FormatedTextLabel>{label}: </FormatedTextLabel>
         {this.state.formatLabel ? labelFormater(value) : value}

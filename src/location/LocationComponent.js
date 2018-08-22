@@ -104,46 +104,15 @@ class LocationComponent extends React.Component {
     };
   }
 
-  static getDerivedStateFromProps({ location, data }) {
-    // Make sure the state set from location is actually part of the data received.
-    // Browser caching might cause this to not be true.
-    if (location.state && location.state.field && location.state.model) {
-      const {
-        field: locationFieldName,
-        model: locationModelName,
-      } = location.state;
-      const locationField = data.fields.find(
-        field => field.name === locationFieldName,
-      );
-      if (locationField) {
-        const locationModel = locationField.models.find(
-          model => model.name === locationModelName,
-        );
-        if (locationModel) {
-          return {
-            field: locationFieldName,
-            model: locationModelName,
-          };
-        }
-      }
-    }
-    return null;
-  }
-
   handleFilterChange = (category, event) => {
     // Clear state, excluded field, if a different model is selected
-    if (event.target.checked === true) {
-      this.setState(prevState => ({
-        [category]: [...prevState[category], event.target.value],
-      }));
-    }
-    if (event.target.checked === false) {
-      this.setState(prevState => ({
-        [category]: prevState[category].filter(
-          item => item !== event.target.value,
-        ),
-      }));
-    }
+    const { checked, value } = event.target;
+
+    this.setState(prevState => {
+      return checked
+        ? { [category]: [...prevState[category], value] }
+        : { [category]: prevState[category].filter(item => item !== value) };
+    });
   };
 
   render() {

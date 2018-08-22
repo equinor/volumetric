@@ -46,14 +46,7 @@ class ImportMetricsComponent extends React.Component {
       case 'loading':
         return <StyledSpinner isLoading={true} />;
       case 'done':
-        return (
-          <Redirect
-            to={{
-              pathname: '/',
-              state: { field: this.state.field, model: this.state.model },
-            }}
-          />
-        );
+        return <Redirect push to={'/'} />;
       default:
         return (
           <ImportWrapper>
