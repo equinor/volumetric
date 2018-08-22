@@ -96,37 +96,59 @@ class LocationComponent extends React.Component {
     this.handleFilterChange = this.handleFilterChange.bind(this);
 
     this.state = {
-      field:
-        (this.props.location.state && this.props.location.state.field) ||
-        this.props.data.fields[0].name,
-      model:
-        (this.props.location.state && this.props.location.state.model) ||
-        this.props.data.fields[0].models[0].name,
+      field: this.props.data.fields[0].name,
+      model: this.props.data.fields[0].models[0].name,
       faultblocks: [],
       zones: [],
       facies: [],
     };
   }
 
+  static getDerivedStateFromProps({ location, data }) {
+    // Make sure the state set from location is actually part of the data received.
+    // Browser caching might cause this to not be true.
+    if (location.state && location.state.field && location.state.model) {
+      const {
+        field: locationFieldName,
+        model: locationModelName,
+      } = location.state;
+      const locationField = data.fields.find(
+        field => field.name === locationFieldName,
+      );
+      if (locationField) {
+        const locationModel = locationField.models.find(
+          model => model.name === locationModelName,
+        );
+        if (locationModel) {
+          return {
+            field: locationFieldName,
+            model: locationModelName,
+          };
+        }
+      }
+    }
+    return null;
+  }
+
   handleFilterChange = (category, event) => {
     // Clear state, excluded field, if a different model is selected
-    if (event.target.checked) {
-      // If it was not a 'all box' that was ticked, append it's value to the state and unset 'all'
-      this.setState({
-        [category]: [...this.state[category], event.target.value],
-      });
+    if (event.target.checked === true) {
+      this.setState(prevState => ({
+        [category]: [...prevState[category], event.target.value],
+      }));
     }
-    // If a box get unchecked, unset 'all'
     if (event.target.checked === false) {
-      const array = [...this.state[category]];
-      const index = array.indexOf(event.target.value);
-      array.splice(index, 1);
-      this.setState({ [category]: array });
+      this.setState(prevState => ({
+        [category]: prevState[category].filter(
+          item => item !== event.target.value,
+        ),
+      }));
     }
   };
 
   render() {
     const { data } = this.props;
+
     return (
       <div>
         <ModelSelector
