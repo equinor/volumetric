@@ -51,7 +51,7 @@ def _add_volumetrics(data_dicts, locations, model):
 
 
 @timeit
-def import_model(filename, model_name, user='anon', field_name='Tordis'):
+def import_model(filename, model_name=None, user='anon', field_name='Tordis'):
     """
     Import a file containing a single model
     :param model_name: optional model name, read from file if not provided
