@@ -3,15 +3,15 @@ import { gql } from 'apollo-boost';
 export const GET_METRICS = gql`
   query Metrics(
     $modelName: String!
-    $faciesName: [String]
-    $faultblockName: [String]
-    $zoneName: [String]
+    $faciesNames: [String]
+    $faultblockNames: [String]
+    $zoneNames: [String]
   ) {
     calcOnVolumetrics(
       modelName: $modelName
-      faciesName: $faciesName
-      faultblockName: $faultblockName
-      zoneName: $zoneName
+      faciesNames: $faciesNames
+      faultblockNames: $faultblockNames
+      zoneNames: $zoneNames
     ) {
       volumetrics {
         realization

@@ -47,7 +47,7 @@ export class Fields extends React.Component {
 
     return (
       <DatasetSelectorItem
-        name="Fields"
+        name="Field"
         selectedOption={field}
         data={data.fields}
         onChange={value => handleChange('field', value.value)}
@@ -65,7 +65,7 @@ export class Models extends React.Component {
 
     return (
       <DatasetSelectorItem
-        name="Models"
+        name="Model"
         selectedOption={model}
         data={models}
         onChange={value => handleChange('model', value.value)}
@@ -89,48 +89,3 @@ export const Filter = props => {
     </div>
   );
 };
-
-export class Faultblocks extends React.Component {
-  render() {
-    const { data, handleBoxChange, checked } = this.props;
-    return (
-      <Filter
-        name="Faultblocks"
-        filters={data.model.faultblocks}
-        handleBoxChange={handleBoxChange}
-        category="faultblocks"
-        checked={checked}
-      />
-    );
-  }
-}
-
-export class Zones extends React.Component {
-  render() {
-    const { data, handleBoxChange, checked } = this.props;
-    return (
-      <Filter
-        name="Zones"
-        filters={data.model.zones}
-        handleBoxChange={handleBoxChange}
-        category="zones"
-        checked={checked}
-      />
-    );
-  }
-}
-
-export class Facies extends React.Component {
-  render() {
-    const { data, handleBoxChange, checked } = this.props;
-    return (
-      <Filter
-        name="facies"
-        filters={data.model.facies}
-        handleBoxChange={handleBoxChange}
-        category="facies"
-        checked={checked}
-      />
-    );
-  }
-}
