@@ -1,13 +1,18 @@
-from behave import *
+from pprint import pprint
+
+from behave import when, given
 import json
+from graphene.test import Client
+from graphqlapi.schema import schema
 
 
-def context_response_json(context, response):
+def context_response_json(context):
+    response = context.response
     if response.status_code == 200 or response.status_code == 201:
         context.response_json = json.loads(response.data)
 
 
-@given(u'i access the resource url "{url}"')
+@given('i access the resource url "{url}"')
 def step_impl(context, url):
     context.url = str(url)
 
@@ -18,7 +23,15 @@ def get_headers(context):
     return header
 
 
-@when(u'i make a "{method}" request')
+@when('i make a graphql query')
+def step_impl(context):
+    context.url = '/graphql'
+    client = Client(schema)
+    context.response = client.execute(context.text)
+    context.response_json = context.response
+
+
+@when('i make a "{method}" request')
 def step_impl(context, method):
     data = {}
     if 'text' in context and context.text:
@@ -28,32 +41,14 @@ def step_impl(context, method):
     headers = get_headers(context)
 
     if method == 'PUT':
-        context.response = context.client.put(
-            context.url,
-            data=data,
-            content_type='application/json',
-            headers=headers
-        )
+        context.response = context.client.put(context.url, data=data, content_type='application/json', headers=headers)
     elif method == 'POST':
-        context.response = context.client.post(
-            context.url,
-            data=data,
-            content_type='application/json',
-            headers=headers
-        )
+        context.response = context.client.post(context.url, data=data, content_type='application/json', headers=headers)
     elif method == 'GET':
-        context.response = context.client.get(
-            context.url,
-            content_type='application/json',
-            headers=headers
-        )
+        context.response = context.client.get(context.url, content_type='application/json', headers=headers)
     elif method == 'DELETE':
-        context.response = context.client.delete(
-            context.url,
-            content_type='application/json',
-            headers=headers
-        )
+        context.response = context.client.delete(context.url, content_type='application/json', headers=headers)
 
     context.response_status = context.response.status_code
     if context.response.content_type == 'application/json':
-        context_response_json(context, context.response)
+        context_response_json(context)

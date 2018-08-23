@@ -8,7 +8,7 @@ from .types import CalcOnVolumetricsType
 
 
 def get_volumetrics(model_name, kwargs):
-    filter_queries = [getattr(LocationModel, key).in_(value) for key, value in kwargs.items()]
+    filter_queries = [getattr(LocationModel, key[:-1]).in_(value) for key, value in kwargs.items()]
     location_query = db.session.query(LocationModel.id).filter(LocationModel.model_name == model_name)
     for filter_query in filter_queries:
         location_query = location_query.filter(filter_query)
@@ -16,7 +16,8 @@ def get_volumetrics(model_name, kwargs):
     if not location_ids:
         return []
 
-    return VolumetricsModel.query.filter(VolumetricsModel.location_id.in_(location_ids)).all()
+    return VolumetricsModel.query.filter(VolumetricsModel.location_id.in_(
+        [location.id for location in location_ids])).all()
 
 
 class Query(graphene.ObjectType):
@@ -33,9 +34,9 @@ class Query(graphene.ObjectType):
         volumetrics = get_volumetrics(model_name, filtered_kwargs)
 
         return CalcOnVolumetricsType(
-            zone_name=kwargs.get('zone_name'),
-            faultblock_name=kwargs.get('faultblock_name'),
-            facies_name=kwargs.get('facies_name'),
+            zone_names=kwargs.get('zone_names'),
+            faultblock_names=kwargs.get('faultblock_names'),
+            facies_names=kwargs.get('facies_names'),
             volumetrics=volumetrics,
         )
 
@@ -43,9 +44,9 @@ class Query(graphene.ObjectType):
 
     calc_on_volumetrics = graphene.Field(
         CalcOnVolumetricsType,
-        facies_name=graphene.List(graphene.String),
-        faultblock_name=graphene.List(graphene.String),
-        zone_name=graphene.List(graphene.String),
+        facies_names=graphene.List(graphene.String),
+        faultblock_names=graphene.List(graphene.String),
+        zone_names=graphene.List(graphene.String),
         model_name=graphene.String())
 
 
