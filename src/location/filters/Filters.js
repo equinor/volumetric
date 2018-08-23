@@ -1,15 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 import FilterList from './FilterList';
 import Select from '../../common/Select';
-
-const TableDescriber = styled.h4`
-  margin-bottom: 10px;
-`;
-
-const FilterHeader = styled.h4`
-  margin-bottom: 2px;
-`;
+import { H4 } from '../../common/Headers';
 
 const DatasetSelectorItem = ({
   name,
@@ -28,7 +20,7 @@ const DatasetSelectorItem = ({
   }
   return (
     <div style={{ flexGrow: 1 }}>
-      <TableDescriber>{name}</TableDescriber>
+      <H4>{name}</H4>
       <Select
         options={options}
         value={value}
@@ -78,7 +70,7 @@ export const Filter = props => {
   const { name, category, filters, handleFilterChange, checked } = props;
   return (
     <div>
-      <FilterHeader>{name}</FilterHeader>
+      <H4>{name}</H4>
       <FilterList
         filters={filters}
         handleFilterChange={handleFilterChange}
