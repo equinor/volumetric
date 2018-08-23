@@ -15,6 +15,14 @@ const VisStyled = styled.div`
   margin-top: 40px;
 `;
 
+const NoData = styled.div`
+  margin: 50px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 24vh;
+`;
+
 class VisToggler extends React.Component {
   constructor() {
     super();
@@ -32,6 +40,10 @@ class VisToggler extends React.Component {
 
   render() {
     const { data, isLoading } = this.props;
+
+    if (!isLoading && data.volumetrics.length === 0) {
+      return <NoData>No data...</NoData>;
+    }
 
     return (
       <div>
