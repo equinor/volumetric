@@ -1,3 +1,6 @@
+import collections
+from pprint import pprint
+
 from behave import *
 import json
 from deepdiff import DeepDiff
@@ -16,6 +19,20 @@ STATUS_CODES = {
 @then(u'the response status should be "{status}"')
 def step_impl(context, status):
     return context.response_status == STATUS_CODES[status]
+
+
+@then('the graphql response should contain')
+def json_at_path(context):
+    executed = context.response
+    data = context.text or context.data
+    expected = dict(json.JSONDecoder(object_pairs_hook=collections.OrderedDict).decode(data))
+    result = DeepDiff(expected, executed)
+    if result != {}:
+        print('Response:')
+        pprint(context.response)
+        print('Diff:')
+        pprint(result)
+    assert result == {}
 
 
 @then('the response should contain')

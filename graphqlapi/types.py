@@ -44,9 +44,9 @@ def calculate(volumetrics, metric_name, calculation_function):
 
 
 class CalcOnVolumetricsType(graphene.ObjectType):
-    zone_name = graphene.String()
-    faultblock_name = graphene.String()
-    facies_name = graphene.String()
+    zone_names = graphene.List(graphene.String)
+    faultblock_names = graphene.List(graphene.String)
+    facies_names = graphene.List(graphene.String)
     volumetrics = graphene.List(VolumetricType)
     percentiles = graphene.Field(PValuesType, percentile=graphene.Int())
     means = graphene.Field(MeanType)

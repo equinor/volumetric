@@ -19,20 +19,20 @@ Feature: GraphQL API
 
     Given there are volumetrics
       | location_id | realization | grv | nrv | npv | hcpv | stoiip |
-      | 0           | 1           | 0.1 | 0.2 | 0.3 | 0.4  | 0.5    |
       | 1           | 1           | 0.1 | 0.2 | 0.3 | 0.4  | 0.5    |
+      | 2           | 1           | 1.1 | 1.2 | 1.3 | 1.4  | 1.5    |
 
 
   Scenario: Query for fields
-    Given i access the resource url "/graphql"
-    When i make a "POST" request
+    When i make a graphql query
     """
     {
-      "query" : "{ fields { name } }"
+      fields {
+        name
+      }
     }
     """
-    Then the response status should be "OK"
-    And the response should contain
+    Then the graphql response should contain
     """
     {
       "data": {
@@ -50,14 +50,11 @@ Feature: GraphQL API
 
   Scenario: Query for models
     Given i access the resource url "/graphql"
-    When i make a "POST" request
+    When i make a graphql query
     """
-    {
-      "query" : "{ fields { name models { name } } }"
-    }
+    { fields { name models { name } } }
     """
-    Then the response status should be "OK"
-    And the response should contain
+    Then the graphql response should contain
     """
     {
       "data": {
@@ -83,91 +80,51 @@ Feature: GraphQL API
     }
     """
 
-# TODO: I dunno how to test
-# Scenario: Query for volumetrics
-#    Given i access the resource url "/graphql"
-#    When i make a "POST" request
-#    """
-#    {
-#      "query": "calcOnVolumetrics { zoneName faciesName faultblockName volumetrics { id realization } }"
-#    }
-#    """
-#    Then the response status should be "OK"
-#    And the response should contain
-#    """
-#    {
-#      "data": {
-#        "calcOnVolumetrics": {
-#          "zoneName": "Zone 1",
-#          "faciesName": "Type Of Rock 1",
-#          "faultblockName": "Fault Block 1",
-#          "volumetrics": [
-#            {
-#              "id": 0,
-#              "realization": 1
-#            }
-#          ]
-#        }
-#      }
-#    }
-#    """
-
-# TODO: fix'em
-# Scenario: Query for volumetrics
-#    Given i access the resource url "/graphql"
-#    When i make a "POST" request
-#    """
-#    {
-#        "query" : "{ volumetric(modelName: "Model 1") { id realization } }"
-#    }
-#    """
-#    Then the response status should be "OK"
-#    And the response should contain
-#    """
-#    {
-#      "data": {
-#        "volumetric": [
-#          {
-#            "id": 1,
-#            "realization": 1
-#          },
-#          {
-#            "id": 2,
-#            "realization": 1
-#          }
-#        ]
-#      }
-#    }
-#    """
-#
-#  Scenario: Query for single location with volumetrics
-#    Given i access the resource url "/graphql"
-#    When i make a "POST" request
-#    """
-#    {
-#      "query" : "{ location(id: 1) { id facies volumetrics { realization grv stoiip nrv npv } } }"
-#    }
-#    """
-#    Then the response status should be "OK"
-#    And the response should contain
-#    """
-#    {
-#      "data": {
-#        "location": [
-#          {
-#            "id": "1",
-#            "facies": "Type Of Rock 1",
-#            "volumetrics": [
-#              {
-#                "realization": 1,
-#                "grv": 0.1,
-#                "stoiip": 0.5,
-#                "nrv": 0.2,
-#                "npv": 0.3
-#              }
-#            ]
-#          }
-#        ]
-#      }
-#    }
-#    """
+  Scenario: Query for volumetrics
+    Given i access the resource url "/graphql"
+    When i make a graphql query
+    """
+    {
+      calcOnVolumetrics(modelName: "Model 1", faultblockNames: "Fault Block 1", zoneNames: "Zone 1", faciesNames: "Type Of Rock 1") {
+        zoneNames
+        faciesNames
+        faultblockNames
+        p10: percentiles(percentile: 10) {
+          grv
+        }
+        means {
+          grv
+        }
+        volumetrics {
+          id
+          realization
+          grv
+        }
+      }
+    }
+    """
+    Then the graphql response should contain
+    """
+    {
+      "data": {
+        "calcOnVolumetrics": {
+          "zoneNames": ["Zone 1"],
+          "faciesNames": ["Type Of Rock 1"],
+          "faultblockNames": ["Fault Block 1"],
+          "p10": {
+            "grv": 0.1
+          },
+          "means": {
+            "grv": 0.1
+          },
+          "volumetrics": [
+            {
+              "id": 1,
+              "realization": 1,
+              "grv": 0.1
+            }
+          ]
+        }
+      }
+    }
+    """
