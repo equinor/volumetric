@@ -12,10 +12,10 @@ const FilterPage = styled.div`
 
 const VisWithData = ({ model, facies, faultblocks, zones }) => {
   const variables = { modelName: model };
-  if (facies && facies.length > 0) variables['faciesName'] = facies;
+  if (facies && facies.length > 0) variables['faciesNames'] = facies;
   if (faultblocks && faultblocks.length > 0)
-    variables['faultblockName'] = faultblocks;
-  if (zones && zones.length > 0) variables['zoneName'] = zones;
+    variables['faultblockNames'] = faultblocks;
+  if (zones && zones.length > 0) variables['zoneNames'] = zones;
 
   return (
     <Query query={GET_METRICS} variables={variables}>
