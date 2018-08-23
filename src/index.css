@@ -1,5 +1,58 @@
+@font-face {
+  font-family: 'Equinor-Bold';
+  src: url('./fonts/equinor/Equinor-Bold.woff2') format('woff2'),
+    url('./fonts/equinor/Equinor-Bold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Equinor-BoldItalic';
+  src: url('./fonts/equinor/Equinor-BoldItalic.woff2') format('woff2'),
+    url('./fonts/equinor/Equinor-BoldItalic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Equinor-Italic';
+  src: url('./fonts/equinor/Equinor-Italic.woff2') format('woff2'),
+    url('./fonts/equinor/Equinor-Italic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Equinor-Light';
+  src: url('./fonts/equinor/Equinor-Light.woff2') format('woff2'),
+    url('./fonts/equinor/Equinor-Light.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Equinor-LightItalic';
+  src: url('./fonts/equinor/Equinor-LightItalic.woff2') format('woff2'),
+    url('./fonts/equinor/Equinor-LightItalic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Equinor-Medium';
+  src: url('./fonts/equinor/Equinor-Medium.woff2') format('woff2'),
+    url('./fonts/equinor/Equinor-Medium.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Equinor-MediumItalic';
+  src: url('./fonts/equinor/Equinor-MediumItalic.woff2') format('woff2'),
+    url('./fonts/equinor/Equinor-MediumItalic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Equinor-Regular';
+  src: url('./fonts/equinor/Equinor-Regular.woff2') format('woff2'),
+    url('./fonts/equinor/Equinor-Regular.woff') format('woff');
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: Equinor-Regular, sans-serif;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

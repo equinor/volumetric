@@ -3,6 +3,9 @@ import styled from 'styled-components';
 
 const Input = styled.input`
   display: block;
+  font-family: Equinor-Regular, sans-serif;
+  font-size: 16px;
+  padding: 2px 8px;
 `;
 
 const TextInputStyled = styled(Input)`

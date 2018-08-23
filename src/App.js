@@ -7,9 +7,7 @@ import { Dictionary } from './dictionary/';
 import { ImportMetrics } from './import/';
 
 const AppContainer = styled.div`
-  margin-left: 50px;
-  margin-right: 50px;
-  margin-bottom: 50px;
+  margin: 0 50px 25px;
 `;
 
 const AppHeader = styled.header`

@@ -90,6 +90,10 @@ const ContentWrapper = styled.div`
   margin-left: 50px;
 `;
 
+const FilterWrapper = styled.div`
+  min-width: 200px;
+`;
+
 class LocationComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -139,7 +143,7 @@ class LocationComponent extends React.Component {
           data={data}
         />
         <FilterPage>
-          <div>
+          <FilterWrapper>
             <LocationFilters
               data={data.fields
                 .find(field => field.name === this.state.field)
@@ -150,7 +154,7 @@ class LocationComponent extends React.Component {
               checkedZones={this.state.zones}
               checkedFacies={this.state.facies}
             />
-          </div>
+          </FilterWrapper>
           <ContentWrapper>
             <VisWithData {...this.state} />
           </ContentWrapper>

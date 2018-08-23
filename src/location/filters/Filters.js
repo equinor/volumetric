@@ -8,8 +8,7 @@ const TableDescriber = styled.h4`
 `;
 
 const FilterHeader = styled.h4`
-  font-size: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 2px;
 `;
 
 const DatasetSelectorItem = ({
