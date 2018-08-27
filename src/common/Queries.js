@@ -2,9 +2,9 @@ import { gql } from 'apollo-boost';
 
 export const GET_FIELDS = gql`
   query Fields {
-    fields {
+    fields(orderBy: "name") {
       name
-      models {
+      models(orderBy: "name") {
         name
         faultblocks
         zones
