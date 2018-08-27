@@ -15,6 +15,7 @@ Flask-SQLAlchemy = "*"
 SQLAlchemy = "*"
 Flask-RESTful = "*"
 numpy = "*"
+natsort = "*"
 
 [dev-packages]
 pydevd = "*"

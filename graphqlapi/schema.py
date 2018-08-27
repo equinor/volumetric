@@ -1,7 +1,9 @@
 import graphene
 from graphql import GraphQLError
+from utils.ordering import ordered_model
 
 from models import Volumetrics as VolumetricsModel, Field as FieldModel, Location as LocationModel, db
+from utils.ordering import OrderedList
 from .field import Field as FieldType, AddField
 from .importMetrics import ImportModel
 from .types import CalcOnVolumetricsType
@@ -21,12 +23,12 @@ def get_volumetrics(model_name, kwargs):
 
 
 class Query(graphene.ObjectType):
+    @ordered_model
     def resolve_fields(self, info, **kwargs):
         return FieldModel.query.filter_by(**kwargs).all()
 
     def resolve_calc_on_volumetrics(self, info, model_name, **kwargs):
         filtered_kwargs = {k: v for k, v in kwargs.items() if None not in v}
-
         # Open for improvements
         if not filtered_kwargs and not model_name:
             raise GraphQLError('This query requires 1-4 filters.')
@@ -40,7 +42,7 @@ class Query(graphene.ObjectType):
             volumetrics=volumetrics,
         )
 
-    fields = graphene.List(FieldType, name=graphene.String())
+    fields = OrderedList(FieldType, name=graphene.String())
 
     calc_on_volumetrics = graphene.Field(
         CalcOnVolumetricsType,

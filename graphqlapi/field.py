@@ -1,12 +1,17 @@
 import graphene
 
 from models import db, Field as FieldModel
+from utils.ordering import OrderedList, ordered_model
 from .types import ModelType
 
 
 class Field(graphene.ObjectType):
     name = graphene.String()
-    models = graphene.List(ModelType)
+    models = OrderedList(ModelType)
+
+    @ordered_model
+    def resolve_models(self, info):
+        return self.models
 
 
 class AddField(graphene.Mutation):
