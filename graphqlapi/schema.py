@@ -6,12 +6,12 @@ from models import Volumetrics as VolumetricsModel, Field as FieldModel, Locatio
 from utils.ordering import OrderedList
 from .field import Field as FieldType, AddField
 from .importMetrics import ImportModel
-from .types import CalcOnVolumetricsType
+from .types import CalcOnVolumetricsType, ModelTypeEnum
 
 
-def get_volumetrics(model_name, kwargs):
+def get_volumetrics(model_id, kwargs):
     filter_queries = [getattr(LocationModel, key[:-1]).in_(value) for key, value in kwargs.items()]
-    location_query = db.session.query(LocationModel.id).filter(LocationModel.model_name == model_name)
+    location_query = db.session.query(LocationModel.id).filter(LocationModel.model_id == model_id)
     for filter_query in filter_queries:
         location_query = location_query.filter(filter_query)
     location_ids = location_query.all()
@@ -27,29 +27,35 @@ class Query(graphene.ObjectType):
     def resolve_fields(self, info, **kwargs):
         return FieldModel.query.filter_by(**kwargs).all()
 
-    def resolve_calc_on_volumetrics(self, info, model_name, **kwargs):
+    def resolve_calc_on_volumetrics(self, info, model_id, **kwargs):
         filtered_kwargs = {k: v for k, v in kwargs.items() if None not in v}
         # Open for improvements
-        if not filtered_kwargs and not model_name:
+        if not filtered_kwargs and not model_id:
             raise GraphQLError('This query requires 1-4 filters.')
 
-        volumetrics = get_volumetrics(model_name, filtered_kwargs)
+        volumetrics = get_volumetrics(model_id, filtered_kwargs)
 
         return CalcOnVolumetricsType(
+            model_id=model_id,
             zone_names=kwargs.get('zone_names'),
             faultblock_names=kwargs.get('faultblock_names'),
             facies_names=kwargs.get('facies_names'),
             volumetrics=volumetrics,
         )
 
+    def resolve_model_types(self, info):
+        return [ModelTypeEnum.FULL_FIELD, ModelTypeEnum.SEGMENT]
+
     fields = OrderedList(FieldType, name=graphene.String())
+
+    model_types = graphene.List(ModelTypeEnum)
 
     calc_on_volumetrics = graphene.Field(
         CalcOnVolumetricsType,
         facies_names=graphene.List(graphene.String),
         faultblock_names=graphene.List(graphene.String),
         zone_names=graphene.List(graphene.String),
-        model_name=graphene.String())
+        model_id=graphene.Int())
 
 
 class Mutations(graphene.ObjectType):

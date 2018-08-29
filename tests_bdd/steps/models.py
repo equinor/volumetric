@@ -18,10 +18,18 @@ def step_impl(context):
     context.models = {}
     for row in context.table:
         name = row['name']
-        user = row['user']
+        model_version = row['model_version']
+        model_type = row['model_type']
+        description = row['description']
+        created_user = row['created_user']
+        is_official = row['is_official'] == 'True'
         model = Model(
             name=name,
-            user=user,
+            model_version=model_version,
+            model_type=model_type,
+            description=description,
+            created_user=created_user,
+            is_official=is_official,
             field=context.fields[row['field']],
         )
         context.models[name] = model
@@ -38,7 +46,7 @@ def step_impl(context):
             faultblock_name=row['faultblock_name'],
             zone_name=row['zone_name'],
             facies_name=row['facies_name'],
-            model_name=row['model_name'],
+            model_id=row['model_id'],
         )
         context.locations[str(id)] = location
         db.session.add(location)

@@ -8,14 +8,14 @@ Feature: GraphQL API
       | Field 2 |
 
     Given there are models
-      | name    | user   | field   |
-      | Model 1 | User 1 | Field 1 |
-      | Model 2 | User 2 | Field 2 |
+      | name    | model_version | model_type | description                               | is_official | created_user | field   |
+      | Model 1 | 1             | 1          | Testing the description is very important | True        | The Stig     | Field 1 |
+      | Model 2 | 11            | 2          | description here                          | False       | The Stig     | Field 2 |
 
     Given there are locations
-      | facies_name    | faultblock_name | zone_name | model_name |
-      | Type Of Rock 1 | Fault Block 1   | Zone 1    | Model 1    |
-      | Type Of Rock 2 | Fault Block 2   | Zone 2    | Model 1    |
+      | facies_name    | faultblock_name | zone_name | model_id |
+      | Type Of Rock 1 | Fault Block 1   | Zone 1    | 1        |
+      | Type Of Rock 2 | Fault Block 2   | Zone 2    | 1        |
 
     Given there are volumetrics
       | location_id | realization | grv | nrv | npv | hcpv | stoiip |
@@ -52,7 +52,7 @@ Feature: GraphQL API
     Given i access the resource url "/graphql"
     When i make a graphql query
     """
-    { fields { name models { name } } }
+    { fields { name models { name isOfficial } } }
     """
     Then the graphql response should contain
     """
@@ -63,7 +63,8 @@ Feature: GraphQL API
             "name": "Field 1",
             "models": [
               {
-                "name": "Model 1"
+                "name": "Model 1",
+                "isOfficial": true
               }
             ]
           },
@@ -71,7 +72,8 @@ Feature: GraphQL API
             "name": "Field 2",
             "models": [
               {
-                "name": "Model 2"
+                "name": "Model 2",
+                "isOfficial": false
               }
             ]
           }
@@ -85,7 +87,8 @@ Feature: GraphQL API
     When i make a graphql query
     """
     {
-      calcOnVolumetrics(modelName: "Model 1", faultblockNames: "Fault Block 1", zoneNames: "Zone 1", faciesNames: "Type Of Rock 1") {
+      calcOnVolumetrics(modelId: 1, faultblockNames: "Fault Block 1", zoneNames: "Zone 1", faciesNames: "Type Of Rock 1") {
+        modelId
         zoneNames
         faciesNames
         faultblockNames
@@ -108,6 +111,7 @@ Feature: GraphQL API
     {
       "data": {
         "calcOnVolumetrics": {
+          "modelId": 1,
           "zoneNames": ["Zone 1"],
           "faciesNames": ["Type Of Rock 1"],
           "faultblockNames": ["Fault Block 1"],
@@ -134,7 +138,7 @@ Feature: GraphQL API
     When i make a graphql query
     """
     {
-      calcOnVolumetrics(modelName: "Model 1", faultblockNames: ["Fault Block 1", "Fault Block 2"]) {
+      calcOnVolumetrics(modelId: 1, faultblockNames: ["Fault Block 1", "Fault Block 2"]) {
         zoneNames
         faciesNames
         faultblockNames
