@@ -1,9 +1,10 @@
 import graphene
-
+from utils.calculations import calculate, get_mean, get_pvalue_func, get_sum_means
 from models.location import Location as LocationModel
 from utils.calculations import get_mean, get_pvalue_func
 from utils.ordering import OrderedList, ordered_strings
 
+metric_list = ['stoiip', 'grv', 'nrv', 'npv', 'hcpv']
 
 class VolumetricType(graphene.ObjectType):
     id = graphene.Int()
@@ -31,21 +32,8 @@ class PValuesType(graphene.ObjectType):
     hcpv = graphene.Float()
 
 
-def calculate(volumetrics, metric_name, calculation_function):
-    dataset = []
-    for volumetric in volumetrics:
-        metric = getattr(volumetric, metric_name)
-        if metric is None:
-            return None
-        dataset.append(float(metric))
-
-    if not dataset:
-        return 0
-
-    return calculation_function(dataset)
-
-
 class CalcOnVolumetricsType(graphene.ObjectType):
+    model_name = graphene.Field(graphene.String)
     zone_names = graphene.List(graphene.String)
     faultblock_names = graphene.List(graphene.String)
     facies_names = graphene.List(graphene.String)
@@ -58,16 +46,23 @@ class CalcOnVolumetricsType(graphene.ObjectType):
         return PValuesType(
             **{
                 metric_name: calculate(volumetrics, metric_name, get_pvalue_func(percentile))
-                for metric_name in ['stoiip', 'grv', 'nrv', 'npv', 'hcpv']
+                for metric_name in metric_list
             })
+
 
     def resolve_means(self, info):
         volumetrics = self.volumetrics
+        unique_locations = set([volumetric.location_id for volumetric in volumetrics])
+        location_dict = dict.fromkeys(unique_locations)
+
+        for location in unique_locations:
+            location_dict[location] = \
+                [volumetric for volumetric in volumetrics if volumetric.location_id == location]
+
+        total_mean = get_sum_means(location_dict)
         return MeanType(
-            **{
-                metric_name: calculate(volumetrics, metric_name, get_mean)
-                for metric_name in ['stoiip', 'grv', 'nrv', 'npv', 'hcpv']
-            })
+            **total_mean
+        )
 
 
 class LocationType(graphene.ObjectType):
