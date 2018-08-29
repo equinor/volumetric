@@ -128,3 +128,57 @@ Feature: GraphQL API
       }
     }
     """
+
+  Scenario: Query for multiple volumetrics
+    Given i access the resource url "/graphql"
+    When i make a graphql query
+    """
+    {
+      calcOnVolumetrics(modelName: "Model 1", faultblockNames: ["Fault Block 1", "Fault Block 2"]) {
+        zoneNames
+        faciesNames
+        faultblockNames
+        p10: percentiles(percentile: 10) {
+          grv
+        }
+        means {
+          grv
+        }
+        volumetrics {
+          id
+          realization
+          grv
+        }
+      }
+    }
+    """
+    Then the graphql response should contain
+    """
+    {
+      "data": {
+        "calcOnVolumetrics": {
+          "zoneNames": null,
+          "faciesNames": null,
+          "faultblockNames": ["Fault Block 1", "Fault Block 2"],
+          "p10": {
+            "grv": 0.6000000000000001
+          },
+          "means": {
+            "grv": 1.2000000000000002
+          },
+          "volumetrics": [
+            {
+              "id": 1,
+              "realization": 1,
+              "grv": 0.1
+            },
+            {
+              "id": 2,
+              "realization": 1,
+              "grv": 1.1
+            }
+          ]
+        }
+      }
+    }
+    """
