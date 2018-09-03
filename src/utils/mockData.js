@@ -28,7 +28,7 @@ export const volumetrics = {
       nrv: 13814119.84,
       stoiip: 2367281.31,
     },
-    volumetrics: [
+    summedVolumetrics: [
       {
         id: 3225638,
         realization: 0,

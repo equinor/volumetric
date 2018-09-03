@@ -58,7 +58,7 @@ const getHistogramData = (data, bucketCount = 10) => {
   });
 };
 
-const HistogramChart = ({ volumetrics: metrics, selectedMetric }) => {
+const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
   const marginLeft = 75;
   const data = metrics.map(metric => {
     return metric[selectedMetric];

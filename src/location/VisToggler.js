@@ -41,7 +41,7 @@ class VisToggler extends React.Component {
   render() {
     const { data, isLoading } = this.props;
 
-    if (!isLoading && data.volumetrics.length === 0) {
+    if (!isLoading && data.summedVolumetrics.length === 0) {
       return <NoData>No data...</NoData>;
     }
 
@@ -58,7 +58,7 @@ class VisToggler extends React.Component {
           <StyledSpinner isLoading={isLoading}>
             {this.state.showVis === 'table' && (
               <AsyncRender
-                render={() => <Table metrics={data.volumetrics} />}
+                render={() => <Table metrics={data.summedVolumetrics} />}
               />
             )}
 

@@ -7,13 +7,13 @@ export const GET_METRICS = gql`
     $faultblockNames: [String]
     $zoneNames: [String]
   ) {
-    calcOnVolumetrics(
+    volumetrics(
       modelId: $modelId
       faciesNames: $faciesNames
       faultblockNames: $faultblockNames
       zoneNames: $zoneNames
     ) {
-      volumetrics {
+      summedVolumetrics {
         realization
         grv
         nrv
