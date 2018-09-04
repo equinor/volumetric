@@ -73,6 +73,7 @@ deploy_develop:
     - git pull
     - ./bin/activate volumetric pull
     - ./bin/activate volumetric build proxy
+    - ./bin/activate volumetric down
     - ./bin/activate volumetric up -d
 
 deploy_test:
@@ -97,4 +98,5 @@ deploy_test:
     - git pull
     - ./bin/activate volumetric pull
     - ./bin/activate volumetric build proxy
+    - ./bin/activate volumetric down
     - ./bin/activate volumetric up -d
