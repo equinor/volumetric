@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ALMOST_BLACK } from './variables';
+import PropTypes from 'prop-types';
 
 const SpinnerComponent = styled.div`
   display: inline-block;
@@ -107,6 +108,10 @@ export const Spinner = props => {
   ) : (
     props.children
   );
+};
+
+Spinner.propTypes = {
+  isLoading: PropTypes.bool.isRequired,
 };
 
 export const StyledSpinner = styled(Spinner)`

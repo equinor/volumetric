@@ -1,30 +1,17 @@
 import React from 'react';
-import styled from 'styled-components';
-
-const CheckboxLabel = styled.label`
-  padding: 5px 0;
-  display: block;
-  cursor: pointer;
-`;
-
-const CheckBox = props => {
-  return <input {...props} />;
-};
+import { CheckboxWithLabel } from '../../common/Input';
 
 class FilterItem extends React.Component {
   render() {
     const { handleFilterChange, category, datarow, checked } = this.props;
     let checkedState = checked.includes(datarow);
     return (
-      <CheckboxLabel checked={checkedState}>
-        <CheckBox
-          onChange={event => handleFilterChange(category, event)}
-          type="checkbox"
-          value={datarow === null ? '' : datarow}
-          checked={checkedState}
-        />
-        {datarow}
-      </CheckboxLabel>
+      <CheckboxWithLabel
+        onChange={event => handleFilterChange(category, event)}
+        value={datarow === null ? '' : datarow}
+        checked={checkedState}
+        label={datarow}
+      />
     );
   }
 }

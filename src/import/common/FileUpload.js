@@ -1,8 +1,18 @@
 import React from 'react';
 import { API_URL } from '../../common/variables';
 import { FileInput } from './Input';
+import styled from 'styled-components';
+
+const ErrorText = styled.span`
+  color: red;
+  margin-left: 15px;
+`;
 
 class FileUpload extends React.Component {
+  state = {
+    errorText: null,
+  };
+
   constructor() {
     super();
     this.fileInput = React.createRef();
@@ -35,17 +45,26 @@ class FileUpload extends React.Component {
         response.json().then(body => {
           onChange(body.filename);
         });
+      })
+      .catch(error => {
+        console.log(error);
+        this.setState({ errorText: error.message });
       });
   }
 
   render() {
     return (
-      <FileInput
-        {...this.props}
-        type="file"
-        inputRef={this.fileInput}
-        onChange={this.handleUpload}
-      />
+      <div>
+        <FileInput
+          {...this.props}
+          type="file"
+          inputRef={this.fileInput}
+          onChange={this.handleUpload}
+        />
+        {this.state.errorText !== null && (
+          <ErrorText>Error: {this.state.errorText}</ErrorText>
+        )}
+      </div>
     );
   }
 }

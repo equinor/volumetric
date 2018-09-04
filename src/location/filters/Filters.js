@@ -3,30 +3,15 @@ import FilterList from './FilterList';
 import Select from '../../common/Select';
 import { H4 } from '../../common/Headers';
 
-const DatasetSelectorItem = ({
-  name,
-  data,
-  selectedOption,
-  onChange,
-  isLoading,
-}) => {
-  let options, value;
-  if (!isLoading) {
-    options = data.map(({ name }) => ({ value: name, label: name }));
-    value =
-      selectedOption !== ''
-        ? { value: selectedOption, label: selectedOption }
-        : undefined;
-  }
+const DatasetSelectorItem = ({ name, selectedOption, onChange, options }) => {
   return (
     <div style={{ flexGrow: 1 }}>
       <H4>{name}</H4>
       <Select
         options={options}
-        value={value}
+        value={selectedOption}
         placeholder={`Select ${name}`}
         onChange={onChange}
-        isLoading={isLoading}
       />
     </div>
   );
@@ -40,8 +25,8 @@ export class Fields extends React.Component {
       <DatasetSelectorItem
         name="Field"
         selectedOption={field}
-        data={data.fields}
-        onChange={value => handleChange('field', value.value)}
+        options={data.fields.map(({ name }) => ({ value: name, label: name }))}
+        onChange={selectedOption => handleChange('field', selectedOption)}
         category="fields"
       />
     );
@@ -52,14 +37,20 @@ export class Models extends React.Component {
   render() {
     const { data, model, handleChange } = this.props;
 
-    const models = data !== undefined ? data.models : [];
+    const models =
+      data !== undefined
+        ? data.models.map(({ id, name, modelVersion }) => ({
+            value: id,
+            label: `${name} (${modelVersion})`,
+          }))
+        : [];
 
     return (
       <DatasetSelectorItem
         name="Model"
         selectedOption={model}
-        data={models}
-        onChange={value => handleChange('model', value.value)}
+        options={models}
+        onChange={selectedOption => handleChange('model', selectedOption)}
         category="models"
       />
     );
