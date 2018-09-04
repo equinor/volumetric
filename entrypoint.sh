@@ -28,6 +28,7 @@ fi
 
 if [ ${first_arg} = 'api' ]; then
     flask db upgrade
+    flask import_test
 	flask run
 	exit $?
 fi

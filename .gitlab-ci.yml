@@ -9,7 +9,6 @@ stages:
 variables:
   API_IMAGE: $CI_REGISTRY/volumetric/api
   PROJECT_PATH: /data/vlmtrc
-  COMPOSE_INTERACTIVE_NO_CLI: 1
 
 build_api:
   stage: build
@@ -74,7 +73,6 @@ deploy_develop:
     - ./bin/activate volumetric pull
     - ./bin/activate volumetric build proxy
     - ./bin/activate volumetric up -d
-    - ./bin/activate volumetric exec api flask import_test
 
 deploy_test:
   stage: deploy
@@ -99,4 +97,3 @@ deploy_test:
     - ./bin/activate volumetric pull
     - ./bin/activate volumetric build proxy
     - ./bin/activate volumetric up -d
-    - ./bin/activate volumetric exec api flask import_test
