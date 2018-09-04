@@ -11,7 +11,8 @@ const Input = styled.input`
 const TextInputStyled = styled(Input)`
   border-radius: 4px;
   border: 1px solid hsl(0, 0%, 80%);
-  min-height: 30px;
+  min-height: 32px;
+  margin: 1px 0;
 `;
 
 const FileInputHidden = styled(Input)`
@@ -28,9 +29,9 @@ export const Button = styled.button`
 `;
 
 export const Label = styled.label`
-  min-width: 300px;
   display: flex;
   flex-direction: column;
+  margin: 15px 0;
 `;
 
 export const TextInput = ({ label, ...props }) => {
@@ -45,15 +46,17 @@ export const TextInput = ({ label, ...props }) => {
 const FileInputLabel = styled(Label)`
   border-radius: 4px;
   border: 1px solid hsl(0, 0%, 80%);
-  min-height: 30px;
+  min-height: 34px;
+  padding: 0 10px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  background-color: lightgray;
+  background-color: white;
+  min-width: 300px;
 
   :hover {
-    background-color: gray;
+    background-color: lightgray;
   }
 `;
 

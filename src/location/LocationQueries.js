@@ -2,13 +2,13 @@ import { gql } from 'apollo-boost';
 
 export const GET_METRICS = gql`
   query Metrics(
-    $modelName: String!
+    $modelId: Int!
     $faciesNames: [String]
     $faultblockNames: [String]
     $zoneNames: [String]
   ) {
     calcOnVolumetrics(
-      modelName: $modelName
+      modelId: $modelId
       faciesNames: $faciesNames
       faultblockNames: $faultblockNames
       zoneNames: $zoneNames

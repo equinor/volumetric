@@ -46,6 +46,7 @@ deploy_develop:
     - cd $PROJECT_PATH/main
     - git pull
     - ./bin/activate volumetric pull
+    - ./bin/activate volumetric build proxy
     - ./bin/activate volumetric up -d
 
 
@@ -70,4 +71,5 @@ deploy_test:
     - cd $PROJECT_PATH/main
     - git pull
     - ./bin/activate volumetric pull
+    - ./bin/activate volumetric build proxy
     - ./bin/activate volumetric up -d

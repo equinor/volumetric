@@ -2,8 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { Query } from 'react-apollo';
 import { GET_METRICS } from './LocationQueries';
-import { Fields, Models, Filter } from './filters/Filters';
+import { Filter } from './filters/Filters';
+import ModelSelector from './ModelSelector';
 import VisToggler from './VisToggler';
+import ModelInfo from './ModelInfo';
 
 const FilterPage = styled.div`
   display: flex;
@@ -11,7 +13,7 @@ const FilterPage = styled.div`
 `;
 
 const VisWithData = ({ model, facies, faultblocks, zones }) => {
-  const variables = { modelName: model };
+  const variables = { modelId: model.value };
   if (facies && facies.length > 0) variables['faciesNames'] = facies;
   if (faultblocks && faultblocks.length > 0)
     variables['faultblockNames'] = faultblocks;
@@ -29,59 +31,38 @@ const VisWithData = ({ model, facies, faultblocks, zones }) => {
 };
 
 const LocationFilters = ({
-  model,
-  allChecked,
   handleFilterChange,
   checkedFaultblocks,
   checkedZones,
   checkedFacies,
-  data,
+  model,
 }) => {
   return (
     <React.Fragment>
       <Filter
         name="Faultblocks"
-        filters={data.faultblocks}
+        filters={model.faultblocks}
         handleFilterChange={handleFilterChange}
         category="faultblocks"
         checked={checkedFaultblocks}
       />
       <Filter
         name="Zones"
-        filters={data.zones}
+        filters={model.zones}
         handleFilterChange={handleFilterChange}
         category="zones"
         checked={checkedZones}
       />
-      {data.facies[0] !== null && (
+      {model.facies[0] !== null && (
         <Filter
           name="Facies"
-          filters={data.facies}
+          filters={model.facies}
           handleFilterChange={handleFilterChange}
           category="facies"
           checked={checkedFacies}
         />
       )}
     </React.Fragment>
-  );
-};
-
-const ModelSelectorStyled = styled.div`
-  display: flex;
-`;
-
-const ModelSelector = ({ handleChange, field, model, data }) => {
-  return (
-    <ModelSelectorStyled>
-      <React.Fragment>
-        <Fields field={field} data={data} handleChange={handleChange} />
-        <Models
-          data={data.fields.find(otherField => otherField.name === field)}
-          model={model}
-          handleChange={handleChange}
-        />
-      </React.Fragment>
-    </ModelSelectorStyled>
   );
 };
 
@@ -98,18 +79,27 @@ class LocationComponent extends React.Component {
   constructor(props) {
     super(props);
     this.handleFilterChange = this.handleFilterChange.bind(this);
+    this.handleModelSelectorChange = this.handleModelSelectorChange.bind(this);
+
+    const field = this.props.data.fields[0];
+    const model = field.models[0];
 
     this.state = {
-      field: this.props.data.fields[0].name,
-      model: this.props.data.fields[0].models[0].name,
+      field: {
+        label: field.name,
+        value: field.name,
+      },
+      model: {
+        label: `${model.name} (${model.modelVersion})`,
+        value: model.id,
+      },
       faultblocks: [],
       zones: [],
       facies: [],
     };
   }
 
-  handleFilterChange = (category, event) => {
-    // Clear state, excluded field, if a different model is selected
+  handleFilterChange(category, event) {
     const { checked, value } = event.target;
 
     this.setState(prevState => {
@@ -117,38 +107,45 @@ class LocationComponent extends React.Component {
         ? { [category]: [...prevState[category], value] }
         : { [category]: prevState[category].filter(item => item !== value) };
     });
-  };
+  }
+
+  handleModelSelectorChange(key, value) {
+    const { data } = this.props;
+    const stateChanges = {
+      [key]: value,
+      faultblocks: [],
+      zones: [],
+      facies: [],
+    };
+    if (key === 'field') {
+      const firstModel = data.fields.find(field => field.name === value.value)
+        .models[0];
+      stateChanges['model'] = {
+        label: `${firstModel.name} (${firstModel.modelVersion})`,
+        value: firstModel.id,
+      };
+    }
+    this.setState(stateChanges);
+  }
 
   render() {
     const { data } = this.props;
+    const currentModel = data.fields
+      .find(field => field.name === this.state.field.value)
+      .models.find(model => model.id === this.state.model.value);
 
     return (
       <div>
         <ModelSelector
           {...this.state}
-          handleChange={(key, value) => {
-            const stateChanges = {
-              [key]: value,
-              faultblocks: [],
-              zones: [],
-              facies: [],
-            };
-            if (key === 'field') {
-              stateChanges['model'] = data.fields.find(
-                field => field.name === value,
-              ).models[0].name;
-            }
-            this.setState(stateChanges);
-          }}
+          handleChange={this.handleModelSelectorChange}
           data={data}
         />
+        {this.state.model.value && <ModelInfo model={currentModel} />}
         <FilterPage>
           <FilterWrapper>
             <LocationFilters
-              data={data.fields
-                .find(field => field.name === this.state.field)
-                .models.find(model => model.name === this.state.model)}
-              model={this.state.model}
+              model={currentModel}
               handleFilterChange={this.handleFilterChange}
               checkedFaultblocks={this.state.faultblocks}
               checkedZones={this.state.zones}
