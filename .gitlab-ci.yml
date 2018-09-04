@@ -9,7 +9,7 @@ stages:
 variables:
   API_IMAGE: $CI_REGISTRY/volumetric/api
   PROJECT_PATH: /data/vlmtrc
-  COMPOSE_INTERACTIVE_NO_CLI: true
+  COMPOSE_INTERACTIVE_NO_CLI: 1
 
 build_api:
   stage: build
