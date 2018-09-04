@@ -7,14 +7,14 @@ stages:
   - deploy
 
 variables:
-  API_IMAGE: $CI_REGISTRY/volumetric/api
+  BUILD_IMAGE: $CI_REGISTRY/volumetric/api:$CI_PIPELINE_ID
+  PUBLISH_IMAGE: $CI_REGISTRY/volumetric/api
   PROJECT_PATH: /data/vlmtrc
 
 build_api:
   stage: build
   script:
-    - docker build --force-rm -t $API_IMAGE .
-    - docker tag $API_IMAGE $API_IMAGE:$CI_COMMIT_REF_NAME
+    - docker build -t $BUILD_IMAGE .
 
 feature-tests:
   stage: test
@@ -33,7 +33,8 @@ publish_image:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
   script:
-    - docker push $API_IMAGE:$CI_COMMIT_REF_NAME
+    - docker tag $BUILD_IMAGE $PUBLISH_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $PUBLISH_IMAGE:$CI_COMMIT_REF_NAME
 
 create_erd:
   stage: document

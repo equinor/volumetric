@@ -7,7 +7,7 @@ networks:
 
 services:
   api:
-    image: $API_IMAGE:$CI_COMMIT_REF_NAME
+    image: $BUILD_IMAGE
     networks:
       - ci
     environment:
