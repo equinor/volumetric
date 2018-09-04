@@ -72,9 +72,8 @@ deploy_develop:
     - git pull
     - ./bin/activate volumetric pull
     - ./bin/activate volumetric build proxy
-    - ./bin/activate volumetric run --rm api manage db upgrade
-    - ./bin/activate volumetric run --rm api flask import_test
     - ./bin/activate volumetric up -d
+    - ./bin/activate volumetric exec api flask import_test
 
 deploy_test:
   stage: deploy
@@ -98,6 +97,5 @@ deploy_test:
     - git pull
     - ./bin/activate volumetric pull
     - ./bin/activate volumetric build proxy
-    - ./bin/activate volumetric run --rm api manage db upgrade
-    - ./bin/activate volumetric run --rm api flask import_test
     - ./bin/activate volumetric up -d
+    - ./bin/activate volumetric exec api flask import_test
