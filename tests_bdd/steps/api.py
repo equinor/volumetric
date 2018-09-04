@@ -1,8 +1,8 @@
-from pprint import pprint
+import json
 
 from behave import when, given
-import json
 from graphene.test import Client
+
 from graphqlapi.schema import schema
 
 
