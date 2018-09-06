@@ -1,7 +1,6 @@
 import graphene
-
 from models.location import Location as LocationModel
-from utils.calculations import calculate, get_sum_means, get_pvalue_func
+from utils.calculations import calculate, get_pvalue_func, get_mean
 from utils.ordering import OrderedList, ordered_strings
 
 metric_list = ['stoiip', 'grv', 'nrv', 'npv', 'hcpv']
@@ -33,33 +32,35 @@ class PValuesType(graphene.ObjectType):
     hcpv = graphene.Float()
 
 
-class CalcOnVolumetricsType(graphene.ObjectType):
-    model_id = graphene.Int()
-    zone_names = graphene.List(graphene.String)
-    faultblock_names = graphene.List(graphene.String)
-    facies_names = graphene.List(graphene.String)
-    volumetrics = graphene.List(VolumetricType)
-    percentiles = graphene.Field(PValuesType, percentile=graphene.Int())
-    means = graphene.Field(MeanType)
+class VolumetricsType(graphene.ObjectType):
+    model_id = graphene.Field(graphene.Int, description='A single model')
+    zone_names = graphene.List(graphene.String, description='A list of zones within the model')
+    faultblock_names = graphene.List(graphene.String, description='A list of faultblocks within the model')
+    facies_names = graphene.List(graphene.String, description='A list of facies within the model')
+    volumetrics = graphene.List(VolumetricType,
+                                description='A list of all the realizations of every location in the model')
+    summed_volumetrics = graphene.List(VolumetricType,
+                                       description='A list of volumetrics, grouped and summed by realization')
+    percentiles = graphene.Field(PValuesType, percentile=graphene.Int(),
+                                 description='The given percentile, calculated on the "summed_volumetrics list"')
+    means = graphene.Field(MeanType, description='The calculated mean on the "summed_volumetrics" list')
 
     def resolve_percentiles(self, info, percentile):
-        volumetrics = self.volumetrics
-        return PValuesType(**{
-            metric_name: calculate(volumetrics, metric_name, get_pvalue_func(percentile))
-            for metric_name in metric_list
-        })
+        volumetrics = self.summed_volumetrics
+        return PValuesType(
+            **{
+                metric_name: calculate(volumetrics, metric_name, get_pvalue_func(percentile))
+                for metric_name in metric_list
+            }
+        )
 
     def resolve_means(self, info):
-        volumetrics = self.volumetrics
-        unique_locations = set([volumetric.location_id for volumetric in volumetrics])
-        location_dict = dict.fromkeys(unique_locations)
-
-        for location in unique_locations:
-            location_dict[location] = \
-                [volumetric for volumetric in volumetrics if volumetric.location_id == location]
-
-        total_mean = get_sum_means(location_dict)
-        return MeanType(**total_mean)
+        volumetrics = self.summed_volumetrics
+        return MeanType(
+            **{
+                metric_name: calculate(volumetrics, metric_name, get_mean)
+                for metric_name in metric_list
+            })
 
 
 class LocationType(graphene.ObjectType):
