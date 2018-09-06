@@ -24,7 +24,7 @@ const VisWithData = ({ model, facies, faultblocks, zones }) => {
       {({ loading, error, data }) => {
         if (error) return <p>Error :(</p>;
 
-        return <VisToggler data={data.calcOnVolumetrics} isLoading={loading} />;
+        return <VisToggler data={data.volumetrics} isLoading={loading} />;
       }}
     </Query>
   );
