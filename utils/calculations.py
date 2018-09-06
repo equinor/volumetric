@@ -40,12 +40,11 @@ def sum_volumetrics(volumetrics):
                 volumetric.realization: {key: getattr(volumetric, key)
                                          for key in volumetric_key_list}
             })
-            continue
-
-        volumetrics_by_realization[volumetric.realization].update({
-                key: sum([getattr(volumetric, key), volumetrics_by_realization[volumetric.realization][key]])
-                for key in metric_list
-            })
+        else:
+            volumetrics_by_realization[volumetric.realization].update({
+                    key: sum([getattr(volumetric, key), volumetrics_by_realization[volumetric.realization][key]])
+                    for key in metric_list
+                })
 
     for realization in volumetrics_by_realization:
         volumetrics_by_realization[realization].update({'id': realization})
