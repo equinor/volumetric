@@ -40,6 +40,7 @@
     "enzyme-adapter-react-16": "^1.1.1",
     "enzyme-to-json": "^3.3.4",
     "lint-staged": "^7.0.4",
-    "prettier": "^1.12.1"
+    "prettier": "^1.12.1",
+    "waait": "^1.0.2"
   }
 }
