@@ -18,7 +18,6 @@ def calculate(volumetrics, metric_name, calculation_function):
 
 def get_pvalue_func(p):
     def get_pvalue(data):
-        # TODO: Handle 0 values
         percentile = np.percentile(data, p, interpolation='midpoint')
         return float(percentile)
 
@@ -26,25 +25,29 @@ def get_pvalue_func(p):
 
 
 def get_mean(data):
-    # TODO: Handle 0 values
     mean = np.mean(data)
     return float(mean)
 
 
-def get_sum_means(volumetrics_by_location):
-    # Input: A dictionary of location ID's. Each ID containing a list of volumetrics from that location.
-    means_per_location = {}
-    for location in volumetrics_by_location:
-        means_per_location[location] = {
-            metric_name: calculate(volumetrics_by_location[location], metric_name, get_mean)
-            for metric_name in metric_list
-        }
+def sum_volumetrics(volumetrics):
+    volumetrics_by_realization = {}
+    volumetric_key_list = tuple(metric_list)
+    volumetric_key_list = volumetric_key_list + ('realization',)
 
-    total_mean = {metric_name: 0 for metric_name in metric_list}
-    for location in means_per_location:
-        total_mean = {
-            metric_name: (total_mean[metric_name] + means_per_location[location][metric_name])
-            for metric_name in metric_list
-        }
+    for volumetric in volumetrics:
+        if volumetric.realization not in volumetrics_by_realization:
+            volumetrics_by_realization.update({
+                volumetric.realization: {key: getattr(volumetric, key)
+                                         for key in volumetric_key_list}
+            })
+            continue
 
-    return {metric_name: total_mean[metric_name] for metric_name in metric_list}
+        volumetrics_by_realization[volumetric.realization].update({
+                key: sum([getattr(volumetric, key), volumetrics_by_realization[volumetric.realization][key]])
+                for key in metric_list
+            })
+
+    for realization in volumetrics_by_realization:
+        volumetrics_by_realization[realization].update({'id': realization})
+
+    return volumetrics_by_realization

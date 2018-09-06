@@ -28,7 +28,13 @@ fi
 
 if [ ${first_arg} = 'api' ]; then
     flask db upgrade
-    flask import_test
+    if [ "$FLASK_ENV" != 'development' ]; then
+        flask db import test
+    else
+        echo "Running in development mode. Skipping import of test data."
+        echo "To import manually, run 'volumetric run api flask db import_test'"
+    fi
+
 	flask run
 	exit $?
 fi

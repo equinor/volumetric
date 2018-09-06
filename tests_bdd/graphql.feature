@@ -87,7 +87,7 @@ Feature: GraphQL API
     When i make a graphql query
     """
     {
-      calcOnVolumetrics(modelId: 1, faultblockNames: "Fault Block 1", zoneNames: "Zone 1", faciesNames: "Type Of Rock 1") {
+      volumetrics(modelId: 1, faultblockNames: "Fault Block 1", zoneNames: "Zone 1", faciesNames: "Type Of Rock 1") {
         modelId
         zoneNames
         faciesNames
@@ -110,7 +110,7 @@ Feature: GraphQL API
     """
     {
       "data": {
-        "calcOnVolumetrics": {
+        "volumetrics": {
           "modelId": 1,
           "zoneNames": ["Zone 1"],
           "faciesNames": ["Type Of Rock 1"],
@@ -138,7 +138,7 @@ Feature: GraphQL API
     When i make a graphql query
     """
     {
-      calcOnVolumetrics(modelId: 1, faultblockNames: ["Fault Block 1", "Fault Block 2"]) {
+      volumetrics(modelId: 1, faultblockNames: ["Fault Block 1", "Fault Block 2"]) {
         zoneNames
         faciesNames
         faultblockNames
@@ -146,6 +146,11 @@ Feature: GraphQL API
           grv
         }
         means {
+          grv
+        }
+        summedVolumetrics {
+          id
+          realization
           grv
         }
         volumetrics {
@@ -160,16 +165,23 @@ Feature: GraphQL API
     """
     {
       "data": {
-        "calcOnVolumetrics": {
+        "volumetrics": {
           "zoneNames": null,
           "faciesNames": null,
           "faultblockNames": ["Fault Block 1", "Fault Block 2"],
           "p10": {
-            "grv": 0.6000000000000001
+            "grv": 1.2
           },
           "means": {
-            "grv": 1.2000000000000002
+            "grv": 1.2
           },
+          "summedVolumetrics": [
+            {
+              "id": 1,
+              "realization": 1,
+              "grv": 1.2
+            }
+          ],
           "volumetrics": [
             {
               "id": 1,
