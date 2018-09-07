@@ -2,15 +2,12 @@ import React from 'react';
 import {
   DEFAULT_COLOR,
   HOVER_COLOR,
-  METRICS,
   SELECTED_COLOR,
 } from '../../../common/variables';
 import RadioButton, { RadioButtonStyled } from '../../../common/RadioButton';
 import styled from 'styled-components';
-
-const initialState = {
-  selectedMetric: METRICS[0].toLowerCase(),
-};
+import { gql } from 'apollo-boost';
+import { Query } from 'react-apollo';
 
 const MetricSelectorStyled = styled.div`
   display: flex;
@@ -30,45 +27,61 @@ const MetricRadioButtonStyle = styled(RadioButtonStyled).attrs({
   flex-grow: 1;
 `;
 
-class MetricSelector extends React.Component {
-  constructor() {
-    super();
-    this.state = initialState;
+export const GET_SELECTED_METRIC = gql`
+  {
+    metrics {
+      selectedMetric @client
+      metrics @client
+    }
   }
+`;
 
-  render() {
-    const { renderHeader, renderVis, renderStats } = this.props;
+export default props => {
+  const { renderHeader, renderVis, renderStats } = props;
 
-    return (
-      <React.Fragment>
-        {renderHeader(this.state.selectedMetric)}
-        <MetricSelectorStyled>
-          {METRICS.map((metric, index) => {
-            const isSelected =
-              this.state.selectedMetric === metric.toLowerCase();
-            return (
-              <MetricRadioButtonStyle
-                key={`metric-selector-btn-${metric}`}
-                selected={isSelected}
-                first={index === 0}
-                last={index === METRICS.length - 1}
-              >
-                <RadioButton
-                  onChange={selectedMetric => this.setState({ selectedMetric })}
-                  selected={isSelected}
-                  value={metric.toLowerCase()}
-                >
-                  {metric}
-                </RadioButton>
-              </MetricRadioButtonStyle>
-            );
-          })}
-        </MetricSelectorStyled>
-        {renderVis(this.state.selectedMetric)}
-        {renderStats && renderStats(this.state.selectedMetric)}
-      </React.Fragment>
-    );
-  }
-}
-
-export default MetricSelector;
+  return (
+    <Query query={GET_SELECTED_METRIC}>
+      {({ data, client, loading }) => {
+        if (loading) return null;
+        const { metrics, selectedMetric } = data.metrics;
+        return (
+          <React.Fragment>
+            {renderHeader(selectedMetric)}
+            <MetricSelectorStyled>
+              {metrics.map((metric, index) => {
+                const isSelected = selectedMetric === metric.toLowerCase();
+                return (
+                  <MetricRadioButtonStyle
+                    key={`metric-selector-btn-${metric}`}
+                    selected={isSelected}
+                    first={index === 0}
+                    last={index === metrics.length - 1}
+                  >
+                    <RadioButton
+                      onChange={selectedMetric =>
+                        client.writeData({
+                          data: {
+                            metrics: {
+                              __typename: 'Metrics',
+                              selectedMetric: selectedMetric,
+                            },
+                          },
+                        })
+                      }
+                      selected={isSelected}
+                      value={metric.toLowerCase()}
+                    >
+                      {metric}
+                    </RadioButton>
+                  </MetricRadioButtonStyle>
+                );
+              })}
+            </MetricSelectorStyled>
+            {renderVis(selectedMetric)}
+            {renderStats && renderStats(selectedMetric)}
+          </React.Fragment>
+        );
+      }}
+    </Query>
+  );
+};
