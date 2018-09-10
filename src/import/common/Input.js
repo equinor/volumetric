@@ -55,6 +55,11 @@ const FileInputLabel = styled(Label)`
   background-color: white;
   min-width: 300px;
 
+  :focus-within {
+    outline: 1px dotted #212121;
+    outline: 5px auto -webkit-focus-ring-color;
+  }
+
   :hover {
     background-color: lightgray;
   }
