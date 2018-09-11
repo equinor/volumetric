@@ -2,6 +2,7 @@ import graphene
 from graphql import GraphQLError
 from utils.calculations import sum_volumetrics as calc_sum_volumetrics
 from utils.ordering import ordered_model, OrderedList
+from utils.authentication import jwt_require
 
 from models import Volumetrics as VolumetricsModel, Field as FieldModel, Location as LocationModel, db
 from .field import Field as FieldType, AddField
@@ -28,10 +29,12 @@ def sum_volumetrics(volumetrics):
 
 
 class Query(graphene.ObjectType):
+    @jwt_require
     @ordered_model
     def resolve_fields(self, info, **kwargs):
         return FieldModel.query.filter_by(**kwargs).all()
 
+    @jwt_require
     def resolve_volumetrics(self, info, model_id, **kwargs):
         filtered_kwargs = {k: v for k, v in kwargs.items() if None not in v}
         # Open for improvements
@@ -52,6 +55,7 @@ class Query(graphene.ObjectType):
             summed_volumetrics=summed_volumetrics,
         )
 
+    @jwt_require
     def resolve_model_types(self, info):
         return [ModelTypeEnum.FULL_FIELD, ModelTypeEnum.SEGMENT]
 
