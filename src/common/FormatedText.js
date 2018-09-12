@@ -7,11 +7,15 @@ const FormatedTextStyle = styled.div`
   padding: 3px 0 3px 6px;
   border-left: 3px solid ${ALMOST_BLACK};
   cursor: pointer;
-  min-width: 10em;
+  min-width: 13em;
 `;
 
 const FormatedTextLabel = styled.span`
   font-weight: bold;
+  margin-right: 0.2222em;
+  ::after {
+    content: ':';
+  }
 `;
 
 export class FormatedText extends React.Component {
@@ -31,8 +35,8 @@ export class FormatedText extends React.Component {
           this.setState(prevState => ({ formatLabel: !prevState.formatLabel }))
         }
       >
-        <FormatedTextLabel>{label}: </FormatedTextLabel>
-        {this.state.formatLabel ? labelFormater(value) : value}
+        <FormatedTextLabel>{label}</FormatedTextLabel>
+        {this.state.formatLabel ? labelFormater(value) : value}m<sup>3</sup>
       </FormatedTextStyle>
     );
   }

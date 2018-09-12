@@ -24,10 +24,20 @@ const TH = styled.th`
   border: 1px solid lightgray;
 `;
 
+const addUnit = headerText => {
+  return METRICS.includes(headerText) ? (
+    <span>
+      {headerText} (m<sup>3</sup>)
+    </span>
+  ) : (
+    headerText
+  );
+};
+
 const Headers = () => {
   return (
     <thead>
-      <tr>{HEADERS.map(name => <TH key={name}>{name}</TH>)}</tr>
+      <tr>{HEADERS.map(name => <TH key={name}>{addUnit(name)}</TH>)}</tr>
     </thead>
   );
 };

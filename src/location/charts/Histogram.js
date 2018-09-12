@@ -29,19 +29,34 @@ const fillBuckets = (data, bucketCount, bucketSize, min) => {
   return buckets.map(nofValues => (nofValues / data.length) * 100);
 };
 
-const getBucketName = (bucketSize, index, bucketCount, min) => {
-  const bottomBucketLimitLabel = labelFormater(bucketSize * index + min);
-  const topBucketLimitLabel = labelFormater(bucketSize * (index + 1) + min);
-  const firstBucket = 0;
-  const lastBucket = bucketCount - 1;
+const BucketRange = ({ bottomBucket, topBucket, isLast }) => (
+  <tspan>
+    <tspan x="0">
+      [{bottomBucket}
+      -
+    </tspan>
+    <tspan x="0" dy="1.3em">
+      {topBucket}
+      {isLast ? ']' : '>'}
+    </tspan>
+  </tspan>
+);
 
-  switch (index) {
-    case firstBucket:
-      return `[${bottomBucketLimitLabel} - ${topBucketLimitLabel}>`;
-    case lastBucket:
-      return `[${bottomBucketLimitLabel} - ${topBucketLimitLabel}]`;
+const getBucketFormater = (bucketData, bucketCount) => bucketIndex => {
+  const { bottomBucket, topBucket } = bucketData[bucketIndex];
+  switch (parseInt(bucketIndex, 10)) {
+    case 0: // First bucket
+      return <BucketRange bottomBucket={bottomBucket} topBucket={topBucket} />;
+    case bucketCount - 1: // Last bucket
+      return (
+        <BucketRange bottomBucket={bottomBucket} topBucket={topBucket} isLast />
+      );
     default:
-      return `< ${topBucketLimitLabel}`;
+      return (
+        <tspan x="0" dy="1.15em">
+          {`<${topBucket}`}
+        </tspan>
+      );
   }
 };
 
@@ -50,12 +65,20 @@ const getHistogramData = (data, bucketCount = 10) => {
   const bucketRange = max - min;
   const bucketSize = bucketRange / bucketCount;
   const buckets = fillBuckets(data, bucketCount, bucketSize, min);
-  return buckets.map((value, index) => {
-    return {
-      x: getBucketName(bucketSize, index, bucketCount, min),
-      y: value,
-    };
-  });
+  return {
+    histogramData: buckets.map((value, index) => {
+      return {
+        x: index,
+        y: value,
+      };
+    }),
+    bucketData: buckets.map((value, index) => {
+      return {
+        bottomBucket: labelFormater(bucketSize * index + min),
+        topBucket: labelFormater(bucketSize * (index + 1) + min),
+      };
+    }),
+  };
 };
 
 const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
@@ -63,13 +86,14 @@ const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
   const data = metrics.map(metric => {
     return metric[selectedMetric];
   });
-
-  const histogramData = getHistogramData(data);
+  const bucketCount = 10;
+  const { histogramData, bucketData } = getHistogramData(data, bucketCount);
+  const bucketFormater = getBucketFormater(bucketData, bucketCount);
   return (
     <FlexibleXYPlot
       style={{ padding: '5px' }}
       xType={'ordinal'}
-      margin={{ left: marginLeft, bottom: 50 }}
+      margin={{ left: marginLeft, bottom: 85 }}
     >
       <VerticalBarSeries data={histogramData} />
       <XAxis
@@ -78,9 +102,19 @@ const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
             fontSize: '0.9em',
           },
         }}
+        tickFormat={bucketFormater}
       />
-      <YAxis tickFormat={tick => `${tick} %`} />
-      <CenteredAxisLabel title={'Percent of realizations'} />
+      <YAxis />
+      <CenteredAxisLabel titleLength={27}>
+        Percent of realizations (%)
+      </CenteredAxisLabel>
+      <CenteredAxisLabel xAxis titleLength={18}>
+        <tspan>
+          Bucket ranges (m
+          <tspan baselineShift="super">3</tspan>
+          )
+        </tspan>
+      </CenteredAxisLabel>
     </FlexibleXYPlot>
   );
 };
