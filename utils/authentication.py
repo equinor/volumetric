@@ -2,6 +2,7 @@ import jwt
 from jwt.algorithms import RSAAlgorithm
 import requests
 import json
+from flask import request
 from config import Config
 import datetime
 
@@ -15,24 +16,16 @@ def get_AzureActiveDirectoryCert(token_header):
         if key['kid'] == token_header['kid']:
             key_json = json.dumps(key)
             return RSAAlgorithm.from_jwk(key_json)
-    return
+    return "No Public key found that matches the given Key-ID"
 
 
-def jwt_require(auth_required_function):
-    def jwt_require_argument_wrapper(*args, **kwargs):
-        global public_key
-        global public_key_timestamp
-        encoded_token = args[1].context.headers.environ['HTTP_AUTHORIZATION'].split(' ')[1]
+def jwt_require():
+    global public_key
+    global public_key_timestamp
+    encoded_token = request.headers.get('AUTHORIZATION').split(' ')[1]
 
-        if public_key_timestamp == '' or public_key_timestamp < datetime.datetime.now() - datetime.timedelta(hours=24):
-            public_key = get_AzureActiveDirectoryCert(jwt.get_unverified_header(encoded_token))
-            public_key_timestamp = datetime.datetime.now()
+    if public_key_timestamp == '' or public_key_timestamp < datetime.datetime.now() - datetime.timedelta(hours=24):
+        public_key = get_AzureActiveDirectoryCert(jwt.get_unverified_header(encoded_token))
+        public_key_timestamp = datetime.datetime.now()
 
-        try:
-            decode = jwt.decode(encoded_token, public_key, algorithms=['RS256'], audience=Config.AZURE_APP_CLIENT_ID)
-            return auth_required_function(*args, **kwargs)
-        except jwt.ExpiredSignatureError:
-            return 'Signature expired. Please log in again.'
-        except jwt.InvalidTokenError:
-            return 'Invalid token. Please log in again.'
-    return jwt_require_argument_wrapper
+    return jwt.decode(encoded_token, public_key, algorithms=['RS256'], audience=Config.AZURE_APP_CLIENT_ID)
