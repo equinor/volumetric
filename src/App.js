@@ -54,31 +54,35 @@ const UserInfo = styled.h5`
 `;
 
 const App = () => (
-  <Router>
-    <div>
-      <AppHeader>
-        <AppTitle>
-          <HeaderLink to="/">Volumetric</HeaderLink>
-        </AppTitle>
-        <div>
-          <AuthConsumer>
-            {user => <UserInfo>{user.name}</UserInfo>}
-          </AuthConsumer>
-          <HeaderLinks>
-            <HeaderLink to="dictionary">Dictionary</HeaderLink>
-            <HeaderLink to="import">Import</HeaderLink>
-          </HeaderLinks>
-        </div>
-      </AppHeader>
-      <AppContainer>
-        <Switch>
-          <Route exact path="/" component={LocationContainer} />
-          <Route path="/dictionary" component={Dictionary} />
-          <Route path="/import" component={ImportMetrics} />
-        </Switch>
-      </AppContainer>
-    </div>
-  </Router>
+  <AuthConsumer>
+    {({ user }) => (
+      <Router>
+        <React.Fragment>
+          <AppHeader>
+            <AppTitle>
+              <HeaderLink to="/">Volumetric</HeaderLink>
+            </AppTitle>
+            <div>
+              <UserInfo>{user.name}</UserInfo>
+              <HeaderLinks>
+                <HeaderLink to="dictionary">Dictionary</HeaderLink>
+                {user.isCreator && <HeaderLink to="import">Import</HeaderLink>}
+              </HeaderLinks>
+            </div>
+          </AppHeader>
+          <AppContainer>
+            <Switch>
+              <Route exact path="/" component={LocationContainer} />
+              <Route path="/dictionary" component={Dictionary} />
+              {user.isCreator && (
+                <Route path="/import" component={ImportMetrics} />
+              )}
+            </Switch>
+          </AppContainer>
+        </React.Fragment>
+      </Router>
+    )}
+  </AuthConsumer>
 );
 
 export default App;

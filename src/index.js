@@ -37,7 +37,10 @@ const client = new ApolloClient({
 
 const AppWithApollo = (
   <ApolloProvider client={client}>
-    <AuthProvider getUser={() => authContext.getCachedUser()}>
+    <AuthProvider
+      getUser={() => authContext.getCachedUser()}
+      getToken={() => getToken()}
+    >
       <App />
     </AuthProvider>
   </ApolloProvider>
