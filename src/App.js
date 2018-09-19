@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { Switch } from 'react-router';
 import { Dictionary } from './dictionary/';
 import { ImportMetrics } from './import/';
+import { AuthConsumer } from './auth/AuthContext';
 
 const AppContainer = styled.div`
   margin: 0 50px 25px;
@@ -17,6 +18,7 @@ const AppHeader = styled.header`
   background-color: #222;
   color: white;
   min-height: 80px;
+  justify-content: space-between;
 `;
 
 const AppTitle = styled.h1`
@@ -45,6 +47,12 @@ const HeaderLinks = styled.div`
   margin-bottom: 12px;
 `;
 
+const UserInfo = styled.h5`
+  text-decoration: none;
+  color: white;
+  margin-right: 10px;
+`;
+
 const App = () => (
   <Router>
     <div>
@@ -52,10 +60,15 @@ const App = () => (
         <AppTitle>
           <HeaderLink to="/">Volumetric</HeaderLink>
         </AppTitle>
-        <HeaderLinks>
-          <HeaderLink to="dictionary">Dictionary</HeaderLink>
-          <HeaderLink to="import">Import</HeaderLink>
-        </HeaderLinks>
+        <div>
+          <AuthConsumer>
+            {user => <UserInfo>{user.name}</UserInfo>}
+          </AuthConsumer>
+          <HeaderLinks>
+            <HeaderLink to="dictionary">Dictionary</HeaderLink>
+            <HeaderLink to="import">Import</HeaderLink>
+          </HeaderLinks>
+        </div>
       </AppHeader>
       <AppContainer>
         <Switch>
