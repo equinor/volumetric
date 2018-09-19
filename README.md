@@ -6,6 +6,12 @@ Copy the file "secrets.env.template" to "secrets.env" and set the variables in t
 
 Then run `docker-compose up -d`
 
+## Pip operations
+To add new packages, run;
+`volumetric-pyenv install mypackage`
+and rebuild the image with;
+`volumetric build`
+
 ## Database operations
 
 ### Alembic operations

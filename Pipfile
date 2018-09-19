@@ -16,6 +16,9 @@ SQLAlchemy = "*"
 Flask-RESTful = "*"
 numpy = "*"
 natsort = "*"
+cryptography = "*"
+pyjwt = "*"
+requests = "*"
 
 [dev-packages]
 pydevd = "*"
