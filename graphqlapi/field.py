@@ -1,4 +1,5 @@
 import graphene
+from graphql import GraphQLError
 
 from models import db, Field as FieldModel
 from utils.ordering import OrderedList, ordered_model
@@ -22,6 +23,9 @@ class AddField(graphene.Mutation):
     field = graphene.Field(lambda: Field)
 
     def mutate(self, info, name):
+        if not info.context.user.isCreator:
+            raise GraphQLError('You are not allowed to create fields!')
+
         field = FieldModel(name=name)
         db.session.add(field)
         db.session.commit()

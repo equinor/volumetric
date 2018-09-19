@@ -3,7 +3,8 @@ from graphql import GraphQLError
 from utils.calculations import sum_volumetrics as calc_sum_volumetrics
 from utils.ordering import ordered_model, OrderedList
 
-from models import Volumetrics as VolumetricsModel, Field as FieldModel, Location as LocationModel, db
+from models import Volumetrics as VolumetricsModel, Field as FieldModel, Location as LocationModel, db, \
+    Model as ModelModel
 from .field import Field as FieldType, AddField
 from .importMetrics import ImportModel
 from .types import VolumetricsType, VolumetricType, ModelTypeEnum
@@ -30,9 +31,29 @@ def sum_volumetrics(volumetrics):
 class Query(graphene.ObjectType):
     @ordered_model
     def resolve_fields(self, info, **kwargs):
-        return FieldModel.query.filter_by(**kwargs).all()
+        user = info.context.user
+        fields = FieldModel.query.filter_by(**kwargs).all()
+        if user.isAdmin:
+            return fields
+
+        field_types = []
+        for field in fields:
+            field_type = FieldType()
+            field_type.name = field.name
+            field_type.models = [
+                model for model in field.models if model.created_user == user.shortname or model.is_official
+            ]
+            if len(field_type.models) > 0:
+                field_types.append(field_type)
+        return field_types
 
     def resolve_volumetrics(self, info, model_id, **kwargs):
+        user = info.context.user
+        model = ModelModel.query.filter(ModelModel.id == model_id).first()
+
+        if not (user.isAdmin or model.is_official or model.created_user == user.shortname):
+            raise GraphQLError('Forbidden')
+
         filtered_kwargs = {k: v for k, v in kwargs.items() if None not in v}
         # Open for improvements
         if not filtered_kwargs and not model_id:

@@ -7,8 +7,6 @@ from flask_migrate import Migrate
 
 from config import Config
 from graphqlapi import create_api
-from import_data import import_model
-
 from models import db, Volumetrics, Model, Location, Field
 
 
