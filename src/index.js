@@ -6,8 +6,23 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { ApolloProvider } from 'react-apollo';
 import { API_URL } from './common/variables';
+import { authContext } from './auth/AdalConfig';
+import { runWithAdal } from 'react-adal';
+import { AuthProvider } from './auth/AuthContext';
+
+export const getToken = () => {
+  return authContext.getCachedToken(authContext.config.clientId);
+};
 
 const client = new ApolloClient({
+  request: async operation => {
+    const token = getToken();
+    operation.setContext({
+      headers: {
+        authorization: token ? `Bearer ${token}` : '',
+      },
+    });
+  },
   uri: `${API_URL}/graphql`,
   clientState: {
     defaults: {
@@ -20,12 +35,20 @@ const client = new ApolloClient({
   },
 });
 
-const ApolloApp = App => (
+const AppWithApollo = (
   <ApolloProvider client={client}>
-    <App />
+    <AuthProvider getUser={() => authContext.getCachedUser()}>
+      <App />
+    </AuthProvider>
   </ApolloProvider>
 );
 
-render(ApolloApp(App), document.getElementById('root'));
+runWithAdal(
+  authContext,
+  () => {
+    render(AppWithApollo, document.getElementById('root'));
+  },
+  false,
+);
 
 registerServiceWorker();
