@@ -2,6 +2,7 @@ import React from 'react';
 import { API_URL } from '../../common/variables';
 import { FileInput } from './Input';
 import styled from 'styled-components';
+import { AuthConsumer } from '../../auth/AuthContext';
 
 const ErrorText = styled.span`
   color: red;
@@ -19,7 +20,7 @@ class FileUpload extends React.Component {
     this.handleUpload = this.handleUpload.bind(this);
   }
 
-  handleUpload(event) {
+  handleUpload(token, event) {
     event.preventDefault();
     const { onChange } = this.props;
 
@@ -34,6 +35,9 @@ class FileUpload extends React.Component {
     fetch(`${API_URL}/upload`, {
       method: 'POST',
       body: data,
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
     })
       .then(response => {
         if (!response.ok) {
@@ -55,15 +59,21 @@ class FileUpload extends React.Component {
   render() {
     return (
       <div>
-        <FileInput
-          {...this.props}
-          type="file"
-          inputRef={this.fileInput}
-          onChange={this.handleUpload}
-        />
-        {this.state.errorText !== null && (
-          <ErrorText>Error: {this.state.errorText}</ErrorText>
-        )}
+        <AuthConsumer>
+          {({ token }) => (
+            <React.Fragment>
+              <FileInput
+                {...this.props}
+                type="file"
+                inputRef={this.fileInput}
+                onChange={event => this.handleUpload(token, event)}
+              />
+              {this.state.errorText !== null && (
+                <ErrorText>Error: {this.state.errorText}</ErrorText>
+              )}
+            </React.Fragment>
+          )}
+        </AuthConsumer>
       </div>
     );
   }
