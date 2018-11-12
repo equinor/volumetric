@@ -4,6 +4,8 @@ from behave import when, given
 from graphene.test import Client
 
 from graphqlapi.schema import schema
+from utils.authentication import User
+from utils.graphql import Context
 
 
 def context_response_json(context):
@@ -23,11 +25,11 @@ def get_headers(context):
     return header
 
 
-@when('i make a graphql query')
+@when('I make a graphql query')
 def step_impl(context):
     context.url = '/graphql'
     client = Client(schema)
-    context.response = client.execute(context.text)
+    context.response = client.execute(context.text, context=Context(user=context.user))
     context.response_json = context.response
 
 
@@ -52,3 +54,11 @@ def step_impl(context, method):
     context.response_status = context.response.status_code
     if context.response.content_type == 'application/json':
         context_response_json(context)
+
+
+@given("I am an application admin")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.user = User(name='Test user', shortname='testuser', roles=['VolumetricAdmin'])

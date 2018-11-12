@@ -24,7 +24,8 @@ Feature: GraphQL API
 
 
   Scenario: Query for fields
-    When i make a graphql query
+    Given I am an application admin
+    When I make a graphql query
     """
     {
       fields {
@@ -49,8 +50,8 @@ Feature: GraphQL API
     """
 
   Scenario: Query for models
-    Given i access the resource url "/graphql"
-    When i make a graphql query
+    Given I am an application admin
+    When I make a graphql query
     """
     { fields { name models { name isOfficial } } }
     """
@@ -83,8 +84,8 @@ Feature: GraphQL API
     """
 
   Scenario: Query for volumetrics
-    Given i access the resource url "/graphql"
-    When i make a graphql query
+    Given I am an application admin
+    When I make a graphql query
     """
     {
       volumetrics(modelId: 1, faultblockNames: "Fault Block 1", zoneNames: "Zone 1", faciesNames: "Type Of Rock 1") {
@@ -134,8 +135,8 @@ Feature: GraphQL API
     """
 
   Scenario: Query for multiple volumetrics
-    Given i access the resource url "/graphql"
-    When i make a graphql query
+    Given I am an application admin
+    When I make a graphql query
     """
     {
       volumetrics(modelId: 1, faultblockNames: ["Fault Block 1", "Fault Block 2"]) {

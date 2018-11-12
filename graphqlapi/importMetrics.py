@@ -1,6 +1,7 @@
 import graphene
 import os
 from flask import current_app
+from graphql import GraphQLError
 
 from graphqlapi.types import ModelTypeEnum
 from .field import Field as FieldType
@@ -25,16 +26,18 @@ class ImportModel(graphene.Mutation):
     field = graphene.Field(FieldType)
 
     def mutate(self, info, filename, field, model, **kwargs):
-        filepath = os.path.join(current_app.instance_path, current_app.config.get('UPLOAD_FOLDER'), filename)
+        if not info.context.user.isCreator:
+            raise GraphQLError('You need to be a creator to import models!')
+
+        if kwargs['is_official'] and not info.context.user.isAdmin:
+            raise GraphQLError('You need to be an admin to import official models!')
+
         if not kwargs['is_official']:
             del kwargs['official_from_date']
             del kwargs['official_to_date']
-        import_model(
-            filepath,
-            field_name=field,
-            model_name=model,
-            created_user='anon',  # TODO: set user to authorized user
-            **kwargs)
+
+        filepath = os.path.join(current_app.instance_path, current_app.config.get('UPLOAD_FOLDER'), filename)
+        import_model(filepath, field_name=field, model_name=model, created_user=info.context.user.shortname, **kwargs)
         field_model = db.session.query(FieldModel).filter(FieldModel.name == field).first()
         ok = True
         return ImportModel(ok=ok, field=field_model)
