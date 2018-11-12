@@ -8,6 +8,8 @@ from flask_migrate import Migrate
 from config import Config
 from graphqlapi import create_api
 from models import db, Volumetrics, Model, Location, Field
+from utils.authentication import User
+from utils.graphql import Context
 
 
 def create_app():
@@ -63,7 +65,8 @@ def make_import_request(filename, field_name, model_name, model_version='first')
         """.format(filename=filename, field_name=field_name, model_name=model_name, model_version=model_version))
     print(query)
     client = Client(schema)
-    response = client.execute(query)
+    response = client.execute(
+        query, context=Context(user=User(name='An On', shortname='anon', roles=['VolumetricAdmin'])))
     print(response)
 
 

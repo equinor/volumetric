@@ -38,18 +38,23 @@ def _add_locations(data_dicts, model):
 
 
 def _add_volumetrics(data_dicts, locations, model):
-    for data_dict in data_dicts:
-        location_key, facie, faultblock, zone = _get_location_info(data_dict, model_id=model.id)
-        location = locations[location_key]
+    with db.engine.begin() as connection:
+        inserts = []
+        for data_dict in data_dicts:
+            location_key, facie, faultblock, zone = _get_location_info(data_dict, model_id=model.id)
+            location = locations[location_key]
 
-        location.volumetrics.append(
-            Volumetrics(
-                grv=data_dict.get('grv'),
-                nrv=data_dict.get('nrv'),
-                npv=data_dict.get('npv'),
-                hcpv=data_dict.get('hcpv'),
-                stoiip=data_dict.get('stoiip'),
-                realization=data_dict.get('realization')))
+            inserts.append({
+                'grv': data_dict.get('grv'),
+                'nrv': data_dict.get('nrv'),
+                'npv': data_dict.get('npv'),
+                'hcpv': data_dict.get('hcpv'),
+                'stoiip': data_dict.get('stoiip'),
+                'realization': data_dict.get('realization'),
+                'location_id': location.id,
+            })
+        ins = Volumetrics.__table__.insert()
+        connection.execute(ins, inserts)
 
 
 @timeit
@@ -62,17 +67,21 @@ def import_model(filename, field_name, model_name, **kwargs):
     """
     lines_as_ordered_dicts = read_file(filename)
 
-    field, was_created = get_or_create(db.session, Field, name=field_name)
-    db.session.add(field)
+    with db.engine.begin() as connection:
 
-    data_dicts = [line_dict for line_dict in lines_as_ordered_dicts if not _should_ignore(line_dict)]
+        field, was_created = get_or_create(db.session, Field, name=field_name)
+        db.session.add(field)
 
-    model_name = data_dicts[0]['model'] if not model_name else model_name
-    model = Model(name=model_name, field=field, **kwargs)
-    db.session.flush()
+        data_dicts = [line_dict for line_dict in lines_as_ordered_dicts if not _should_ignore(line_dict)]
 
-    locations = _add_locations(data_dicts, model=model)
+        model_name = data_dicts[0]['model'] if not model_name else model_name
+        model = Model(name=model_name, field=field, **kwargs)
+        db.session.flush()
 
-    _add_volumetrics(data_dicts, locations=locations, model=model)
+        locations = _add_locations(data_dicts, model=model)
 
-    db.session.commit()
+        db.session.commit()
+
+        _add_volumetrics(data_dicts, locations=locations, model=model)
+
+        db.session.commit()
