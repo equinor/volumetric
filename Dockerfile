@@ -7,10 +7,6 @@ RUN addgroup -S volumetric -g $GID \
  && mkdir /code \
  && chown volumetric:volumetric /code
 
-# If proxy not set in ~/.docker/config.json, uncomment these lines.
-#ENV PROXY=http://www-proxy.statoil.no:80
-#ENV HTTP_PROXY=$PROXY
-#ENV HTTPS_PROXY=$PROXY
 ENV PYTHONUNBUFFERED=1 TZ=Europe/Oslo
 
 # Add Equinor crt for pip to work
