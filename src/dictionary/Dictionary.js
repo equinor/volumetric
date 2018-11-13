@@ -50,17 +50,17 @@ const Dictionary = () => {
       <DictionaryHeader>Definitions</DictionaryHeader>
       <UL>
         <DictItem
-          name="Faultblock"
-          description="aka Region Index. A 3D region/area within a reservoir. Horizontal."
+          name="Region"
+          description="aka Region Index and faultblock. A 3D region/area within a reservoir. Horizontal."
         />
         <DictItem
           name="Zone"
           description="A 3D region/area within a reservoir. Vertical."
         />
-        <DictItem name="Model" description="Name of the model." />
+        <DictItem name="Case" description="Name of the case." />
         <DictItem
           name="Realization"
-          description="Identifier for a certain realization of the model."
+          description="Identifier for a certain realization of the case."
         />
         <DictItem
           name="Facies"
@@ -70,11 +70,11 @@ const Dictionary = () => {
       <DictionaryHeader>Metrics</DictionaryHeader>
       <UL>
         <DictItem
-          name="GRV"
-          description="Gross Rock Volume. aka BRV - Bulk Rock Volume"
+          name="BULK"
+          description="Bulk Rock Volume aka GRV - Gross Rock Volume."
         />
-        <DictItem name="NRV" description="Net Rock Volume" />
-        <DictItem name="NPV" description="Net Pore Volume" />
+        <DictItem name="Net" description="aka NRV, Net Rock Volume" />
+        <DictItem name="Porv" description="aka NPV, Net Pore Volume" />
         <DictItem name="HCPV" description="Hydrocarbon Pore Volume" />
         <DictItem
           name="STOIIP"

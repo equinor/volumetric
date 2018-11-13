@@ -3,20 +3,19 @@ import styled from 'styled-components';
 import { Query } from 'react-apollo';
 import { GET_METRICS } from './LocationQueries';
 import { Filter } from './filters/Filters';
-import ModelSelector from './ModelSelector';
+import CaseSelector from './CaseSelector';
 import VisToggler from './VisToggler';
-import ModelInfo from './ModelInfo';
+import CaseInfo from './CaseInfo';
 
 const FilterPage = styled.div`
   display: flex;
   flex-flow: row;
 `;
 
-const VisWithData = ({ model, facies, faultblocks, zones }) => {
-  const variables = { modelId: model.value };
+const VisWithData = ({ currentCase, facies, regions, zones }) => {
+  const variables = { caseId: currentCase.value };
   if (facies && facies.length > 0) variables['faciesNames'] = facies;
-  if (faultblocks && faultblocks.length > 0)
-    variables['faultblockNames'] = faultblocks;
+  if (regions && regions.length > 0) variables['regionNames'] = regions;
   if (zones && zones.length > 0) variables['zoneNames'] = zones;
 
   return (
@@ -32,31 +31,31 @@ const VisWithData = ({ model, facies, faultblocks, zones }) => {
 
 const LocationFilters = ({
   handleFilterChange,
-  checkedFaultblocks,
+  checkedRegions,
   checkedZones,
   checkedFacies,
-  model,
+  currentCase,
 }) => {
   return (
     <React.Fragment>
       <Filter
-        name="Faultblocks"
-        filters={model.faultblocks}
+        name="Regions"
+        filters={currentCase.regions}
         handleFilterChange={handleFilterChange}
-        category="faultblocks"
-        checked={checkedFaultblocks}
+        category="regions"
+        checked={checkedRegions}
       />
       <Filter
         name="Zones"
-        filters={model.zones}
+        filters={currentCase.zones}
         handleFilterChange={handleFilterChange}
         category="zones"
         checked={checkedZones}
       />
-      {model.facies[0] !== null && (
+      {currentCase.facies[0] !== null && (
         <Filter
           name="Facies"
-          filters={model.facies}
+          filters={currentCase.facies}
           handleFilterChange={handleFilterChange}
           category="facies"
           checked={checkedFacies}
@@ -79,21 +78,21 @@ class LocationComponent extends React.Component {
   constructor(props) {
     super(props);
     this.handleFilterChange = this.handleFilterChange.bind(this);
-    this.handleModelSelectorChange = this.handleModelSelectorChange.bind(this);
+    this.handleCaseSelectorChange = this.handleCaseSelectorChange.bind(this);
 
     const field = this.props.data.fields[0];
-    const model = field.models[0];
+    const currentCase = field.cases[0];
 
     this.state = {
       field: {
         label: field.name,
         value: field.name,
       },
-      model: {
-        label: `${model.name} (${model.modelVersion})`,
-        value: model.id,
+      currentCase: {
+        label: `${currentCase.name} (${currentCase.caseVersion})`,
+        value: currentCase.id,
       },
-      faultblocks: [],
+      regions: [],
       zones: [],
       facies: [],
     };
@@ -109,20 +108,20 @@ class LocationComponent extends React.Component {
     });
   }
 
-  handleModelSelectorChange(key, value) {
+  handleCaseSelectorChange(key, value) {
     const { data } = this.props;
     const stateChanges = {
       [key]: value,
-      faultblocks: [],
+      regions: [],
       zones: [],
       facies: [],
     };
     if (key === 'field') {
-      const firstModel = data.fields.find(field => field.name === value.value)
-        .models[0];
-      stateChanges['model'] = {
-        label: `${firstModel.name} (${firstModel.modelVersion})`,
-        value: firstModel.id,
+      const firstCase = data.fields.find(field => field.name === value.value)
+        .cases[0];
+      stateChanges['currentCase'] = {
+        label: `${firstCase.name} (${firstCase.caseVersion})`,
+        value: firstCase.id,
       };
     }
     this.setState(stateChanges);
@@ -130,24 +129,24 @@ class LocationComponent extends React.Component {
 
   render() {
     const { data } = this.props;
-    const currentModel = data.fields
+    const currentCase = data.fields
       .find(field => field.name === this.state.field.value)
-      .models.find(model => model.id === this.state.model.value);
+      .cases.find(otherCase => otherCase.id === this.state.currentCase.value);
 
     return (
       <div>
-        <ModelSelector
+        <CaseSelector
           {...this.state}
-          handleChange={this.handleModelSelectorChange}
+          handleChange={this.handleCaseSelectorChange}
           data={data}
         />
-        {this.state.model.value && <ModelInfo model={currentModel} />}
+        {this.state.currentCase.value && <CaseInfo currentCase={currentCase} />}
         <FilterPage>
           <FilterWrapper>
             <LocationFilters
-              model={currentModel}
+              currentCase={currentCase}
               handleFilterChange={this.handleFilterChange}
-              checkedFaultblocks={this.state.faultblocks}
+              checkedRegions={this.state.regions}
               checkedZones={this.state.zones}
               checkedFacies={this.state.facies}
             />

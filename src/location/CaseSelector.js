@@ -1,19 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Fields, Models } from './filters/Filters';
+import { Fields, Cases } from './filters/Filters';
 
 const ModelSelectorStyled = styled.div`
   display: flex;
 `;
 
-export default ({ handleChange, field, model, data }) => {
+export default ({ handleChange, field, currentCase, data }) => {
   return (
     <ModelSelectorStyled>
       <React.Fragment>
         <Fields field={field} data={data} handleChange={handleChange} />
-        <Models
+        <Cases
           data={data.fields.find(otherField => otherField.name === field.value)}
-          model={model}
+          currentCase={currentCase}
           handleChange={handleChange}
         />
       </React.Fragment>

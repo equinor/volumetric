@@ -27,31 +27,29 @@ export class Fields extends React.Component {
         selectedOption={field}
         options={data.fields.map(({ name }) => ({ value: name, label: name }))}
         onChange={selectedOption => handleChange('field', selectedOption)}
-        category="fields"
       />
     );
   }
 }
 
-export class Models extends React.Component {
+export class Cases extends React.Component {
   render() {
-    const { data, model, handleChange } = this.props;
+    const { data, currentCase, handleChange } = this.props;
 
-    const models =
+    const cases =
       data !== undefined
-        ? data.models.map(({ id, name, modelVersion }) => ({
+        ? data.cases.map(({ id, name, caseVersion }) => ({
             value: id,
-            label: `${name} (${modelVersion})`,
+            label: `${name} (${caseVersion})`,
           }))
         : [];
 
     return (
       <DatasetSelectorItem
-        name="Model"
-        selectedOption={model}
-        options={models}
-        onChange={selectedOption => handleChange('model', selectedOption)}
-        category="models"
+        name="Case"
+        selectedOption={currentCase}
+        options={cases}
+        onChange={selectedOption => handleChange('currentCase', selectedOption)}
       />
     );
   }

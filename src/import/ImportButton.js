@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Button } from './common/Input';
 
-const ImportButton = ({ importModel, disabled }) => {
+const ImportButton = ({ importCase, disabled }) => {
   return (
-    <Button disabled={disabled} onClick={importModel}>
+    <Button disabled={disabled} onClick={importCase}>
       Submit
     </Button>
   );

@@ -32,9 +32,9 @@ class ImportMetricsComponent extends React.Component {
     this.state = {
       filename: null,
       field: null,
-      model: null,
-      modelVersion: null,
-      modelType: props.data.modelTypes[0],
+      case: null,
+      caseVersion: null,
+      caseType: props.data.caseTypes[0],
       description: null,
       isOfficial: false,
       officialFromDate: moment(),
@@ -51,7 +51,7 @@ class ImportMetricsComponent extends React.Component {
 
   render() {
     const {
-      data: { fields, modelTypes },
+      data: { fields, caseTypes },
     } = this.props;
     return (
       <AuthConsumer>
@@ -59,7 +59,7 @@ class ImportMetricsComponent extends React.Component {
           <ImportWrapper>
             <H2>Import metrics</H2>
             <ImportMutation {...this.props}>
-              {importModel => (
+              {importCase => (
                 <React.Fragment>
                   <H4>Field</H4>
                   <InputWrapper>
@@ -72,35 +72,35 @@ class ImportMetricsComponent extends React.Component {
                       placeholder="Select or create a field..."
                     />
                   </InputWrapper>
-                  <H4>Model</H4>
+                  <H4>Case</H4>
                   <InputWrapper>
                     <TextInput
                       label="Name"
-                      onChange={e => this.handleChange('model', e.target.value)}
-                      placeholder="Enter model name..."
+                      onChange={e => this.handleChange('case', e.target.value)}
+                      placeholder="Enter case name..."
                     />
                     <TextInput
                       label="Version"
                       onChange={e =>
-                        this.handleChange('modelVersion', e.target.value)
+                        this.handleChange('caseVersion', e.target.value)
                       }
-                      placeholder="Enter model version..."
+                      placeholder="Enter case version..."
                     />
                     <Label>
                       Type
                       <StyledSelect
                         onChange={selectedOption =>
-                          this.handleChange('modelType', selectedOption.value)
+                          this.handleChange('caseType', selectedOption.value)
                         }
-                        options={modelTypes.map(modelType => ({
-                          value: modelType,
-                          label: modelType,
+                        options={caseTypes.map(caseType => ({
+                          value: caseType,
+                          label: caseType,
                         }))}
                         value={{
-                          value: this.state.modelType,
-                          label: this.state.modelType,
+                          value: this.state.caseType,
+                          label: this.state.caseType,
                         }}
-                        placeholder="Select model type..."
+                        placeholder="Select case type..."
                       />
                     </Label>
                     <TextInput
@@ -108,7 +108,7 @@ class ImportMetricsComponent extends React.Component {
                       onChange={e =>
                         this.handleChange('description', e.target.value)
                       }
-                      placeholder="Enter model description..."
+                      placeholder="Enter case description..."
                     />
                     <div>
                       <CheckboxWithLabel
@@ -122,8 +122,8 @@ class ImportMetricsComponent extends React.Component {
                         disabled={!user.isAdmin}
                         title={
                           !user.isAdmin
-                            ? 'You need to be admin to import official models.'
-                            : 'Is this an official model?'
+                            ? 'You need to be admin to import official cases.'
+                            : 'Is this an official case?'
                         }
                         labelLeft
                       />
@@ -151,12 +151,12 @@ class ImportMetricsComponent extends React.Component {
                         !(
                           this.state.field &&
                           this.state.filename &&
-                          this.state.model &&
-                          this.state.modelVersion &&
-                          this.state.modelType
+                          this.state.case &&
+                          this.state.caseVersion &&
+                          this.state.caseType
                         )
                       }
-                      importModel={() => importModel({ variables: this.state })}
+                      importCase={() => importCase({ variables: this.state })}
                     />
                   </InputWrapper>
                 </React.Fragment>

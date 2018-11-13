@@ -2,52 +2,52 @@ import { gql } from 'apollo-boost';
 
 export const GET_METRICS = gql`
   query Metrics(
-    $modelId: Int!
+    $caseId: Int!
     $faciesNames: [String]
-    $faultblockNames: [String]
+    $regionNames: [String]
     $zoneNames: [String]
   ) {
     volumetrics(
-      modelId: $modelId
+      caseId: $caseId
       faciesNames: $faciesNames
-      faultblockNames: $faultblockNames
+      regionNames: $regionNames
       zoneNames: $zoneNames
     ) {
       summedVolumetrics {
         realization
-        grv
-        nrv
-        npv
+        bulk
+        net
+        porv
         hcpv
         stoiip
       }
       p90: percentiles(percentile: 90) {
         stoiip
-        nrv
+        net
         hcpv
-        npv
-        grv
+        porv
+        bulk
       }
       p10: percentiles(percentile: 10) {
         stoiip
-        nrv
+        net
         hcpv
-        npv
-        grv
+        porv
+        bulk
       }
       p50: percentiles(percentile: 50) {
         stoiip
-        nrv
+        net
         hcpv
-        npv
-        grv
+        porv
+        bulk
       }
       means {
         stoiip
-        nrv
+        net
         hcpv
-        npv
-        grv
+        porv
+        bulk
       }
     }
   }
