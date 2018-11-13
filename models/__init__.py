@@ -14,6 +14,7 @@ class BatchSQLAlchemy(SQLAlchemy):
 
 db = BatchSQLAlchemy()
 from models.field import Field
-from models.model import Model
+from models.case import Case
 from models.location import Location
+from models.realization import Realization
 from models.volumetrics import Volumetrics

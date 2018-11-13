@@ -5,7 +5,7 @@ from graphene.test import Client
 
 from graphqlapi.schema import schema
 from utils.authentication import User
-from utils.graphql import Context
+from utils.graphql.context import Context
 
 
 def context_response_json(context):

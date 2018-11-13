@@ -1,5 +1,6 @@
 import numpy as np
-metric_list = ['stoiip', 'grv', 'nrv', 'npv', 'hcpv']
+
+METRICS = ('stoiip', 'bulk', 'net', 'porv', 'hcpv', 'giip', 'associatedgas', 'associatedliquid', 'recoverable')
 
 
 def calculate(volumetrics, metric_name, calculation_function):
@@ -29,22 +30,30 @@ def get_mean(data):
     return float(mean)
 
 
+def _get_metric_value(volumetric, key):
+    metric = getattr(volumetric, key)
+    return metric if metric is not None else 0
+
+
 def sum_volumetrics(volumetrics):
     volumetrics_by_realization = {}
-    volumetric_key_list = tuple(metric_list)
-    volumetric_key_list = volumetric_key_list + ('realization',)
+    volumetric_key_list = METRICS + ('realization', )
 
     for volumetric in volumetrics:
-        if volumetric.realization not in volumetrics_by_realization:
+        if volumetric.realization.realization not in volumetrics_by_realization:
             volumetrics_by_realization.update({
-                volumetric.realization: {key: getattr(volumetric, key)
-                                         for key in volumetric_key_list}
+                volumetric.realization.realization:
+                {key: _get_metric_value(volumetric, key)
+                 for key in volumetric_key_list}
             })
         else:
-            volumetrics_by_realization[volumetric.realization].update({
-                    key: sum([getattr(volumetric, key), volumetrics_by_realization[volumetric.realization][key]])
-                    for key in metric_list
-                })
+            volumetrics_by_realization[volumetric.realization.realization].update({
+                key: sum([
+                    _get_metric_value(volumetric, key),
+                    volumetrics_by_realization[volumetric.realization.realization][key]
+                ])
+                for key in METRICS
+            })
 
     for realization in volumetrics_by_realization:
         volumetrics_by_realization[realization].update({'id': realization})

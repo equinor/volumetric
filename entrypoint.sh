@@ -46,6 +46,7 @@ if [ ${first_arg} = 'manage' ]; then
 fi
 
 if [ ${first_arg} = 'tests' ]; then
+    export ENVIRONMENT='test'
     behave
     exit $?
 fi

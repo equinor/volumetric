@@ -1,115 +1,87 @@
 import graphene
+
+from models.case import CaseTypeEnum
 from models.location import Location as LocationModel
-from utils.calculations import calculate, get_pvalue_func, get_mean
+from models.volumetrics import PhaseEnum
+from utils.calculations import calculate, get_pvalue_func, get_mean, METRICS
 from utils.ordering import OrderedList, ordered_strings
 
-metric_list = ['stoiip', 'grv', 'nrv', 'npv', 'hcpv']
+
+def case_type_description(value):
+    if value == CaseTypeEnum.SEGMENT:
+        return 'Case describing a segmented part of the field'
+    elif value == CaseTypeEnum.FULL_FIELD:
+        return 'Case describing the full field'
 
 
-class VolumetricType(graphene.ObjectType):
+CaseTypeGrapheneEnum = graphene.Enum.from_enum(CaseTypeEnum, description=lambda value: case_type_description(value))
+
+
+class Metrics(graphene.ObjectType):
+    bulk = graphene.Float()
+    net = graphene.Float()
+    porv = graphene.Float()
+    hcpv = graphene.Float()
+    stoiip = graphene.Float()
+    giip = graphene.Float()
+    associatedgas = graphene.Float()
+    associatedliquid = graphene.Float()
+    recoverable = graphene.Float()
+
+
+class VolumetricType(Metrics):
     id = graphene.Int()
     realization = graphene.Int()
-    grv = graphene.Float()
-    nrv = graphene.Float()
-    npv = graphene.Float()
-    hcpv = graphene.Float()
-    stoiip = graphene.Float()
+    phase = graphene.Enum.from_enum(PhaseEnum)
 
-
-class MeanType(graphene.ObjectType):
-    stoiip = graphene.Float()
-    grv = graphene.Float()
-    nrv = graphene.Float()
-    npv = graphene.Float()
-    hcpv = graphene.Float()
-
-
-class PValuesType(graphene.ObjectType):
-    stoiip = graphene.Float()
-    grv = graphene.Float()
-    nrv = graphene.Float()
-    npv = graphene.Float()
-    hcpv = graphene.Float()
+    def resolve_realization(self, info):
+        return self.realization.realization
 
 
 class VolumetricsType(graphene.ObjectType):
-    model_id = graphene.Field(graphene.Int, description='A single model')
-    zone_names = graphene.List(graphene.String, description='A list of zones within the model')
-    faultblock_names = graphene.List(graphene.String, description='A list of faultblocks within the model')
-    facies_names = graphene.List(graphene.String, description='A list of facies within the model')
-    volumetrics = graphene.List(VolumetricType,
-                                description='A list of all the realizations of every location in the model')
-    summed_volumetrics = graphene.List(VolumetricType,
-                                       description='A list of volumetrics, grouped and summed by realization')
-    percentiles = graphene.Field(PValuesType, percentile=graphene.Int(),
-                                 description='The given percentile, calculated on the "summed_volumetrics list"')
-    means = graphene.Field(MeanType, description='The calculated mean on the "summed_volumetrics" list')
+    case_id = graphene.Field(graphene.Int, description='A single case')
+    zone_names = graphene.List(graphene.String, description='A list of zones for this case')
+    region_names = graphene.List(graphene.String, description='A list of regions for this case')
+    facies_names = graphene.List(graphene.String, description='A list of facies for this case')
+    volumetrics = graphene.List(
+        VolumetricType, description='A list of all the realizations of every location in the case')
+    summed_volumetrics = graphene.List(
+        VolumetricType, description='A list of volumetrics, grouped and summed by realization')
+    percentiles = graphene.Field(
+        Metrics,
+        percentile=graphene.Int(),
+        description='The given percentile, calculated on the "summed_volumetrics list"')
+    means = graphene.Field(Metrics, description='The calculated mean on the "summed_volumetrics" list')
 
     def resolve_percentiles(self, info, percentile):
         volumetrics = self.summed_volumetrics
-        return PValuesType(
-            **{
-                metric_name: calculate(volumetrics, metric_name, get_pvalue_func(percentile))
-                for metric_name in metric_list
-            }
-        )
+        return Metrics(
+            **
+            {metric_name: calculate(volumetrics, metric_name, get_pvalue_func(percentile))
+             for metric_name in METRICS})
 
     def resolve_means(self, info):
         volumetrics = self.summed_volumetrics
-        return MeanType(
-            **{
-                metric_name: calculate(volumetrics, metric_name, get_mean)
-                for metric_name in metric_list
-            })
+        return Metrics(**{metric_name: calculate(volumetrics, metric_name, get_mean) for metric_name in METRICS})
 
 
 class LocationType(graphene.ObjectType):
     id = graphene.Int()
-    faultblock_name = graphene.String()
+    region_name = graphene.String()
     zone_name = graphene.String()
     facies_name = graphene.String()
     volumetrics = graphene.List(VolumetricType)
 
 
-class FaultblockType(graphene.ObjectType):
-    model_name = graphene.String()
-    name = graphene.String()
-    locations = graphene.List(LocationType)
+def get_distinct_location_keys(case_id, entity):
+    return LocationModel.query.filter_by(case_id=case_id).with_entities(entity).distinct()
 
 
-class ZoneType(graphene.ObjectType):
-    name = graphene.String()
-    model_name = graphene.String()
-    locations = graphene.List(LocationType)
-
-
-class FaciesType(graphene.ObjectType):
-    name = graphene.String()
-    model_name = graphene.String()
-    locations = graphene.List(LocationType)
-
-
-def get_distinct_location_keys(model_id, entity):
-    return LocationModel.query.filter_by(model_id=model_id).with_entities(entity).distinct()
-
-
-class ModelTypeEnum(graphene.Enum):
-    SEGMENT = 1
-    FULL_FIELD = 2
-
-    @property
-    def description(self):
-        if self == ModelTypeEnum.SEGMENT:
-            return 'Model describing a segmented part of the field'
-        elif self == ModelTypeEnum.FULL_FIELD:
-            return 'Model describing the full field'
-
-
-class ModelType(graphene.ObjectType):
+class CaseType(graphene.ObjectType):
     id = graphene.Int()
     name = graphene.String()
-    model_version = graphene.String()
-    model_type = ModelTypeEnum()
+    case_version = graphene.String()
+    case_type = CaseTypeGrapheneEnum()
     description = graphene.String()
     is_official = graphene.Boolean()
     is_currently_official = graphene.Boolean()
@@ -118,17 +90,14 @@ class ModelType(graphene.ObjectType):
     created_user = graphene.String()
     created_date = graphene.DateTime()
     field_name = graphene.String()
-    faultblocks = OrderedList(graphene.String)
+    regions = OrderedList(graphene.String)
     zones = OrderedList(graphene.String)
     facies = OrderedList(graphene.String)
 
     @ordered_strings
-    def resolve_faultblocks(self, info):
-        faultblocks = [
-            faultblock.faultblock_name
-            for faultblock in get_distinct_location_keys(self.id, LocationModel.faultblock_name)
-        ]
-        return faultblocks
+    def resolve_regions(self, info):
+        regions = [region.region_name for region in get_distinct_location_keys(self.id, LocationModel.region_name)]
+        return regions
 
     @ordered_strings
     def resolve_zones(self, info):

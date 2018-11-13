@@ -1,5 +1,5 @@
 from behave import *
-from models import Model, Location, Volumetrics, db, Field
+from models import Case, Location, Volumetrics, db, Field, Realization
 
 
 @given(u'there are fields')
@@ -13,27 +13,27 @@ def step_impl(context):
     db.session.commit()
 
 
-@given(u'there are models')
+@given(u'there are cases')
 def step_impl(context):
-    context.models = {}
+    context.cases = {}
     for row in context.table:
         name = row['name']
-        model_version = row['model_version']
-        model_type = row['model_type']
+        case_version = row['case_version']
+        case_type = row['case_type']
         description = row['description']
         created_user = row['created_user']
         is_official = row['is_official'] == 'True'
-        model = Model(
+        case = Case(
             name=name,
-            model_version=model_version,
-            model_type=model_type,
+            case_version=case_version,
+            case_type=case_type,
             description=description,
             created_user=created_user,
             is_official=is_official,
             field=context.fields[row['field']],
         )
-        context.models[name] = model
-        db.session.add(model)
+        context.cases[name] = case
+        db.session.add(case)
     db.session.commit()
 
 
@@ -43,10 +43,10 @@ def step_impl(context):
     id = 1
     for row in context.table:
         location = Location(
-            faultblock_name=row['faultblock_name'],
+            region_name=row['region_name'],
             zone_name=row['zone_name'],
             facies_name=row['facies_name'],
-            model_id=row['model_id'],
+            case_id=row['case_id'],
         )
         context.locations[str(id)] = location
         db.session.add(location)
@@ -58,13 +58,36 @@ def step_impl(context):
 def step_impl(context):
     for row in context.table:
         location = Volumetrics(
-            location_id=int(context.locations[row['location_id']].id),
-            realization=int(row['realization']),
-            grv=float(row['grv']),
-            nrv=float(row['nrv']),
-            npv=float(row['npv']),
+            realization_id=int(context.realizations[row['realization_id']].id),
+            bulk=float(row['bulk']),
+            net=float(row['net']),
+            porv=float(row['porv']),
             hcpv=float(row['hcpv']),
             stoiip=float(row['stoiip']),
+            phase=row['phase'],
+            giip=float(row['giip']),
+            associatedgas=float(row['associatedgas']),
+            associatedliquid=float(row['associatedliquid']),
+            recoverable=float(row['recoverable']),
         )
         db.session.add(location)
+    db.session.commit()
+
+
+@given("there are realizations")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    context.realizations = {}
+    id = 1
+    for row in context.table:
+        realization = Realization(
+            location_id=int(context.locations[row['location_id']].id),
+            realization=int(row['realization']),
+            iteration=int(row['iteration']),
+        )
+        context.realizations[str(id)] = realization
+        db.session.add(realization)
+        id = id + 1
     db.session.commit()
