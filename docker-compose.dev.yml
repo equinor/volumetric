@@ -9,6 +9,8 @@ services:
       - web
       - api
     restart: unless-stopped
+    volumes:
+      - ./proxy/x.volumetric.equinor.com.key:/etc/nginx/ssl/x.volumetric.equinor.com.key
 
   web:
     image: git.equinor.com:4567/volumetric/web:master
