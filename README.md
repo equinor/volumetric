@@ -33,7 +33,7 @@ The flask-migrate commands can be accessed by executing the manage.py script "db
 
 ![ERD schema][erd]
 
-[erd]: https://git.statoil.no/volumetric/api/-/jobs/artifacts/master/raw/data/build/schema.png?job=create_erd
+[erd]: https://git.equinor.com/volumetric/api/-/jobs/artifacts/master/raw/data/build/schema.png?job=create_erd
 
 ## How to debug
 
