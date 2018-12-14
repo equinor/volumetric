@@ -37,7 +37,7 @@ The flask-migrate commands can be accessed by executing the manage.py script "db
 
 ## How to debug
 
-* [Setup remote debugging](https://git.statoil.no/CRIS/cris-run/wikis/remote-debugging-in-cris-api)
+* [Setup remote debugging](https://git.equinor.com/CRIS/cris-run/wikis/remote-debugging-in-cris-api)
 
 Make sure to enable remote debugging in config.py
 
