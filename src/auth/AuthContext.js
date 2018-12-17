@@ -10,7 +10,7 @@ export class AuthProvider extends React.Component {
       ? props.getUser()
       : { profile: { name: 'Not logged in', roles: [] } };
     const token = props.getToken && props.getToken();
-    const { name, roles } = user.profile;
+    const { name, roles = [] } = user.profile;
     this.state = {
       user: {
         name: name,
