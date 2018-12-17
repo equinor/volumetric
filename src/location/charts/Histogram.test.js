@@ -13,8 +13,8 @@ const mocks = [
     result: {
       data: {
         metrics: {
-          selectedMetric: 'grv',
-          metrics: ['grv', 'nrv', 'npv', 'hcpv', 'stoiip'],
+          selectedMetric: 'bulk',
+          metrics: ['bulk', 'net', 'porv', 'hcpv', 'stoiip'],
         },
       },
     },
@@ -27,7 +27,7 @@ it('renders without crashing', async () => {
   // First render will give loading=true from the MockedProvider
   ReactDOM.render(
     <MockedProvider mocks={mocks} addTypename={false}>
-      <Histogram {...volumetrics.data} selectedMetric={'grv'} />
+      <Histogram {...volumetrics.data} selectedMetric={'bulk'} />
     </MockedProvider>,
     div,
   );

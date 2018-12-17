@@ -4,15 +4,15 @@ export const GET_FIELDS = gql`
   query Fields {
     fields(orderBy: "name") {
       name
-      models(orderBy: "name") {
+      cases(orderBy: "name") {
         id
         name
-        modelVersion
-        modelType
+        caseVersion
+        caseType
         description
         isOfficial
         isCurrentlyOfficial
-        faultblocks
+        regions
         zones
         facies
       }

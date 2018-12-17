@@ -4,24 +4,24 @@ import { gql } from 'apollo-boost';
 import { Mutation } from 'react-apollo';
 import { StyledSpinner } from '../common/Spinner';
 
-const IMPORT_MODEL = gql`
-  mutation ImportModel(
+const IMPORT_CASE = gql`
+  mutation ImportCase(
     $filename: String!
     $field: String!
-    $model: String!
-    $modelVersion: String!
-    $modelType: ModelTypeEnum!
+    $case: String!
+    $caseVersion: String!
+    $caseType: CaseTypeEnum!
     $description: String
     $isOfficial: Boolean
     $officialFromDate: DateTime
     $officialToDate: DateTime
   ) {
-    importModel(
+    importCase(
       filename: $filename
       field: $field
-      model: $model
-      modelVersion: $modelVersion
-      modelType: $modelType
+      case: $case
+      caseVersion: $caseVersion
+      caseType: $caseType
       description: $description
       isOfficial: $isOfficial
       officialFromDate: $officialFromDate
@@ -30,15 +30,15 @@ const IMPORT_MODEL = gql`
       ok
       field {
         name
-        models {
+        cases {
           id
           name
-          modelVersion
-          modelType
+          caseVersion
+          caseType
           description
           isOfficial
           isCurrentlyOfficial
-          faultblocks
+          regions
           zones
           facies
         }
@@ -47,14 +47,14 @@ const IMPORT_MODEL = gql`
   }
 `;
 
-const updateCache = (cache, { data: { importModel } }) => {
+const updateCache = (cache, { data: { importCase } }) => {
   const { fields } = cache.readQuery({ query: GET_FIELDS });
   cache.writeQuery({
     query: GET_FIELDS,
     data: {
       fields: [
-        ...fields.filter(fieldObj => fieldObj.name !== importModel.field.name),
-        importModel.field,
+        ...fields.filter(fieldObj => fieldObj.name !== importCase.field.name),
+        importCase.field,
       ],
     },
   });
@@ -63,16 +63,16 @@ const updateCache = (cache, { data: { importModel } }) => {
 export default ({ history, ...props }) => {
   return (
     <Mutation
-      mutation={IMPORT_MODEL}
+      mutation={IMPORT_CASE}
       update={(cache, response) => updateCache(cache, response)}
       onCompleted={() => history.push('/')}
     >
-      {(importModel, { loading, error }) => {
+      {(importCase, { loading, error }) => {
         if (error) return <div>error</div>;
 
         return (
           <StyledSpinner isLoading={loading}>
-            {props.children(importModel)}
+            {props.children(importCase)}
           </StyledSpinner>
         );
       }}

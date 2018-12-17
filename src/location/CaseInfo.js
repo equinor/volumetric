@@ -20,13 +20,13 @@ const DD = styled.dd`
   margin-right: 25px;
 `;
 
-export default ({ model }) => {
+export default ({ currentCase }) => {
   return (
     <DL>
-      <DT>Model Type</DT>
-      <DD>{model.modelType}</DD>
-      <DT>Model Description</DT>
-      <DD>{model.description}</DD>
+      <DT>Case Type</DT>
+      <DD>{currentCase.caseType}</DD>
+      <DT>Case Description</DT>
+      <DD>{currentCase.description}</DD>
     </DL>
   );
 };

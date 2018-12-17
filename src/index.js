@@ -28,8 +28,8 @@ const client = new ApolloClient({
     defaults: {
       metrics: {
         __typename: 'Metrics',
-        selectedMetric: 'grv',
-        metrics: ['grv', 'nrv', 'npv', 'hcpv', 'stoiip'],
+        selectedMetric: 'bulk',
+        metrics: ['bulk', 'net', 'porv', 'hcpv', 'stoiip'],
       },
     },
   },

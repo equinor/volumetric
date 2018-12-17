@@ -5,9 +5,9 @@ import { gql } from 'apollo-boost';
 import { StyledSpinner } from '../common/Spinner';
 import { GET_FIELDS } from '../common/Queries';
 
-const GET_MODEL_TYPES = gql`
-  query ModelTypes {
-    modelTypes
+const GET_CASE_TYPES = gql`
+  query CaseTypes {
+    caseTypes
   }
 `;
 
@@ -16,7 +16,7 @@ const ImportMetricsContainer = props => {
     <Query query={GET_FIELDS}>
       {({ loading: loadingOne, error: errorOne, data: dataOne }) => {
         return (
-          <Query query={GET_MODEL_TYPES}>
+          <Query query={GET_CASE_TYPES}>
             {({ loading: loadingTwo, error: errorTwo, data: dataTwo }) => {
               if (errorOne || errorTwo) {
                 return <div>Something went wrong!</div>;
