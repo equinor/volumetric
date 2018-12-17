@@ -3,7 +3,7 @@ from utils.authentication import get_validated_user
 from flask import request
 
 from .schema import schema
-from .fileUpload import file_upload
+from .file_upload import file_upload
 
 
 def auth_required(view):

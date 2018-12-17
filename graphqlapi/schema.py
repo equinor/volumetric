@@ -1,26 +1,13 @@
 import graphene
 from graphql import GraphQLError
+
+from models import Field as FieldModel, Case as CaseModel
+from services.database_service import DatabaseService
 from utils.calculations import sum_volumetrics as calc_sum_volumetrics
-from utils.ordering import ordered_model, OrderedList
-
-from models import Volumetrics as VolumetricsModel, Field as FieldModel, Location as LocationModel, db, \
-    Model as ModelModel
+from utils.ordering import ordered_case, OrderedList
 from .field import Field as FieldType, AddField
-from .importMetrics import ImportModel
-from .types import VolumetricsType, VolumetricType, ModelTypeEnum
-
-
-def get_volumetrics(model_id, kwargs):
-    filter_queries = [getattr(LocationModel, key[:-1]).in_(value) for key, value in kwargs.items()]
-    location_query = db.session.query(LocationModel.id).filter(LocationModel.model_id == model_id)
-    for filter_query in filter_queries:
-        location_query = location_query.filter(filter_query)
-    location_ids = location_query.all()
-    if not location_ids:
-        return []
-
-    return VolumetricsModel.query.filter(VolumetricsModel.location_id.in_(
-        [location.id for location in location_ids])).all()
+from .importMetrics import ImportCase
+from .types import VolumetricsType, VolumetricType, CaseTypeGrapheneEnum
 
 
 def sum_volumetrics(volumetrics):
@@ -29,7 +16,7 @@ def sum_volumetrics(volumetrics):
 
 
 class Query(graphene.ObjectType):
-    @ordered_model
+    @ordered_case
     def resolve_fields(self, info, **kwargs):
         user = info.context.user
         fields = FieldModel.query.filter_by(**kwargs).all()
@@ -40,57 +27,55 @@ class Query(graphene.ObjectType):
         for field in fields:
             field_type = FieldType()
             field_type.name = field.name
-            field_type.models = [
-                model for model in field.models if model.created_user == user.shortname or model.is_official
-            ]
-            if len(field_type.models) > 0:
+            field_type.cases = [case for case in field.cases if case.created_user == user.shortname or case.is_official]
+            if len(field_type.cases) > 0:
                 field_types.append(field_type)
         return field_types
 
-    def resolve_volumetrics(self, info, model_id, **kwargs):
+    def resolve_volumetrics(self, info, case_id, **kwargs):
         user = info.context.user
-        model = ModelModel.query.filter(ModelModel.id == model_id).first()
+        case = CaseModel.query.filter(CaseModel.id == case_id).first()
 
-        if not (user.isAdmin or model.is_official or model.created_user == user.shortname):
+        if not (user.isAdmin or case.is_official or case.created_user == user.shortname):
             raise GraphQLError('Forbidden')
 
         filtered_kwargs = {k: v for k, v in kwargs.items() if None not in v}
         # Open for improvements
-        if not filtered_kwargs and not model_id:
+        if not filtered_kwargs and not case_id:
             raise GraphQLError('This query requires 1-4 filters.')
 
-        volumetrics = get_volumetrics(model_id, filtered_kwargs)
-        volumetrics = sorted(volumetrics, key=lambda volumetric: volumetric.realization)
+        volumetrics = DatabaseService.get_volumetrics(case_id, filtered_kwargs)
+        volumetrics = sorted(volumetrics, key=lambda volumetric: volumetric.realization.realization)
 
         summed_volumetrics = sum_volumetrics(volumetrics)
 
         return VolumetricsType(
-            model_id=model_id,
+            case_id=case_id,
             zone_names=kwargs.get('zone_names'),
-            faultblock_names=kwargs.get('faultblock_names'),
+            region_names=kwargs.get('region_names'),
             facies_names=kwargs.get('facies_names'),
             volumetrics=volumetrics,
             summed_volumetrics=summed_volumetrics,
         )
 
-    def resolve_model_types(self, info):
-        return [ModelTypeEnum.FULL_FIELD, ModelTypeEnum.SEGMENT]
+    def resolve_case_types(self, info):
+        return [CaseTypeGrapheneEnum.FULL_FIELD, CaseTypeGrapheneEnum.SEGMENT]
 
     fields = OrderedList(FieldType, name=graphene.String())
 
-    model_types = graphene.List(ModelTypeEnum)
+    case_types = graphene.List(CaseTypeGrapheneEnum)
 
     volumetrics = graphene.Field(
         VolumetricsType,
         facies_names=graphene.List(graphene.String),
-        faultblock_names=graphene.List(graphene.String),
+        region_names=graphene.List(graphene.String),
         zone_names=graphene.List(graphene.String),
-        model_id=graphene.Int())
+        case_id=graphene.Int())
 
 
 class Mutations(graphene.ObjectType):
     add_field = AddField.Field()
-    import_model = ImportModel.Field()
+    import_case = ImportCase.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutations)

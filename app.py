@@ -7,9 +7,9 @@ from flask_migrate import Migrate
 
 from config import Config
 from graphqlapi import create_api
-from models import db, Volumetrics, Model, Location, Field
+from models import db, Volumetrics, Case, Location, Field, Realization
 from utils.authentication import User
-from utils.graphql import Context
+from utils.graphql.context import Context
 
 
 def create_app():
@@ -35,7 +35,8 @@ migrate = Migrate(app, db)
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(app=app, db=db, Volumetrics=Volumetrics, Model=Model, Location=Location, Field=Field)
+    return dict(
+        app=app, db=db, Volumetrics=Volumetrics, Realization=Realization, Case=Case, Location=Location, Field=Field)
 
 
 @app.cli.command()
@@ -53,16 +54,36 @@ def parse_field_name(filename):
     return os.path.splitext(filename.split('_')[-1].capitalize())[0]
 
 
-def make_import_request(filename, field_name, model_name, model_version='first'):
+def make_import_request(filename, field_name, case_name, file_format='FMU', case_version='first'):
     from graphene.test import Client
     from graphqlapi import schema
     query = ("""
-        mutation ImportModel {{
-            importModel(filename: "{filename}", field: "{field_name}", model: "{model_name}", isOfficial: true, officialFromDate: "2012-04-23T18:25:43.511Z", description: "This is a model description", modelType: SEGMENT, modelVersion: "{model_version}") {{
+        mutation ImportCase {{
+            importCase(filename: "{filename}", field: "{field_name}", case: "{case_name}", isOfficial: true, officialFromDate: "2012-04-23T18:25:43.511Z", description: "This is a case description", caseType: SEGMENT, caseVersion: "{case_version}", fileFormat: {file_format}) {{
                 ok
+                field {{
+                    name
+                    cases {{
+                      id
+                      name
+                      caseVersion
+                      caseType
+                      description
+                      isOfficial
+                      isCurrentlyOfficial
+                      regions
+                      zones
+                      facies
+                    }}
+                }}
             }}
         }}
-        """.format(filename=filename, field_name=field_name, model_name=model_name, model_version=model_version))
+        """.format(
+        filename=filename,
+        field_name=field_name,
+        case_name=case_name,
+        case_version=case_version,
+        file_format=file_format))
     print(query)
     client = Client(schema)
     response = client.execute(
@@ -77,8 +98,15 @@ def import_test(ctx):
     ctx.invoke(empty_database)
     make_import_request(
         field_name='Tordis',
-        model_name='sf01rms_faciesseed',
-        filename='20170127_sf01rms201314_faciesseed_COMPDEPTHUNC_ERT_vols_tordis.txt')
+        case_name='sf01rms_faciesseed',
+        filename='20170127_sf01rms201314_faciesseed_COMPDEPTHUNC_ERT_vols_tordis.txt',
+        file_format='CUSTOM')
     make_import_request(
-        field_name='Maureen', model_name='cce', filename='cce11_unc_ERT_vols_maureen.txt', model_version='11')
+        field_name='Maureen',
+        case_name='cce',
+        filename='cce11_unc_ERT_vols_maureen.txt',
+        case_version='11',
+        file_format='CUSTOM')
+    make_import_request(
+        field_name='FMU Field', filename='FMU_VOLS.csv', case_name='0', case_version='final', file_format='FMU')
     app.config['UPLOAD_FOLDER'] = 'uploads'

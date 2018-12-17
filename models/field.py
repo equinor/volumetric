@@ -8,4 +8,4 @@ class Field(db.Model):
     __tablename__ = 'field'
 
     name = Column(String, primary_key=True)
-    models = relationship('Model', passive_deletes=True, backref='field')
+    cases = relationship('Case', passive_deletes=True, backref='field')

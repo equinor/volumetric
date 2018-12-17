@@ -18,7 +18,7 @@ def sorting_func(items, order_direction, **kwargs):
     return natsorted(items, reverse=order_direction == 'desc', alg=ns.IGNORECASE, **kwargs)
 
 
-def ordered_model(func):
+def ordered_case(func):
     @wraps(func)
     def func_wrapper(self, info, order_by=None, order_direction='asc', **kwargs):
         items = func(self, info, **kwargs)

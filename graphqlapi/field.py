@@ -2,17 +2,17 @@ import graphene
 from graphql import GraphQLError
 
 from models import db, Field as FieldModel
-from utils.ordering import OrderedList, ordered_model
-from .types import ModelType
+from utils.ordering import OrderedList, ordered_case
+from .types import CaseType
 
 
 class Field(graphene.ObjectType):
     name = graphene.String()
-    models = OrderedList(ModelType)
+    cases = OrderedList(CaseType)
 
-    @ordered_model
-    def resolve_models(self, info):
-        return self.models
+    @ordered_case
+    def resolve_cases(self, info):
+        return self.cases
 
 
 class AddField(graphene.Mutation):
