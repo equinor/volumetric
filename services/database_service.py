@@ -1,4 +1,5 @@
 from sqlalchemy import func, and_
+from sqlalchemy.orm import joinedload
 
 from models import db, Location, Volumetrics, Realization
 
@@ -27,4 +28,5 @@ class DatabaseService:
                 Realization.iteration == realization_max_iteration_query.c.max_iter,
             )).filter(Realization.location_id.in_([location.id for location in location_ids])).subquery()
 
-        return Volumetrics.query.filter(Volumetrics.realization_id.in_(realization_query)).all()
+        return (Volumetrics.query.filter(Volumetrics.realization_id.in_(realization_query)).options(
+            joinedload(Volumetrics.realization)).all())
