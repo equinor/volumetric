@@ -41,7 +41,7 @@ services:
     - "6379:6379"
 
   worker:
-    image: git.equinor.com:4567/volumetric/api
+    image: git.equinor.com:4567/volumetric/api:master
     command: ["worker"]
     environment:
     - DATABASE_HOST=db
