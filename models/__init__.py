@@ -18,3 +18,4 @@ from models.case import Case
 from models.location import Location
 from models.realization import Realization
 from models.volumetrics import Volumetrics
+from models.tasks import Task

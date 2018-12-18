@@ -11,13 +11,13 @@ from models import db, Volumetrics, Case, Location, Field, Realization
 from utils.authentication import User
 from utils.graphql.context import Context
 
+from redis import Redis
+from rq import Connection, Worker
+
 
 def create_app():
-    # Make the project a Flask application
     app = Flask(__name__)
-    # Set Flask config from config.py file
     app.config.from_object(Config)
-
     db.init_app(app)
     create_api(app)
 
@@ -110,3 +110,11 @@ def import_test(ctx):
     make_import_request(
         field_name='FMU Field', filename='FMU_VOLS.csv', case_name='0', case_version='final', file_format='FMU')
     app.config['UPLOAD_FOLDER'] = 'uploads'
+
+
+@app.cli.command('run_worker')
+def run_worker():
+    redis_connection = Redis(app.config['REDIS_URL'])
+    with Connection(redis_connection):
+        worker = Worker('default')
+        worker.work()

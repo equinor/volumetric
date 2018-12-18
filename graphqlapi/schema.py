@@ -1,13 +1,15 @@
 import graphene
 from graphql import GraphQLError
 
-from models import Field as FieldModel, Case as CaseModel
+from models import Field as FieldModel, Case as CaseModel, Task as TaskModel, db
 from services.database_service import DatabaseService
 from utils.calculations import sum_volumetrics as calc_sum_volumetrics
 from utils.ordering import ordered_case, OrderedList
 from .field import Field as FieldType, AddField
 from .importMetrics import ImportCase
-from .types import VolumetricsType, VolumetricType, CaseTypeGrapheneEnum
+from .types import VolumetricsType, VolumetricType, CaseTypeGrapheneEnum, TaskType
+from utils.worker_jobs import update_job_status_in_db
+from datetime import datetime, timedelta
 
 
 def sum_volumetrics(volumetrics):
@@ -60,6 +62,22 @@ class Query(graphene.ObjectType):
 
     def resolve_case_types(self, info):
         return [CaseTypeGrapheneEnum.FULL_FIELD, CaseTypeGrapheneEnum.SEGMENT]
+
+    def resolve_tasks(self, info, **kwargs):
+        tasks = TaskModel.query.filter(
+            TaskModel.user == kwargs['user']
+        ).filter(
+            TaskModel.queued_at >= (datetime.now() - timedelta(hours=kwargs['hours']))
+        ).all()
+
+        for task in tasks:
+            update_job_status_in_db(task)
+
+        db.session.commit()
+
+        return tasks
+
+    tasks = graphene.List(TaskType, user=graphene.String(), hours=graphene.Int())
 
     fields = OrderedList(FieldType, name=graphene.String())
 

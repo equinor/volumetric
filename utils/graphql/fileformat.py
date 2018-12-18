@@ -1,6 +1,6 @@
-import graphene
+import enum
 
 
-class FileFormat(graphene.Enum):
+class FileFormat(enum.Enum):
     FMU = 'FMU'
     CUSTOM = 'CUSTOM'

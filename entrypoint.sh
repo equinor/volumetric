@@ -39,6 +39,10 @@ if [ ${first_arg} = 'api' ]; then
 	exit $?
 fi
 
+if [ ${first_arg} = 'worker' ]; then
+    python worker.py
+fi
+
 if [ ${first_arg} = 'manage' ]; then
     shift  # shift the input arguments to the left, replacing the first argument with the second etc
     flask "$@"

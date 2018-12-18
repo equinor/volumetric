@@ -6,7 +6,6 @@ from utils.import_formats.fmu import import_fmu_case
 from utils.timer import timeit
 
 
-@timeit
 def import_case(filename, field_name, case_name, file_format=FileFormat.FMU, **kwargs):
     """
     Import a file containing a single model

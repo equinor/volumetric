@@ -29,6 +29,15 @@ class Metrics(graphene.ObjectType):
     recoverable = graphene.Float()
 
 
+class TaskType(graphene.ObjectType):
+    id = graphene.String()
+    user = graphene.String()
+    case_name = graphene.String()
+    queued_at = graphene.DateTime()
+    complete = graphene.Boolean()
+    failed = graphene.Boolean()
+
+
 class VolumetricType(Metrics):
     id = graphene.Int()
     realization = graphene.Int()

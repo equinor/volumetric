@@ -19,6 +19,7 @@ natsort = "*"
 cryptography = "*"
 pyjwt = "*"
 requests = "*"
+rq = "*"
 
 [dev-packages]
 pydevd = "*"
