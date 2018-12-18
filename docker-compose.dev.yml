@@ -35,6 +35,24 @@ services:
       - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
     restart: on-failure
 
+  redis:
+    image: redis:5.0-alpine
+    ports:
+    - "6379:6379"
+
+  worker:
+    image: git.equinor.com:4567/volumetric/api
+    command: ["worker"]
+    environment:
+    - DATABASE_HOST=db
+    - DATABASE_PORT=5432
+    - POSTGRES_USER=volumetric
+    - POSTGRES_DB=volumetric
+    - FLASK_ENV=development
+    - AZURE_APP_CLIENT_ID=c049f236-7e38-41ba-be77-287bc1c8543c
+    - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
+    restart: on-failure
+
   db:
     image: postgres:10.2-alpine
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
