@@ -7,14 +7,15 @@ from graphqlapi.types import CaseTypeGrapheneEnum
 from utils.graphql.fileformat import FileFormat
 from .field import Field as FieldType
 from models import Field as FieldModel, db
+from utils.worker_jobs import import_data_job
 
-from import_data import import_case
+file_format_enum = graphene.Enum.from_enum(FileFormat)
 
 
 class ImportCase(graphene.Mutation):
     class Arguments:
         filename = graphene.String(required=True)
-        file_format = FileFormat(default_value=FileFormat.FMU)
+        file_format = file_format_enum(default_value=file_format_enum.FMU)
         field = graphene.String(required=True)
         case = graphene.String(required=True)
         case_version = graphene.String(required=True)
@@ -39,7 +40,7 @@ class ImportCase(graphene.Mutation):
             del kwargs['official_to_date']
 
         filepath = os.path.join(current_app.instance_path, current_app.config.get('UPLOAD_FOLDER'), filename)
-        import_case(
+        import_data_job(
             filepath,
             field_name=field,
             case_name=case,
