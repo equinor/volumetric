@@ -35,7 +35,7 @@ services:
       - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
     restart: on-failure
     volumes:
-      - uploads:/code/instance/uploads
+      - ./uploads:/code/instance/uploads
 
   redis:
     image: redis:5.0-alpine
@@ -53,7 +53,7 @@ services:
     - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
     restart: on-failure
     volumes:
-      - uploads:/code/instance/uploads:ro
+      - ./uploads:/code/instance/uploads:ro
 
   db:
     image: postgres:10.2-alpine
@@ -69,6 +69,3 @@ services:
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
     restart: unless-stopped
-
-volumes:
-  uploads:

@@ -28,7 +28,7 @@ services:
     image: git.equinor.com:4567/volumetric/api
     volumes:
       #- ./../api:/code
-      - uploads:/code/instance/uploads
+      - ./uploads:/code/instance/uploads
     depends_on:
       - db
     environment:
@@ -54,7 +54,7 @@ services:
     command: ["worker"]
     volumes:
       #- ./../api:/code
-      - uploads:/code/instance/uploads:ro
+      - ./uploads:/code/instance/uploads:ro
     environment:
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
@@ -75,6 +75,3 @@ services:
     environment:
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
-
-volumes:
-  uploads:

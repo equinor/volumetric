@@ -5,3 +5,4 @@ data
 secrets.env
 release
 *.key
+uploads/
