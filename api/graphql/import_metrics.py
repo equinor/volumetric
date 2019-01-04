@@ -4,11 +4,11 @@ import graphene
 from flask import current_app
 from graphql import GraphQLError
 
-from graphqlapi.types import CaseTypeGrapheneEnum
 from models import Field as FieldModel, db
 from utils.graphql.fileformat import FileFormat
 from utils.worker_jobs import import_data_job
 from .field import Field as FieldType
+from .types import CaseTypeGrapheneEnum
 
 file_format_enum = graphene.Enum.from_enum(FileFormat)
 

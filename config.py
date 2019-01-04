@@ -14,8 +14,8 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = (f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}'
                                f'@{POSTGRES_HOSTNAME}:{POSTGRES_PORT}/{POSTGRES_DB}')
     REDIS_URL = 'redis'
-
+    REDIS_PORT = 6379
+    JSON_SORT_KEYS = False
+    UPLOAD_FOLDER = 'uploads'
     # Remote debugging
     REMOTE_DEBUG = False
-
-    UPLOAD_FOLDER = 'uploads'

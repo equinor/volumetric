@@ -3,7 +3,7 @@ from graphql import GraphQLError
 
 from models import db, Field as FieldModel
 from utils.ordering import OrderedList, ordered_case
-from .types import CaseType
+from api.graphql.types import CaseType
 
 
 class Field(graphene.ObjectType):

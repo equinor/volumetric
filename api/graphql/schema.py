@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import graphene
 from graphql import GraphQLError
 
@@ -5,11 +7,10 @@ from models import Field as FieldModel, Case as CaseModel, Task as TaskModel, db
 from services.database_service import DatabaseService
 from utils.calculations import sum_volumetrics as calc_sum_volumetrics
 from utils.ordering import ordered_case, OrderedList
+from utils.worker_jobs import update_job_status_in_db
 from .field import Field as FieldType, AddField
 from .import_metrics import ImportCase
 from .types import VolumetricsType, VolumetricType, CaseTypeGrapheneEnum, TaskType
-from utils.worker_jobs import update_job_status_in_db
-from datetime import datetime, timedelta
 
 
 def sum_volumetrics(volumetrics):

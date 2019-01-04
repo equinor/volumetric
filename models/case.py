@@ -7,9 +7,9 @@ from sqlalchemy.orm import relationship
 from models import db
 
 
-class CaseTypeEnum(enum.Enum):
-    SEGMENT = 'SEGMENT'
-    FULL_FIELD = 'FULL_FIELD'
+class CaseTypeEnum(str, enum.Enum):
+    SEGMENT: str = 'SEGMENT'
+    FULL_FIELD: str = 'FULL_FIELD'
 
 
 class Case(db.Model):

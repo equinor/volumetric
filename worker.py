@@ -1,6 +1,5 @@
 from flask import Flask
 from config import Config
-from graphqlapi import create_api
 from models import db
 from redis import Redis
 from rq import Connection, Worker
@@ -17,8 +16,6 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     db.init_app(app)
-    create_api(app)
-
     return app
 
 
