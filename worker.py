@@ -22,11 +22,6 @@ def create_app():
     return app
 
 
-if hasattr(Config, 'REMOTE_DEBUG') and Config.REMOTE_DEBUG:
-    from utils.debug.remote import enable_remote_debugging
-
-    enable_remote_debugging()
-
 app = create_app()
 with app.app_context():
     run_worker()

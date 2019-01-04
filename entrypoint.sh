@@ -32,7 +32,7 @@ if [ ${first_arg} = 'api' ]; then
         flask import_test
     else
         echo "Running in development mode. Skipping import of test data."
-        echo "To import manually, run 'volumetric run api flask db import_test'"
+        echo "To import manually, run 'volumetric run api flask import-test'"
     fi
 
 	flask run
