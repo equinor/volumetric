@@ -3,10 +3,11 @@ from rq.job import Job
 from redis import Redis
 from import_data import import_case
 from models import Task, db
+from config import Config
 
 
-redis_conn = Redis('redis', 6379)
-queue = Queue(connection=redis_conn)
+redis_connection = Redis(Config.REDIS_URL, Config.REDIS_PORT)
+queue = Queue(connection=redis_connection)
 
 
 def import_data_job(filename, **kwargs):
@@ -23,7 +24,7 @@ def import_data_job(filename, **kwargs):
 # TODO: Move this to a more suitable location
 def update_job_status_in_db(task):
     try:
-        job = Job.fetch(id=task.id, connection=redis_conn)
+        job = Job.fetch(id=task.id, connection=redis_connection)
     except:
         print(f"Job {task.id} is no longer in Redis's store'")
         return

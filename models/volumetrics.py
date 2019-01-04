@@ -5,10 +5,10 @@ from sqlalchemy import Column, Integer, Numeric, ForeignKey, UniqueConstraint, E
 from models import db
 
 
-class PhaseEnum(enum.Enum):
-    OIL = 1
-    GAS = 2
-    TOTAL = 3
+class PhaseEnum(str, enum.Enum):
+    OIL: str = 'OIL'
+    GAS: str = 'GAS'
+    TOTAL: str = 'TOTAL'
 
 
 class Volumetrics(db.Model):

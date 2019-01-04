@@ -3,7 +3,7 @@ import json
 from behave import when, given
 from graphene.test import Client
 
-from graphqlapi.schema import schema
+from api.graphql.schema import schema
 from utils.authentication import User
 from utils.graphql.context import Context
 

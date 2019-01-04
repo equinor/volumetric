@@ -4,23 +4,21 @@ import os
 import click
 from flask import Flask
 from flask_migrate import Migrate
-
+from flask_marshmallow import Marshmallow
 from config import Config
-from graphqlapi import create_api
-from models import db, Volumetrics, Case, Location, Field, Realization
-from utils.authentication import User
-from utils.graphql.context import Context
 
 from redis import Redis
 from rq import Connection, Worker
+
+from models import db, Volumetrics, Case, Location, Field, Realization
+from utils.authentication import User
+from utils.graphql.context import Context
 
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     db.init_app(app)
-    create_api(app)
-
     return app
 
 
@@ -31,6 +29,10 @@ if hasattr(Config, 'REMOTE_DEBUG') and Config.REMOTE_DEBUG:
 
 app = create_app()
 migrate = Migrate(app, db)
+marshmallow = Marshmallow(app)
+
+from api import create_api
+create_api(app)
 
 
 @app.shell_context_processor
@@ -56,7 +58,7 @@ def parse_field_name(filename):
 
 def make_import_request(filename, field_name, case_name, file_format='FMU', case_version='first'):
     from graphene.test import Client
-    from graphqlapi import schema
+    from api import schema
     query = ("""
         mutation ImportCase {{
             importCase(filename: "{filename}", field: "{field_name}", case: "{case_name}", isOfficial: true, officialFromDate: "2012-04-23T18:25:43.511Z", description: "This is a case description", caseType: SEGMENT, caseVersion: "{case_version}", fileFormat: {file_format}) {{

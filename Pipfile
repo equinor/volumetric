@@ -19,7 +19,10 @@ natsort = "*"
 cryptography = "*"
 pyjwt = "*"
 requests = "*"
+flask-marshmallow = "*"
 rq = "*"
+marshmallow-sqlalchemy = "*"
+simplejson = "*"
 
 [dev-packages]
 pydevd = "*"

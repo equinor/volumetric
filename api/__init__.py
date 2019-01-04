@@ -2,7 +2,8 @@ from flask_graphql import GraphQLView
 from utils.authentication import get_validated_user
 from flask import request
 
-from .schema import schema
+from api.graphql.schema import schema
+from api.rest.cases import case_endpoint
 from .file_upload import file_upload
 
 
@@ -27,9 +28,10 @@ def file_upload_with_auth():
 
 
 def create_api(app):
-    # GraphQL
     app.add_url_rule('/graphql', methods=['POST', 'GET'], view_func=graphql_view())
 
     app.add_url_rule('/upload', methods=['POST'], view_func=file_upload_with_auth)
+
+    app.add_url_rule('/case/<case_id>', methods=['GET'], view_func=case_endpoint)
 
     return app
