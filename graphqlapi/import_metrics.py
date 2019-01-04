@@ -1,13 +1,14 @@
-import graphene
 import os
+
+import graphene
 from flask import current_app
 from graphql import GraphQLError
 
 from graphqlapi.types import CaseTypeGrapheneEnum
-from utils.graphql.fileformat import FileFormat
-from .field import Field as FieldType
 from models import Field as FieldModel, db
+from utils.graphql.fileformat import FileFormat
 from utils.worker_jobs import import_data_job
+from .field import Field as FieldType
 
 file_format_enum = graphene.Enum.from_enum(FileFormat)
 
@@ -15,7 +16,7 @@ file_format_enum = graphene.Enum.from_enum(FileFormat)
 class ImportCase(graphene.Mutation):
     class Arguments:
         filename = graphene.String(required=True)
-        file_format = file_format_enum(default_value=file_format_enum.FMU)
+        file_format = file_format_enum(required=True)
         field = graphene.String(required=True)
         case = graphene.String(required=True)
         case_version = graphene.String(required=True)
