@@ -1,5 +1,7 @@
 from collections import namedtuple
 
+from sqlalchemy.exc import IntegrityError
+
 from models import Case, db, Field, Realization
 from models import Location as LocationModel
 from models.volumetrics import Volumetrics, PhaseEnum
@@ -91,35 +93,33 @@ def _get_volumetrics_for_phase(line_dict, phase, realization):
 
 
 def _add_volumetrics(lines_as_ordered_dicts, realizations, locations):
-    with db.engine.begin() as connection:
-        inserts = []
-        for line_dict in lines_as_ordered_dicts:
-            realization = realizations.get(_get_realization_tuple(line_dict, locations))
+    inserts = []
+    for line_dict in lines_as_ordered_dicts:
+        realization = realizations.get(_get_realization_tuple(line_dict, locations))
 
-            for phase in ['oil', 'gas', 'total']:
-                inserts.append(_get_volumetrics_for_phase(line_dict, phase, realization))
+        for phase in ['oil', 'gas', 'total']:
+            inserts.append(_get_volumetrics_for_phase(line_dict, phase, realization))
 
-        ins = Volumetrics.__table__.insert()
-        connection.execute(ins, inserts)
+    ins = Volumetrics.__table__.insert()
+    db.session.execute(ins, inserts)
 
 
 def import_fmu_case(filename, field_name, case_name, **kwargs):
     lines_as_ordered_dicts = read_file(filename, delimiter=",")
 
-    with db.engine.begin() as connection:
-        field, was_created = get_or_create(db.session, Field, name=field_name)
-        db.session.add(field)
+    field, was_created = get_or_create(db.session, Field, name=field_name)
+    db.session.add(field)
 
-        case_name = case_name if case_name else lines_as_ordered_dicts[0]['case']
-        case = Case(name=case_name, field=field, **kwargs)
-        db.session.flush()
+    case_name = case_name if case_name else lines_as_ordered_dicts[0]['case']
+    case = Case(name=case_name, field=field, **kwargs)
+    db.session.flush()
 
-        locations = _add_locations(lines_as_ordered_dicts, case)
-        db.session.commit()
+    locations = _add_locations(lines_as_ordered_dicts, case)
+    db.session.flush()
 
-        realizations = _add_realizations(lines_as_ordered_dicts, locations=locations)
-        db.session.add_all(realizations.values())
-        db.session.commit()
+    realizations = _add_realizations(lines_as_ordered_dicts, locations=locations)
+    db.session.add_all(realizations.values())
+    db.session.flush()
 
-        _add_volumetrics(lines_as_ordered_dicts, realizations=realizations, locations=locations)
-        db.session.commit()
+    _add_volumetrics(lines_as_ordered_dicts, realizations=realizations, locations=locations)
+    db.session.commit()
