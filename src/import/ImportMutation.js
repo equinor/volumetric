@@ -18,6 +18,7 @@ const IMPORT_CASE = gql`
   ) {
     importCase(
       filename: $filename
+      fileFormat: FMU
       field: $field
       case: $case
       caseVersion: $caseVersion
