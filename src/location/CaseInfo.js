@@ -27,6 +27,8 @@ export default ({ currentCase }) => {
       <DD>{currentCase.caseType}</DD>
       <DT>Case Description</DT>
       <DD>{currentCase.description}</DD>
+      <DT>Case id</DT>
+      <DD>{currentCase.id}</DD>
     </DL>
   );
 };
