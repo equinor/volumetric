@@ -3,12 +3,12 @@ import { render } from 'react-dom';
 import './index.css';
 import ApolloClient from 'apollo-boost';
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
 import { ApolloProvider } from 'react-apollo';
 import { API_URL } from './common/variables';
 import { authContext } from './auth/AdalConfig';
 import { runWithAdal } from 'react-adal';
 import { AuthProvider } from './auth/AuthContext';
+import { unregister } from './registerServiceWorker';
 
 export const getToken = () => {
   return authContext.getCachedToken(authContext.config.clientId);
@@ -53,5 +53,3 @@ runWithAdal(
   },
   false,
 );
-
-registerServiceWorker();
