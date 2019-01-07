@@ -10,10 +10,11 @@ export class AuthProvider extends React.Component {
       ? props.getUser()
       : { profile: { name: 'Not logged in', roles: [] } };
     const token = props.getToken && props.getToken();
-    const { name, roles = [] } = user.profile;
+    const { name, roles, upn = [] } = user.profile;
     this.state = {
       user: {
         name: name,
+        shortName: upn.toString().substring(0, upn.lastIndexOf("@")),
         isCreator:
           roles.includes('VolumetricAdmin') ||
           roles.includes('VolumetricCreator'),

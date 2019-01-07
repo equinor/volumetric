@@ -28,7 +28,7 @@ const StyledSelect = styled(Select)`
 
 class ImportMetricsComponent extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       filename: null,
       field: null,

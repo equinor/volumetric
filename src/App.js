@@ -1,11 +1,12 @@
 import React from 'react';
-import { LocationContainer } from './location/';
+import {LocationContainer} from './location/';
 import styled from 'styled-components';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import { Switch } from 'react-router';
-import { Dictionary } from './dictionary/';
-import { ImportMetrics } from './import/';
-import { AuthConsumer } from './auth/AuthContext';
+import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
+import {Switch} from 'react-router';
+import {Dictionary} from './dictionary/';
+import {ImportMetrics} from './import/';
+import {AuthConsumer} from './auth/AuthContext';
+import ImportStatus from './import/ImportStatus'
 
 const AppContainer = styled.div`
   margin: 0 50px 25px;
@@ -55,7 +56,7 @@ const UserInfo = styled.h5`
 
 const App = () => (
   <AuthConsumer>
-    {({ user }) => (
+    {({user}) => (
       <Router>
         <React.Fragment>
           <AppHeader>
@@ -72,13 +73,16 @@ const App = () => (
           </AppHeader>
           <AppContainer>
             <Switch>
-              <Route exact path="/" component={LocationContainer} />
-              <Route path="/dictionary" component={Dictionary} />
+              <Route exact path="/" component={LocationContainer}/>
+              <Route path="/dictionary" component={Dictionary}/>
               {user.isCreator && (
-                <Route path="/import" component={ImportMetrics} />
+                <Route path="/import" render={(routerProps) => <ImportMetrics {...routerProps} />}/>
               )}
             </Switch>
           </AppContainer>
+          <ImportStatus
+            user={user.shortName}
+          />
         </React.Fragment>
       </Router>
     )}
