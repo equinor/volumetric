@@ -1,5 +1,7 @@
 from graphql import GraphQLError
+from sqlalchemy.exc import SQLAlchemyError
 
+from models import db
 from utils.graphql.fileformat import FileFormat
 from utils.import_formats.custom import import_custom_case
 from utils.import_formats.fmu import import_fmu_case
@@ -16,9 +18,19 @@ def import_case(filename, field_name, case_name, file_format, **kwargs):
 
     file_format = FileFormat(file_format)
 
-    if file_format == FileFormat.FMU:
-        import_fmu_case(filename, field_name, case_name, **kwargs)
-    elif file_format == FileFormat.CUSTOM:
-        import_custom_case(filename, field_name, case_name, **kwargs)
-    else:
-        raise GraphQLError('Unsupported file type')
+    try:
+        if file_format == FileFormat.FMU:
+            import_fmu_case(filename, field_name, case_name, **kwargs)
+        elif file_format == FileFormat.CUSTOM:
+            import_custom_case(filename, field_name, case_name, **kwargs)
+        else:
+            raise GraphQLError('Unsupported file type')
+    except SQLAlchemyError:
+        print('SQLAlchemy error')
+        db.session.rollback()
+        raise
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()

@@ -6,10 +6,6 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
 from config import Config
-
-from redis import Redis
-from rq import Connection, Worker
-
 from models import db, Volumetrics, Case, Location, Field, Realization
 from utils.authentication import User
 from utils.graphql.context import Context
@@ -112,11 +108,3 @@ def import_test(ctx):
     make_import_request(
         field_name='FMU Field', filename='FMU_VOLS.csv', case_name='0', case_version='final', file_format='FMU')
     app.config['UPLOAD_FOLDER'] = 'uploads'
-
-
-@app.cli.command('run_worker')
-def run_worker():
-    redis_connection = Redis(app.config['REDIS_URL'])
-    with Connection(redis_connection):
-        worker = Worker('default')
-        worker.work()

@@ -73,46 +73,42 @@ def _add_realizations(data_dicts, locations, case):
 
 
 def _add_volumetrics(data_dicts, realizations, locations, case):
-    with db.engine.begin() as connection:
-        inserts = []
-        for data_dict in data_dicts:
-            realization_key = _get_realization_key(data_dict, locations, case)
-            realization = realizations[realization_key]
+    inserts = []
+    for data_dict in data_dicts:
+        realization_key = _get_realization_key(data_dict, locations, case)
+        realization = realizations[realization_key]
 
-            inserts.append({
-                'bulk': data_dict.get('grv'),
-                'net': data_dict.get('nrv'),
-                'porv': data_dict.get('npv'),
-                'hcpv': data_dict.get('hcpv'),
-                'stoiip': data_dict.get('stoiip'),
-                'phase': PhaseEnum.GAS,
-                'realization_id': realization.id,
-            })
-        ins = Volumetrics.__table__.insert()
-        connection.execute(ins, inserts)
+        inserts.append({
+            'bulk': data_dict.get('grv'),
+            'net': data_dict.get('nrv'),
+            'porv': data_dict.get('npv'),
+            'hcpv': data_dict.get('hcpv'),
+            'stoiip': data_dict.get('stoiip'),
+            'phase': PhaseEnum.GAS,
+            'realization_id': realization.id,
+        })
+    ins = Volumetrics.__table__.insert()
+    db.session.execute(ins, inserts)
 
 
 def import_custom_case(filename, field_name, case_name, **kwargs):
     lines_as_ordered_dicts = read_file(filename)
 
-    with db.engine.begin() as connection:
-        field, was_created = get_or_create(db.session, Field, name=field_name)
-        db.session.add(field)
+    field, was_created = get_or_create(db.session, Field, name=field_name)
+    db.session.add(field)
 
-        data_dicts = [line_dict for line_dict in lines_as_ordered_dicts if not _should_ignore(line_dict)]
+    data_dicts = [line_dict for line_dict in lines_as_ordered_dicts if not _should_ignore(line_dict)]
 
-        case_name = case_name if case_name else lines_as_ordered_dicts[0]['model']
-        case = Case(name=case_name, field=field, **kwargs)
-        db.session.flush()
+    case_name = case_name if case_name else lines_as_ordered_dicts[0]['model']
+    case = Case(name=case_name, field=field, **kwargs)
+    db.session.flush()
 
-        locations = _add_locations(data_dicts, case=case)
+    locations = _add_locations(data_dicts, case=case)
+    db.session.flush()
 
-        db.session.commit()
+    realizations = _add_realizations(data_dicts, locations=locations, case=case)
+    db.session.add_all(realizations.values())
+    db.session.flush()
 
-        realizations = _add_realizations(data_dicts, locations=locations, case=case)
-        db.session.add_all(realizations.values())
-        db.session.commit()
-
-        _add_volumetrics(data_dicts, realizations=realizations, locations=locations, case=case)
-
-        db.session.commit()
+    _add_volumetrics(data_dicts, realizations=realizations, locations=locations, case=case)
+    db.session.commit()
