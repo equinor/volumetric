@@ -111,4 +111,3 @@ def import_custom_case(filename, field_name, case_name, **kwargs):
     db.session.flush()
 
     _add_volumetrics(data_dicts, realizations=realizations, locations=locations, case=case)
-    db.session.commit()

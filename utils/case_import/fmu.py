@@ -1,7 +1,5 @@
 from collections import namedtuple
 
-from sqlalchemy.exc import IntegrityError
-
 from models import Case, db, Field, Realization
 from models import Location as LocationModel
 from models.volumetrics import Volumetrics, PhaseEnum
@@ -122,4 +120,17 @@ def import_fmu_case(filename, field_name, case_name, **kwargs):
     db.session.flush()
 
     _add_volumetrics(lines_as_ordered_dicts, realizations=realizations, locations=locations)
-    db.session.commit()
+
+
+REQUIRED_HEADERS = ['region', 'zone']
+
+
+def validate_fmu_case(filename):
+    lines_as_ordered_dicts = read_file(filename, delimiter=",")
+
+    if len(lines_as_ordered_dicts) == 0:
+        return False
+
+    line_dict = lines_as_ordered_dicts[0]
+    has_required_headers = all(header in line_dict for header in REQUIRED_HEADERS)
+    return has_required_headers, f'The imported file does not have the required columns {",".join(REQUIRED_HEADERS)}'

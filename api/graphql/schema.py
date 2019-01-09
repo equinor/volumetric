@@ -3,11 +3,10 @@ from datetime import datetime, timedelta
 import graphene
 from graphql import GraphQLError
 
-from models import Field as FieldModel, Case as CaseModel, Task as TaskModel, db
+from models import Field as FieldModel, Case as CaseModel, Task as TaskModel
 from services.database_service import DatabaseService
 from utils.calculations import sum_volumetrics as calc_sum_volumetrics
 from utils.ordering import ordered_case, OrderedList
-from utils.worker_jobs import update_job_status_in_db
 from .field import Field as FieldType, AddField
 from .import_metrics import ImportCase
 from .types import VolumetricsType, VolumetricType, CaseTypeGrapheneEnum, TaskType
@@ -67,11 +66,6 @@ class Query(graphene.ObjectType):
     def resolve_tasks(self, info, **kwargs):
         tasks = TaskModel.query.filter(TaskModel.user == kwargs['user']).filter(
             TaskModel.queued_at >= (datetime.now() - timedelta(hours=kwargs['hours']))).all()
-
-        for task in tasks:
-            update_job_status_in_db(task)
-
-        db.session.commit()
 
         return tasks
 
