@@ -1,5 +1,6 @@
 from graphql import GraphQLError
 from rq import get_current_job
+from sqlalchemy.exc import SQLAlchemyError, DataError, IntegrityError
 
 from models import db, Task
 from utils.debug.remote import enable_remote_debugging
@@ -53,7 +54,14 @@ def import_case(filename, field_name, case_name, file_format, **kwargs):
         task.failed = False
         task.complete = True
         db.session.commit()
-    except:
+    except SQLAlchemyError as e:
         task.failed = True
         task.complete = True
+        exception_type = type(e)
+        if exception_type is DataError:
+            task.message = 'DataError: Some data in you file is not of the correct type.'
+        elif exception_type is IntegrityError:
+            task.message = 'IntegrityError: Are you sure all your rows are unique?'
+        else:
+            task.message = 'SQLAlchemyError: Something went wrong while importing the file.'
         db.session.commit()

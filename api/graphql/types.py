@@ -36,6 +36,7 @@ class TaskType(graphene.ObjectType):
     queued_at = graphene.DateTime()
     complete = graphene.Boolean()
     failed = graphene.Boolean()
+    message = graphene.String()
 
 
 class VolumetricType(Metrics):

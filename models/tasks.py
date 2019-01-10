@@ -11,3 +11,4 @@ class Task(db.Model):
     queued_at = Column(DateTime)
     complete = Column(Boolean, default=False)
     failed = Column(Boolean, default=False)
+    message = Column(String)

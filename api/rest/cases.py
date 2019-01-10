@@ -1,7 +1,7 @@
-from flask import jsonify, abort, request
+from flask import jsonify, abort
+
 from models import Case as CaseModel
 from .marshmallow_schemas import case_schema
-from utils.authentication import get_validated_user
 
 
 def case_endpoint(case_id):
