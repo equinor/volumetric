@@ -44,9 +44,6 @@ def import_case(filename, field_name, case_name, file_format, **kwargs):
 
     job = get_current_job()
     task = db.session.query(Task).get(job.id)
-    # TODO: register task as started
-
-    enable_remote_debugging()
 
     try:
         import_func = get_import_func(file_format)
