@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import {GET_UPLOADS} from "../common/Queries";
-import GraphqlError from "../common/GraphqlErrorHandling";
-import {Query} from "react-apollo";
+import { GET_UPLOADS } from '../common/Queries';
+import GraphqlError from '../common/GraphqlErrorHandling';
+import { Query } from 'react-apollo';
 
 const UploadFooter = styled.div`
   justify-content: space-between;
@@ -13,7 +13,7 @@ const UploadFooter = styled.div`
   position: fixed;
   bottom: 0px;
   border: 1px solid rgb(230, 230, 230);
-  box-shadow: 0 -2px 4px rgb(230,230,230,0.9);
+  box-shadow: 0 -2px 4px rgb(230, 230, 230, 0.9);
 `;
 
 const TaskContainer = styled.div`
@@ -64,7 +64,7 @@ const Circle = styled.div`
   justify-content: center;
   cursor: pointer;
   margin: 5px;
-  
+
   &:hover {
     border: 2px solid black;
   }
@@ -79,42 +79,54 @@ const MaximizeButton = styled.span`
   right: 0px;
   border: 1px solid rgb(230, 230, 230);
   border-top-left-radius: 15px;
-  box-shadow: 0 -1px 4px rgb(230,230,230,0.9);
+  box-shadow: 0 -1px 4px rgb(230, 230, 230, 0.9);
 `;
 
-function MinimizeButton({minimizeMaximize}) {
+function MinimizeButton({ minimizeMaximize }) {
   return (
     <Circle onClick={minimizeMaximize}>
-      <DownArrow/>
+      <DownArrow />
     </Circle>
-  )
+  );
 }
 
-function Task(task){
+function Task({ id, caseName, failed, complete, message }) {
   let status;
 
-  if (task.failed) {
+  if (failed) {
     status = <TaskCheckCross>&#10007;</TaskCheckCross>;
   } else {
-    if (task.complete) {
+    if (complete) {
       status = <TaskCheckMark>&#10003;</TaskCheckMark>;
-  } else {
-      status = 'Working...'
+    } else {
+      status = 'Working...';
     }
   }
-    return (
-    <TaskContainer key={task.id}>
+  return (
+    <TaskContainer key={id}>
       <TaskDescription>
-        <div><b>Case: </b>{task.caseName}</div>
-        <div><b>ID: </b>{task.id}</div>
+        <div>
+          <b>Case: </b>
+          {caseName}
+        </div>
+        <div>
+          <b>ID: </b>
+          {id}
+        </div>
+        {failed && (
+          <div>
+            <b>Message: </b>
+            {message}
+          </div>
+        )}
       </TaskDescription>
       <TaskStatus>{status}</TaskStatus>
     </TaskContainer>
   );
 }
 
-function ImportFooterWrapper({tasks, hidden, minimizeMaximize}) {
-  let taskItems = tasks.map((task) => Task(task));
+function ImportFooterWrapper({ tasks, hidden, minimizeMaximize }) {
+  let taskItems = tasks.map(task => Task(task));
   return (
     <div>
       {hidden ? (
@@ -122,12 +134,11 @@ function ImportFooterWrapper({tasks, hidden, minimizeMaximize}) {
       ) : (
         <UploadFooter>
           {taskItems}
-          <MinimizeButton minimizeMaximize={minimizeMaximize}/>
+          <MinimizeButton minimizeMaximize={minimizeMaximize} />
         </UploadFooter>
       )}
-
     </div>
-  )
+  );
 }
 
 class ImportStatus extends React.Component {
@@ -146,29 +157,35 @@ class ImportStatus extends React.Component {
     this.minimizeMaximize = this.minimizeMaximize.bind(this);
   }
 
-  minimizeMaximize(){
-    this.setState((prevState) => ({
+  minimizeMaximize() {
+    this.setState(prevState => ({
       hidden: !prevState.hidden,
       pollInterval: prevState.hidden ? 1500 : 0,
-    }))
+    }));
   }
 
   render() {
     return (
-      <Query query={GET_UPLOADS} variables={this.state.variables} pollInterval={this.state.pollInterval}>
+      <Query
+        query={GET_UPLOADS}
+        variables={this.state.variables}
+        pollInterval={this.state.pollInterval}
+      >
         {props => {
-
-          const {loading, error, data} = props;
+          const { loading, error, data } = props;
 
           if (loading) return <p>Loading</p>;
-          if (error) return <GraphqlError graphError={error}/>;
+          if (error) return <GraphqlError graphError={error} />;
 
-          return data.tasks.length !== 0 &&
-            <ImportFooterWrapper
-              tasks={data.tasks}
-              hidden={this.state.hidden}
-              minimizeMaximize={this.minimizeMaximize}
-            />
+          return (
+            data.tasks.length !== 0 && (
+              <ImportFooterWrapper
+                tasks={data.tasks}
+                hidden={this.state.hidden}
+                minimizeMaximize={this.minimizeMaximize}
+              />
+            )
+          );
         }}
       </Query>
     );
