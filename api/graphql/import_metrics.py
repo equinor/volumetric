@@ -4,13 +4,17 @@ import graphene
 from flask import current_app
 from graphql import GraphQLError
 
-from models import Field as FieldModel, db
+from utils.case_import.import_data import validate_import
 from utils.graphql.fileformat import FileFormat
-from utils.worker_jobs import import_data_job
-from .field import Field as FieldType
-from .types import CaseTypeGrapheneEnum
+from utils.case_import.queue import create_import_data_job
+from .types import CaseTypeGrapheneEnum, TaskType
 
 file_format_enum = graphene.Enum.from_enum(FileFormat)
+
+
+class ValidationError(graphene.ObjectType):
+    id = graphene.String()
+    message = graphene.String()
 
 
 class ImportCase(graphene.Mutation):
@@ -27,7 +31,8 @@ class ImportCase(graphene.Mutation):
         official_to_date = graphene.DateTime()
 
     ok = graphene.Boolean()
-    field = graphene.Field(FieldType)
+    validation_error = graphene.Field(ValidationError)  # TODO: use graphql errors?
+    task = graphene.Field(TaskType)
 
     def mutate(self, info, filename, file_format, field, case, **kwargs):
         if not info.context.user.isCreator:
@@ -41,13 +46,20 @@ class ImportCase(graphene.Mutation):
             del kwargs['official_to_date']
 
         filepath = os.path.join(current_app.instance_path, current_app.config.get('UPLOAD_FOLDER'), filename)
-        import_data_job(
-            filepath,
-            field_name=field,
-            case_name=case,
-            file_format=file_format,
-            created_user=info.context.user.shortname,
-            **kwargs)
-        field_model = db.session.query(FieldModel).filter(FieldModel.name == field).first()
+        is_valid, message = validate_import(filepath, file_format=file_format)
+
+        if is_valid:
+            task = create_import_data_job(
+                filepath,
+                field_name=field,
+                case_name=case,
+                file_format=file_format,
+                created_user=info.context.user.shortname,
+                **kwargs)
+            validation_error = None
+        else:
+            task = None
+            validation_error = ValidationError(id=1, message=message)
+
         ok = True
-        return ImportCase(ok=ok, field=field_model)
+        return ImportCase(ok=ok, task=task, validation_error=validation_error)

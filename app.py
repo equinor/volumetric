@@ -59,21 +59,6 @@ def make_import_request(filename, field_name, case_name, file_format='FMU', case
         mutation ImportCase {{
             importCase(filename: "{filename}", field: "{field_name}", case: "{case_name}", isOfficial: true, officialFromDate: "2012-04-23T18:25:43.511Z", description: "This is a case description", caseType: SEGMENT, caseVersion: "{case_version}", fileFormat: {file_format}) {{
                 ok
-                field {{
-                    name
-                    cases {{
-                      id
-                      name
-                      caseVersion
-                      caseType
-                      description
-                      isOfficial
-                      isCurrentlyOfficial
-                      regions
-                      zones
-                      facies
-                    }}
-                }}
             }}
         }}
         """.format(
