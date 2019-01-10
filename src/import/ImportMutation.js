@@ -1,5 +1,4 @@
 import React from 'react';
-import { GET_FIELDS } from '../common/Queries';
 import { gql } from 'apollo-boost';
 import { Mutation } from 'react-apollo';
 import { StyledSpinner } from '../common/Spinner';
@@ -29,51 +28,23 @@ const IMPORT_CASE = gql`
       officialToDate: $officialToDate
     ) {
       ok
-      field {
-        name
-        cases {
-          id
-          name
-          caseVersion
-          caseType
-          description
-          isOfficial
-          isCurrentlyOfficial
-          regions
-          zones
-          facies
-        }
+      validationError {
+        id
+        message
       }
     }
   }
 `;
 
-const updateCache = (cache, { data: { importCase } }) => {
-  const { fields } = cache.readQuery({ query: GET_FIELDS });
-  cache.writeQuery({
-    query: GET_FIELDS,
-    data: {
-      fields: [
-        ...fields.filter(fieldObj => fieldObj.name !== importCase.field.name),
-        importCase.field,
-      ],
-    },
-  });
-};
-
 export default ({ history, ...props }) => {
   return (
-    <Mutation
-      mutation={IMPORT_CASE}
-      update={(cache, response) => updateCache(cache, response)}
-      onCompleted={() => history.push('/')}
-    >
-      {(importCase, { loading, error }) => {
-        if (error) return <div>error</div>;
+    <Mutation mutation={IMPORT_CASE}>
+      {(importCase, { loading, error, data }) => {
+        if (error) return <div>Something went wrong</div>;
 
         return (
           <StyledSpinner isLoading={loading}>
-            {props.children(importCase)}
+            {props.children(importCase, data)}
           </StyledSpinner>
         );
       }}
