@@ -5,10 +5,10 @@ services:
     build: proxy
     ports:
       - 80:80
-    depends_on:
-      - web
-      - api
+      - 443:443
     restart: unless-stopped
+    volumes:
+    - ./proxy/x.volumetric.equinor.com.key:/etc/nginx/ssl/x.volumetric.equinor.com.key
 
   web:
     image: git.equinor.com:4567/volumetric/web:$WEB_TAG
@@ -31,14 +31,34 @@ services:
       - AZURE_APP_CLIENT_ID=c049f236-7e38-41ba-be77-287bc1c8543c
       - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
     restart: unless-stopped
+    volumes:
+    - ./uploads:/code/instance/uploads
+
+  redis:
+    image: redis:5.0-alpine
+    restart: unless-stopped
+
+  worker:
+    image: git.equinor.com:4567/volumetric/api:$API_TAG
+    command: ["worker"]
+    env_file:
+    - secrets.env
+    environment:
+    - DATABASE_HOST=db
+    - DATABASE_PORT=5432
+    - POSTGRES_USER=volumetric
+    - POSTGRES_DB=volumetric
+    - FLASK_ENV=development
+    - AZURE_APP_CLIENT_ID=c049f236-7e38-41ba-be77-287bc1c8543c
+    - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
+    restart: unless-stopped
+    volumes:
+    - ./uploads:/code/instance/uploads:ro
 
   db:
     image: postgres:10.2-alpine
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
-    ports:
-      - "5432:5432"
     volumes:
-      - ./init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
       - ./postgresql.conf:/etc/postgresql/postgresql.conf
     env_file:
       - secrets.env

@@ -4,8 +4,8 @@ services:
   proxy:
     build: proxy
     ports:
-      - 80:80
-      - 443:443
+    - 8080:80
+    - 4433:443
     depends_on:
       - web
       - api
@@ -33,12 +33,13 @@ services:
       - POSTGRES_DB=volumetric
       - AZURE_APP_CLIENT_ID=c049f236-7e38-41ba-be77-287bc1c8543c
       - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
-    restart: on-failure
+    restart: unless-stopped
     volumes:
       - ./uploads:/code/instance/uploads
 
   redis:
     image: redis:5.0-alpine
+    restart: unless-stopped
 
   worker:
     image: git.equinor.com:4567/volumetric/api:master
@@ -53,7 +54,7 @@ services:
       - FLASK_ENV=development
       - AZURE_APP_CLIENT_ID=c049f236-7e38-41ba-be77-287bc1c8543c
       - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
-    restart: on-failure
+    restart: unless-stopped
     volumes:
       - ./uploads:/code/instance/uploads:ro
 

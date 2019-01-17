@@ -27,7 +27,7 @@ services:
         GID: $DOCKER_GROUP
     image: git.equinor.com:4567/volumetric/api
     volumes:
-      #- ./../api:/code
+    - ./../api:/code
       - ./uploads:/code/instance/uploads
     depends_on:
       - db
@@ -53,7 +53,7 @@ services:
     image: git.equinor.com:4567/volumetric/api
     command: ["worker"]
     volumes:
-      #- ./../api:/code
+    - ./../api:/code
       - ./uploads:/code/instance/uploads:ro
     environment:
       - DATABASE_HOST=db
