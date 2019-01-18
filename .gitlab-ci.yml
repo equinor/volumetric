@@ -96,8 +96,7 @@ deploy_test:
   script:
     - cd $PROJECT_PATH/main
     - git pull
-    - ./bin/activate
-    - volumetric pull
-    - volumetric build proxy
-    - volumetric down
-    - volumetric up -d
+    - ./bin/activate volumetric pull
+    - ./bin/activate volumetric build proxy
+    - ./bin/activate volumetric down
+    - ./bin/activate volumetric up -d
