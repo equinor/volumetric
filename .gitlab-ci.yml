@@ -62,12 +62,11 @@ deploy_develop:
     - master
   environment:
     name: development
-    url: http://dev.volumetric.equinor.com
+    url: https://dev.volumetric.equinor.com
   variables:
     ENVIRONMENT: "dev"
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT" $PROJECT_PATH/main/release
   script:
     - cd $PROJECT_PATH/main
     - git pull
@@ -86,17 +85,19 @@ deploy_test:
     - branches
   environment:
     name: test
-    url: http://test.volumetric.equinor.com
+    url: https://test.volumetric.equinor.com
   variables:
     ENVIRONMENT: "test"
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    - sed -i "/^API_TAG=.*/c\API_TAG=$CI_COMMIT_REF_NAME" $PROJECT_PATH/main/release
-    - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT" $PROJECT_PATH/main/release
+    - sed -i "/^API_TAG=.*/c\API_TAG=$CI_COMMIT_REF_NAME" $PROJECT_PATH/main/.env
+    - sed -i "/^WEB_TAG=.*/c\WEB_TAG=$CI_COMMIT_REF_NAME" $PROJECT_PATH/main/.env
+    - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT" $PROJECT_PATH/main/.env
   script:
     - cd $PROJECT_PATH/main
     - git pull
-    - ./bin/activate volumetric pull
-    - ./bin/activate volumetric build proxy
-    - ./bin/activate volumetric down
-    - ./bin/activate volumetric up -d
+    - . /bin/activate
+    - volumetric pull
+    - volumetric build proxy
+    - volumetric down
+    - volumetric up -d
