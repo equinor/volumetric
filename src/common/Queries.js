@@ -21,20 +21,15 @@ export const GET_FIELDS = gql`
 `;
 
 export const GET_UPLOADS = gql`
-  query Uploads(
-    $user: String
-    $hours: Int
-  ) {
-    tasks(
-      user: $user
-      hours: $hours
-    ) {
+  query Uploads($user: String, $hours: Int) {
+    tasks(user: $user, hours: $hours) {
       user
       caseName
       complete
       failed
       queuedAt
       id
+      message
     }
   }
 `;
