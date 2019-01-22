@@ -6,6 +6,7 @@ import Table from './Table';
 import ToggleButtonGroup from '../common/ToggleButtonGroup';
 import { StyledSpinner } from '../common/Spinner';
 import AsyncRender from '../common/AsyncRender';
+import BarChart from './charts/BarChart';
 
 const VisSelector = styled(ToggleButtonGroup)`
   align-self: flex-end;
@@ -22,6 +23,15 @@ const NoData = styled.div`
   align-items: center;
   padding-right: 24vh;
 `;
+
+const Plot = data => {
+  const singleRealization = data.summedVolumetrics.length === 1;
+  return singleRealization ? (
+    <BarChart metrics={data.summedVolumetrics} />
+  ) : (
+    <Histogram {...data} />
+  );
+};
 
 class VisToggler extends React.Component {
   constructor() {
@@ -62,7 +72,7 @@ class VisToggler extends React.Component {
               />
             )}
 
-            {this.state.showVis === 'plot' && <Histogram {...data} />}
+            {this.state.showVis === 'plot' && <Plot {...data} />}
           </StyledSpinner>
         </VisStyled>
       </div>

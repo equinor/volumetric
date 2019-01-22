@@ -7,7 +7,7 @@ import {
   HorizontalGridLines,
   VerticalGridLines,
 } from 'react-vis';
-import { format } from 'd3-format';
+import { labelFormater } from '../../utils/text';
 import CenteredAxisLabel from './common/CenteredAxisLabel';
 import { PlotHeader, PlotStyled } from './common/PlotStyle';
 
@@ -36,7 +36,7 @@ export default ({ metrics }) => {
         <HorizontalGridLines />
         {verticalBarSeriesList}
         <XAxis />
-        <YAxis tickFormat={tick => format('2.1s')(tick)} />
+        <YAxis tickFormat={tick => labelFormater(tick)} />
         <CenteredAxisLabel title={'Value'} />
       </FlexibleXYPlot>
     </PlotStyled>
