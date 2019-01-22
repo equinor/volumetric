@@ -64,10 +64,8 @@ class Query(graphene.ObjectType):
         return [CaseTypeGrapheneEnum.FULL_FIELD, CaseTypeGrapheneEnum.SEGMENT]
 
     def resolve_tasks(self, info, **kwargs):
-        tasks = TaskModel.query.filter(TaskModel.user == kwargs['user']).filter(
+        return TaskModel.query.filter(TaskModel.user == kwargs['user']).filter(
             TaskModel.queued_at >= (datetime.now() - timedelta(hours=kwargs['hours']))).all()
-
-        return tasks
 
     tasks = graphene.List(TaskType, user=graphene.String(), hours=graphene.Int())
 
