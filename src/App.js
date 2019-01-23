@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import {Switch} from 'react-router';
 import {Dictionary} from './dictionary/';
+import {Contact} from './contact/';
+import {ApiDoc} from './ApiDoc/';
 import {ImportMetrics} from './import/';
 import {AuthConsumer} from './auth/AuthContext';
 import ImportStatus from './import/ImportStatus'
@@ -35,7 +37,7 @@ const AppTitle = styled.h1`
 const HeaderLink = styled(Link)`
   text-decoration: none;
   color: white;
-  margin-right: 10px;
+  margin-right: 25px;
 
   :hover {
     text-decoration: underline;
@@ -49,6 +51,7 @@ const HeaderLinks = styled.div`
 `;
 
 const UserInfo = styled.h5`
+  text-align: right;
   text-decoration: none;
   color: white;
   margin-right: 10px;
@@ -66,8 +69,10 @@ const App = () => (
             <div>
               <UserInfo>{user.name}</UserInfo>
               <HeaderLinks>
-                <HeaderLink to="dictionary">Dictionary</HeaderLink>
                 {user.isCreator && <HeaderLink to="import">Import</HeaderLink>}
+                <HeaderLink to="contact">Contact</HeaderLink>
+                <HeaderLink to="api-doc">API</HeaderLink>
+                <HeaderLink to="dictionary">Dictionary</HeaderLink>
               </HeaderLinks>
             </div>
           </AppHeader>
@@ -75,6 +80,8 @@ const App = () => (
             <Switch>
               <Route exact path="/" component={LocationContainer}/>
               <Route path="/dictionary" component={Dictionary}/>
+              <Route path="/contact" component={Contact}/>
+              <Route path="/api-doc" component={ApiDoc}/>
               {user.isCreator && (
                 <Route path="/import" render={(routerProps) => <ImportMetrics {...routerProps} />}/>
               )}
