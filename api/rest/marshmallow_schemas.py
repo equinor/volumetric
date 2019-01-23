@@ -7,7 +7,7 @@ class VolumetricSchema(marshmallow.ModelSchema):
                   'associatedgas', 'associatedliquid', 'recoverable')
 
 
-volumetric_schema = VolumetricSchema()
+volumetric_schema = VolumetricSchema(strict=True)
 
 
 class RealizationSchema(marshmallow.ModelSchema):
@@ -22,7 +22,7 @@ class LocationSchema(marshmallow.ModelSchema):
     realizations = marshmallow.Nested(RealizationSchema, many=True)
 
 
-location_schema = LocationSchema()
+location_schema = LocationSchema(strict=True)
 
 
 class CaseSchema(marshmallow.ModelSchema):
@@ -35,4 +35,4 @@ class CaseSchema(marshmallow.ModelSchema):
     locations = marshmallow.Nested(LocationSchema, many=True)
 
 
-case_schema = CaseSchema()
+case_schema = CaseSchema(strict=True)
