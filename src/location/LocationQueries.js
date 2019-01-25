@@ -6,12 +6,14 @@ export const GET_METRICS = gql`
     $faciesNames: [String]
     $regionNames: [String]
     $zoneNames: [String]
+    $phase: PhaseEnum!
   ) {
     volumetrics(
       caseId: $caseId
       faciesNames: $faciesNames
       regionNames: $regionNames
       zoneNames: $zoneNames
+      phase: $phase
     ) {
       summedVolumetrics {
         realization
