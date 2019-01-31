@@ -15,6 +15,7 @@ export const GET_FIELDS = gql`
         regions
         zones
         facies
+        phases
       }
     }
   }

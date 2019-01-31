@@ -6,14 +6,16 @@ import { Filter } from './filters/Filters';
 import CaseSelector from './CaseSelector';
 import VisToggler from './VisToggler';
 import CaseInfo from './CaseInfo';
+import { H4 } from '../common/Headers';
+import ToggleButtonGroup from '../common/ToggleButtonGroup';
 
 const FilterPage = styled.div`
   display: flex;
   flex-flow: row;
 `;
 
-const VisWithData = ({ currentCase, facies, regions, zones }) => {
-  const variables = { caseId: currentCase.value };
+const VisWithData = ({ currentCase, facies, regions, zones, phase }) => {
+  const variables = { caseId: currentCase.value, phase: phase.toUpperCase() };
   if (facies && facies.length > 0) variables['faciesNames'] = facies;
   if (regions && regions.length > 0) variables['regionNames'] = regions;
   if (zones && zones.length > 0) variables['zoneNames'] = zones;
@@ -74,6 +76,10 @@ const FilterWrapper = styled.div`
   min-width: 200px;
 `;
 
+const PhaseButtonGroup = styled(ToggleButtonGroup)`
+  max-width: 200px;
+`;
+
 class LocationComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -92,6 +98,7 @@ class LocationComponent extends React.Component {
         label: `${currentCase.name} (${currentCase.caseVersion})`,
         value: currentCase.id,
       },
+      phase: currentCase.phases[0],
       regions: [],
       zones: [],
       facies: [],
@@ -123,6 +130,12 @@ class LocationComponent extends React.Component {
         label: `${firstCase.name} (${firstCase.caseVersion})`,
         value: firstCase.id,
       };
+      stateChanges['phase'] = firstCase.phases[0];
+    } else {
+      const currentCase = data.fields
+        .find(field => field.name === this.state.field.value)
+        .cases.find(otherCase => otherCase.id === value.value);
+      stateChanges['phase'] = currentCase.phases[0];
     }
     this.setState(stateChanges);
   }
@@ -143,6 +156,15 @@ class LocationComponent extends React.Component {
         {this.state.currentCase.value && <CaseInfo currentCase={currentCase} />}
         <FilterPage>
           <FilterWrapper>
+            <div>
+              <H4>Phase</H4>
+              <PhaseButtonGroup
+                buttons={currentCase.phases}
+                currentSelected={this.state.phase}
+                buttonStyle={{ padding: '5px 10px;', fontSize: '16px;' }}
+                onChange={phase => this.setState({ phase })}
+              />
+            </div>
             <LocationFilters
               currentCase={currentCase}
               handleFilterChange={this.handleFilterChange}
