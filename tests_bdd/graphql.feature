@@ -26,12 +26,12 @@ Feature: GraphQL API
       | 1           | 4         | 2           |
 
     Given there are volumetrics
-      | realization_id | bulk | net  | porv | hcpv | stoiip | phase | giip | associatedgas | associatedliquid | recoverable |
-      | 1              | 0.1  | 0.2  | 0.3  | 0.4  | 0.5    | GAS   | 0.7  | 0.8           | 0.9              | 0.99        |
-      | 2              | 11.1 | 11.2 | 11.3 | 11.4 | 11.5   | GAS   | 11.7 | 11.8          | 11.9             | 11.99       |
-      | 3              | 12.1 | 12.2 | 12.3 | 12.4 | 12.5   | GAS   | 12.7 | 12.8          | 12.9             | 12.99       |
-      | 4              | 13.1 | 13.2 | 13.3 | 13.4 | 13.5   | GAS   | 13.7 | 13.8          | 13.9             | 13.99       |
-      | 5              | 1.1  | 1.2  | 1.3  | 1.4  | 1.5    | GAS   | 1.7  | 1.8           | 1.9              | 1.99        |
+      | realization_id | phase |bulk | net  | porv | hcpv | stoiip | phase | giip | associatedgas | associatedliquid | recoverable |
+      | 1              | GAS   |0.1  | 0.2  | 0.3  | 0.4  | 0.5    | GAS   | 0.7  | 0.8           | 0.9              | 0.99        |
+      | 2              | GAS   |11.1 | 11.2 | 11.3 | 11.4 | 11.5   | GAS   | 11.7 | 11.8          | 11.9             | 11.99       |
+      | 3              | GAS   |12.1 | 12.2 | 12.3 | 12.4 | 12.5   | GAS   | 12.7 | 12.8          | 12.9             | 12.99       |
+      | 4              | GAS   |13.1 | 13.2 | 13.3 | 13.4 | 13.5   | GAS   | 13.7 | 13.8          | 13.9             | 13.99       |
+      | 5              | GAS   |1.1  | 1.2  | 1.3  | 1.4  | 1.5    | GAS   | 1.7  | 1.8           | 1.9              | 1.99        |
 
 
   Scenario: Query for fields
@@ -99,7 +99,7 @@ Feature: GraphQL API
     When I make a graphql query
     """
     {
-      volumetrics(caseId: 1, regionNames: "Region 1", zoneNames: "Zone 1", faciesNames: "Type Of Rock 1") {
+      volumetrics(caseId: 1, regionNames: "Region 1", zoneNames: "Zone 1", faciesNames: "Type Of Rock 1", phase: GAS) {
         caseId
         zoneNames
         faciesNames
@@ -150,7 +150,7 @@ Feature: GraphQL API
     When I make a graphql query
     """
     {
-      volumetrics(caseId: 1, regionNames: ["Region 1", "Region 2"]) {
+      volumetrics(caseId: 1, regionNames: ["Region 1", "Region 2"], phase: GAS) {
         zoneNames
         faciesNames
         regionNames

@@ -1,5 +1,6 @@
 import enum
 
+import graphene
 from sqlalchemy import Column, Integer, Numeric, ForeignKey, UniqueConstraint, Enum
 
 from models import db
@@ -9,6 +10,9 @@ class PhaseEnum(str, enum.Enum):
     OIL: str = 'OIL'
     GAS: str = 'GAS'
     TOTAL: str = 'TOTAL'
+
+
+PhaseEnumGraphene = graphene.Enum.from_enum(PhaseEnum)
 
 
 class Volumetrics(db.Model):

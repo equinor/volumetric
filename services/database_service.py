@@ -6,7 +6,7 @@ from models import db, Location, Volumetrics, Realization
 
 class DatabaseService:
     @staticmethod
-    def get_volumetrics(case_id, location_filters):
+    def get_volumetrics(case_id, location_filters, phase):
         filter_queries = [getattr(Location, key[:-1]).in_(value) for key, value in location_filters.items()]
         location_query = db.session.query(Location.id).filter(Location.case_id == case_id)
         for filter_query in filter_queries:
@@ -28,5 +28,5 @@ class DatabaseService:
                 Realization.iteration == realization_max_iteration_query.c.max_iter,
             )).filter(Realization.location_id.in_([location.id for location in location_ids])).subquery()
 
-        return (Volumetrics.query.filter(Volumetrics.realization_id.in_(realization_query)).options(
-            joinedload(Volumetrics.realization)).all())
+        return (Volumetrics.query.filter(Volumetrics.phase == phase).filter(
+            Volumetrics.realization_id.in_(realization_query)).options(joinedload(Volumetrics.realization)).all())

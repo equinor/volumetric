@@ -1,8 +1,9 @@
 import graphene
 
 from models.case import CaseTypeEnum
-from models.location import Location as LocationModel
-from models.volumetrics import PhaseEnum
+from models import (Location as LocationModel, PhaseEnum, Volumetrics as VolumetricsModel, Realization as
+                    RealizationModel, db)
+from models.volumetrics import PhaseEnumGraphene
 from utils.calculations import calculate, get_pvalue_func, get_mean, METRICS
 from utils.ordering import OrderedList, ordered_strings
 
@@ -42,7 +43,7 @@ class TaskType(graphene.ObjectType):
 class VolumetricType(Metrics):
     id = graphene.Int()
     realization = graphene.Int()
-    phase = graphene.Enum.from_enum(PhaseEnum)
+    phase = PhaseEnumGraphene
 
     def resolve_realization(self, info):
         return self.realization.realization
@@ -103,11 +104,11 @@ class CaseType(graphene.ObjectType):
     regions = OrderedList(graphene.String)
     zones = OrderedList(graphene.String)
     facies = OrderedList(graphene.String)
+    phases = OrderedList(PhaseEnumGraphene)
 
     @ordered_strings
     def resolve_regions(self, info):
-        regions = [region.region_name for region in get_distinct_location_keys(self.id, LocationModel.region_name)]
-        return regions
+        return [region.region_name for region in get_distinct_location_keys(self.id, LocationModel.region_name)]
 
     @ordered_strings
     def resolve_zones(self, info):
@@ -116,3 +117,12 @@ class CaseType(graphene.ObjectType):
     @ordered_strings
     def resolve_facies(self, info):
         return [facies.facies_name for facies in get_distinct_location_keys(self.id, LocationModel.facies_name)]
+
+    def resolve_phases(self, info):
+        phases = [
+            phase.phase
+            for phase in db.session.query(VolumetricsModel.phase).join(RealizationModel).join(LocationModel).filter_by(
+                case_id=self.id).distinct()
+        ]
+
+        return [phase for phase in PhaseEnum if phase in phases]  # Keep order from enum

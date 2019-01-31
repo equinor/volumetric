@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import graphene
 from graphql import GraphQLError
 
-from models import Field as FieldModel, Case as CaseModel, Task as TaskModel
+from models import Field as FieldModel, Case as CaseModel, Task as TaskModel, PhaseEnumGraphene
 from services.database_service import DatabaseService
 from utils.calculations import sum_volumetrics as calc_sum_volumetrics
 from utils.ordering import ordered_case, OrderedList
@@ -34,7 +34,7 @@ class Query(graphene.ObjectType):
                 field_types.append(field_type)
         return field_types
 
-    def resolve_volumetrics(self, info, case_id, **kwargs):
+    def resolve_volumetrics(self, info, case_id, phase, **kwargs):
         user = info.context.user
         case = CaseModel.query.filter(CaseModel.id == case_id).first()
 
@@ -46,7 +46,7 @@ class Query(graphene.ObjectType):
         if not filtered_kwargs and not case_id:
             raise GraphQLError('This query requires 1-4 filters.')
 
-        volumetrics = DatabaseService.get_volumetrics(case_id, filtered_kwargs)
+        volumetrics = DatabaseService.get_volumetrics(case_id, filtered_kwargs, phase)
         volumetrics = sorted(volumetrics, key=lambda volumetric: volumetric.realization.realization)
 
         summed_volumetrics = sum_volumetrics(volumetrics)
@@ -78,6 +78,7 @@ class Query(graphene.ObjectType):
         facies_names=graphene.List(graphene.String),
         region_names=graphene.List(graphene.String),
         zone_names=graphene.List(graphene.String),
+        phase=graphene.Argument(PhaseEnumGraphene),
         case_id=graphene.Int())
 
 
