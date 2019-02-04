@@ -5,10 +5,10 @@ import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import {Switch} from 'react-router';
 import {Dictionary} from './dictionary/';
 import {Contact} from './contact/';
-import {ApiDoc} from './ApiDoc/';
+import ApiDoc from './ApiDoc/';
 import {ImportMetrics} from './import/';
 import {AuthConsumer} from './auth/AuthContext';
-import ImportStatus from './import/ImportStatus'
+import ImportStatus from './import/ImportStatus';
 
 const AppContainer = styled.div`
   margin: 0 50px 25px;
@@ -81,15 +81,13 @@ const App = () => (
               <Route exact path="/" component={LocationContainer}/>
               <Route path="/dictionary" component={Dictionary}/>
               <Route path="/contact" component={Contact}/>
-              <Route path="/api-doc" component={ApiDoc}/>
+              <Route path="/api-doc" render={() => <ApiDoc user={user}/>}/>
               {user.isCreator && (
                 <Route path="/import" render={(routerProps) => <ImportMetrics {...routerProps} />}/>
               )}
             </Switch>
           </AppContainer>
-          <ImportStatus
-            user={user.shortName}
-          />
+          <ImportStatus user={user.shortName}/>
         </React.Fragment>
       </Router>
     )}

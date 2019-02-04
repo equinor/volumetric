@@ -5,16 +5,14 @@ const AuthContext = React.createContext();
 export class AuthProvider extends React.Component {
   constructor(props) {
     super(props);
-    // TODO: protection of getUser is for tests, we should figure out how to mock AuthContext
-    const user = props.getUser
-      ? props.getUser()
-      : { profile: { name: 'Not logged in', roles: [] } };
+    const user = props.getUser();
     const token = props.getToken && props.getToken();
-    const { name, roles, upn = [] } = user.profile;
+    const { name, roles, upn, exp = [] } = user.profile;
     this.state = {
       user: {
         name: name,
         shortName: upn.toString().substring(0, upn.lastIndexOf("@")),
+        tokenExpire: exp,
         isCreator:
           roles.includes('VolumetricAdmin') ||
           roles.includes('VolumetricCreator'),
