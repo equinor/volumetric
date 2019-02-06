@@ -1,10 +1,9 @@
 import React from 'react';
-import {getToken} from '../index';
+import { getToken } from '../index';
 import AccessToken from './AccessToken';
 import GraphQL from './GraphQL';
 import RestApi from './RestApi';
 import Intro from './Intro';
-
 
 class ApiDoc extends React.Component {
   constructor(props) {
@@ -27,7 +26,7 @@ class ApiDoc extends React.Component {
   render() {
     return (
       <div>
-        <Intro/>
+        <Intro />
         <AccessToken
           showToken={this.state.showToken}
           handleChange={this.handleChange}
@@ -35,11 +34,11 @@ class ApiDoc extends React.Component {
           token={this.state.token}
           expireDate={this.state.expireDate}
         />
-        <RestApi/>
-        <GraphQL/>
+        <RestApi />
+        <GraphQL />
       </div>
-    )
-  };
+    );
+  }
 }
 
-export default ApiDoc;
+export { ApiDoc };

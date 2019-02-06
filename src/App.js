@@ -1,13 +1,13 @@
 import React from 'react';
-import {LocationContainer} from './location/';
+import { LocationContainer } from './location/';
 import styled from 'styled-components';
-import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
-import {Switch} from 'react-router';
-import {Dictionary} from './dictionary/';
-import {Contact} from './contact/';
-import ApiDoc from './ApiDoc/';
-import {ImportMetrics} from './import/';
-import {AuthConsumer} from './auth/AuthContext';
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import { Switch } from 'react-router';
+import { Dictionary } from './dictionary/';
+import { Contact } from './contact/';
+import { ApiDoc } from './ApiDoc/';
+import { ImportMetrics } from './import/';
+import { AuthConsumer } from './auth/AuthContext';
 import ImportStatus from './import/ImportStatus';
 
 const AppContainer = styled.div`
@@ -59,7 +59,7 @@ const UserInfo = styled.h5`
 
 const App = () => (
   <AuthConsumer>
-    {({user}) => (
+    {({ user }) => (
       <Router>
         <React.Fragment>
           <AppHeader>
@@ -78,16 +78,19 @@ const App = () => (
           </AppHeader>
           <AppContainer>
             <Switch>
-              <Route exact path="/" component={LocationContainer}/>
-              <Route path="/dictionary" component={Dictionary}/>
-              <Route path="/contact" component={Contact}/>
-              <Route path="/api-doc" render={() => <ApiDoc user={user}/>}/>
+              <Route exact path="/" component={LocationContainer} />
+              <Route path="/dictionary" component={Dictionary} />
+              <Route path="/contact" component={Contact} />
+              <Route path="/api-doc" render={() => <ApiDoc user={user} />} />
               {user.isCreator && (
-                <Route path="/import" render={(routerProps) => <ImportMetrics {...routerProps} />}/>
+                <Route
+                  path="/import"
+                  render={routerProps => <ImportMetrics {...routerProps} />}
+                />
               )}
             </Switch>
           </AppContainer>
-          <ImportStatus user={user.shortName}/>
+          <ImportStatus user={user.shortName} />
         </React.Fragment>
       </Router>
     )}

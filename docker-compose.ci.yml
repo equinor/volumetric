@@ -5,7 +5,4 @@ services:
     image: $WEB_IMAGE
     ports:
       - 80:80
-    volumes:
-      - ./src:/code/src
-      - ./public:/code/public
     command: npm start
