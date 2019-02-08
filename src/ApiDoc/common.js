@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const CodeBox = styled.pre`
   font-size: 13px;
@@ -10,15 +10,15 @@ export const CodeBox = styled.pre`
   background-color: #fafafb;
   color: #393939;
   margin-top: 0;
-  font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
   width: fit-content;
 `;
 
 export const DocH2 = styled.h2`
-   color: #3c4146;
-   font-size: 18px;
-   font-weight: 300;
-   margin-bottom: 0;
+  color: #3c4146;
+  font-size: 18px;
+  font-weight: 300;
+  margin-bottom: 0;
 `;
 
 export const InlineCode = styled.b`
@@ -27,7 +27,7 @@ export const InlineCode = styled.b`
   background-color: #fafafb;
   color: #393939;
   margin-top: 0;
-  font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
   width: fit-content;
   display: inline;
   font-weight: 100;

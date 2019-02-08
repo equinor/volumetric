@@ -37,7 +37,11 @@ const addUnit = headerText => {
 const Headers = () => {
   return (
     <thead>
-      <tr>{HEADERS.map(name => <TH key={name}>{addUnit(name)}</TH>)}</tr>
+      <tr>
+        {HEADERS.map(name => (
+          <TH key={name}>{addUnit(name)}</TH>
+        ))}
+      </tr>
     </thead>
   );
 };

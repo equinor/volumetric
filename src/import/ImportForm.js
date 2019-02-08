@@ -97,12 +97,9 @@ export default ({
         )}
       </InputWrapper>
       <H4>File</H4>
-      {mutationData &&
-        mutationData.importCase.validationError && (
-          <ErrorText>
-            {mutationData.importCase.validationError.message}
-          </ErrorText>
-        )}
+      {mutationData && mutationData.importCase.validationError && (
+        <ErrorText>{mutationData.importCase.validationError.message}</ErrorText>
+      )}
       <InputWrapper>
         <FileUpload
           style={{ width: '100%' }}
