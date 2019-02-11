@@ -1,7 +1,7 @@
 #Validate .gitlab-ci.yml at https://git.statoil.no/ci/lint
 stages:
   - build
-  - test
+  - tests
   - publish
   - deploy
 
@@ -15,10 +15,16 @@ build_web:
   script:
     - docker build -t $BUILD_IMAGE .
 
-test_web:
-  stage: test
+test:
+  stage: tests
   script:
     - WEB_IMAGE=$BUILD_IMAGE docker-compose -f docker-compose.ci.yml run --rm -e CI=true web yarn test
+
+audit:
+  stage: tests
+  script:
+    - WEB_IMAGE=$BUILD_IMAGE docker-compose -f docker-compose.ci.yml run --rm web yarn audit
+  allow_failure: true
 
 publish_image:
   stage: publish
