@@ -26,6 +26,11 @@ audit:
     - WEB_IMAGE=$BUILD_IMAGE docker-compose -f docker-compose.ci.yml run --rm web yarn audit
   allow_failure: true
 
+format:
+  stage: tests
+  script:
+    - WEB_IMAGE=$BUILD_IMAGE docker-compose -f docker-compose.ci.yml run --rm web prettier --single-quote --trailing-comma all --list-different "{,*/**/}*.js" "!build/**/*.js" "!node_modules/**/*.js"
+
 publish_image:
   stage: publish
   before_script:
@@ -33,7 +38,6 @@ publish_image:
   script:
     - docker tag $BUILD_IMAGE $PUBLISH_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $PUBLISH_IMAGE:$CI_COMMIT_REF_NAME
-
 
 deploy_develop:
   stage: deploy

@@ -11,7 +11,7 @@ export class AuthProvider extends React.Component {
     this.state = {
       user: {
         name: name,
-        shortName: upn.toString().substring(0, upn.lastIndexOf("@")),
+        shortName: upn.toString().substring(0, upn.lastIndexOf('@')),
         tokenExpire: exp,
         isCreator:
           roles.includes('VolumetricAdmin') ||

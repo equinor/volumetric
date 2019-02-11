@@ -19,11 +19,10 @@ const fillBuckets = (data, bucketCount, bucketSize, min) => {
     Math.floor((value - min) / bucketSize),
   );
   // Count how many values are in each bucket
-  valuesToBucketArray.forEach(
-    bucketIndex =>
-      bucketIndex === bucketCount
-        ? buckets[bucketCount - 1]++
-        : buckets[bucketIndex]++,
+  valuesToBucketArray.forEach(bucketIndex =>
+    bucketIndex === bucketCount
+      ? buckets[bucketCount - 1]++
+      : buckets[bucketIndex]++,
   );
   // Calculate percentage
   return buckets.map(nofValues => (nofValues / data.length) * 100);
@@ -31,10 +30,7 @@ const fillBuckets = (data, bucketCount, bucketSize, min) => {
 
 const BucketRange = ({ bottomBucket, topBucket, isLast }) => (
   <tspan>
-    <tspan x="0">
-      [{bottomBucket}
-      -
-    </tspan>
+    <tspan x="0">[{bottomBucket}-</tspan>
     <tspan x="0" dy="1.3em">
       {topBucket}
       {isLast ? ']' : '>'}
@@ -111,8 +107,7 @@ const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
       <CenteredAxisLabel xAxis titleLength={18}>
         <tspan>
           Bucket ranges (m
-          <tspan baselineShift="super">3</tspan>
-          )
+          <tspan baselineShift="super">3</tspan>)
         </tspan>
       </CenteredAxisLabel>
     </FlexibleXYPlot>
