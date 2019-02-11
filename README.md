@@ -12,13 +12,13 @@ Install yarn locally
 
 Install packages locally:
 
-`yarn --pure-lockfile`
+`yarn install`
 
 Make sure the project is activated.
 
 Add the pre-commit hook:
 
-`cp pre-commit.template .git/hooks/pre-commit`
+`ln -s $PWD/pre-commit $PWD/.git/hooks/pre-commit`
 
 Prettier should now run when you commit changes.
 
