@@ -1,5 +1,19 @@
 import { gql } from 'apollo-boost';
 
+const METRICS_FRAGMENT = gql`
+  fragment AllMetrics on Metrics {
+    stoiip
+    net
+    hcpv
+    porv
+    bulk
+    giip
+    associatedgas
+    associatedliquid
+    recoverable
+  }
+`;
+
 export const GET_METRICS = gql`
   query Metrics(
     $caseId: Int!
@@ -17,60 +31,21 @@ export const GET_METRICS = gql`
     ) {
       summedVolumetrics {
         realization
-        bulk
-        net
-        porv
-        hcpv
-        stoiip
-        giip
-        associatedgas
-        associatedliquid
-        recoverable
+        ...AllMetrics
       }
       p90: percentiles(percentile: 90) {
-        stoiip
-        net
-        hcpv
-        porv
-        bulk
-        giip
-        associatedgas
-        associatedliquid
-        recoverable
+        ...AllMetrics
       }
       p10: percentiles(percentile: 10) {
-        stoiip
-        net
-        hcpv
-        porv
-        bulk
-        giip
-        associatedgas
-        associatedliquid
-        recoverable
+        ...AllMetrics
       }
       p50: percentiles(percentile: 50) {
-        stoiip
-        net
-        hcpv
-        porv
-        bulk
-        giip
-        associatedgas
-        associatedliquid
-        recoverable
+        ...AllMetrics
       }
       means {
-        stoiip
-        net
-        hcpv
-        porv
-        bulk
-        giip
-        associatedgas
-        associatedliquid
-        recoverable
+        ...AllMetrics
       }
     }
   }
+  ${METRICS_FRAGMENT}
 `;
