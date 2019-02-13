@@ -1,8 +1,8 @@
 import graphene
 
+from models import (Location as LocationModel, PhaseEnum, Volumetrics as VolumetricsModel,
+                    Realization as RealizationModel, db)
 from models.case import CaseTypeEnum
-from models import (Location as LocationModel, PhaseEnum, Volumetrics as VolumetricsModel, Realization as
-                    RealizationModel, db)
 from models.volumetrics import PhaseEnumGraphene
 from utils.calculations import calculate, get_pvalue_func, get_mean, METRICS
 from utils.ordering import OrderedList, ordered_strings
@@ -105,6 +105,7 @@ class CaseType(graphene.ObjectType):
     zones = OrderedList(graphene.String)
     facies = OrderedList(graphene.String)
     phases = OrderedList(PhaseEnumGraphene)
+    metrics = OrderedList(graphene.String)
 
     @ordered_strings
     def resolve_regions(self, info):
@@ -117,6 +118,24 @@ class CaseType(graphene.ObjectType):
     @ordered_strings
     def resolve_facies(self, info):
         return [facies.facies_name for facies in get_distinct_location_keys(self.id, LocationModel.facies_name)]
+
+    @ordered_strings
+    def resolve_metrics(self, info):
+        has_metric = []
+        for metric in METRICS:
+            temp = (db.engine.execute(f'''\
+                SELECT  {metric}
+                    FROM volumetrics, realization, location
+                    WHERE location.case_id = {self.id}
+                        AND {metric} NOTNULL
+                        AND volumetrics.realization_id = realization.id
+                        AND realization.location_id = location.id
+                    LIMIT 1;
+            ''')).first()
+
+            if temp:
+                has_metric.append(temp.keys()[0])
+        return has_metric
 
     def resolve_phases(self, info):
         phases = [

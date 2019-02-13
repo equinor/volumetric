@@ -27,11 +27,17 @@ def file_upload_with_auth():
     return file_upload()
 
 
+def case_endpoint_with_auth(case_id):
+    user = get_validated_user()
+    request.user = user
+    return case_endpoint(case_id)
+
+
 def create_api(app):
     app.add_url_rule('/graphql', methods=['POST', 'GET'], view_func=graphql_view())
 
     app.add_url_rule('/upload', methods=['POST'], view_func=file_upload_with_auth)
 
-    app.add_url_rule('/case/<case_id>', methods=['GET'], view_func=case_endpoint)
+    app.add_url_rule('/case/<case_id>', methods=['GET'], view_func=case_endpoint_with_auth)
 
     return app

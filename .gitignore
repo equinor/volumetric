@@ -7,3 +7,4 @@ commands
 __pycache__/
 pycharm-debug-py3k.egg
 instance/uploads
+pycharm-debug.egg
