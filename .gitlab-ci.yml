@@ -1,7 +1,7 @@
 #Validate .gitlab-ci.yml at https://git.statoil.no/ci/lint
 stages:
   - build
-  - test
+  - tests
   - publish
   - document
   - deploy
@@ -16,8 +16,20 @@ build_api:
   script:
     - docker build -t $BUILD_IMAGE .
 
-feature-tests:
-  stage: test
+format:
+  stage: tests
+  variables:
+    COMPOSE_PROJECT_NAME: api$CI_JOB_ID
+  before_script:
+    - docker network create vlmtrc-ci-net-$CI_JOB_ID
+  script:
+    - docker-compose -f docker-compose.ci.yml run --no-deps --rm api yapf --diff --recursive -p .
+  after_script:
+    - docker-compose -f docker-compose.ci.yml down
+    - docker network rm vlmtrc-ci-net-$CI_JOB_ID
+
+features:
+  stage: tests
   variables:
     COMPOSE_PROJECT_NAME: api$CI_JOB_ID
   before_script:

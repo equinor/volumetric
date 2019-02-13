@@ -48,3 +48,13 @@ Make sure to enable remote debugging in config.py
 Make sure you have the right certificates in your docker image. 
 
 On docker build, there has to be a `ca-bundle.trust.crt` that contains StatoilLightCA.crt and StatoilRootCA.crt.
+
+## Setup
+
+### Pre-commit hook:
+
+Activate and build the api docker image
+
+Add the pre-commit hook:
+
+`ln -s $PWD/pre-commit $PWD/.git/hooks/pre-commit`

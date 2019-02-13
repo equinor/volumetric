@@ -21,7 +21,7 @@ service_is_ready() {
 first_arg="$1"
 
 # Feature tests are not depended on database service
-if [ ! -z $DATABASE_HOST ] && [ ${first_arg} != 'tests' ]; then
+if [ ! -z $DATABASE_HOST ] && [ ${first_arg} != 'tests' ] && [ ${first_arg} != 'yapf' ]; then
     service_is_ready "DATABASE" ${DATABASE_HOST} ${DATABASE_PORT}
 fi
 
