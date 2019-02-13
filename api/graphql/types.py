@@ -1,7 +1,7 @@
 import graphene
 
-from models import (Location as LocationModel, PhaseEnum, Volumetrics as VolumetricsModel,
-                    Realization as RealizationModel, db)
+from models import (Location as LocationModel, PhaseEnum, Volumetrics as VolumetricsModel, Realization as
+                    RealizationModel, db)
 from models.case import CaseTypeEnum
 from models.volumetrics import PhaseEnumGraphene
 from utils.calculations import calculate, get_pvalue_func, get_mean, METRICS
@@ -18,7 +18,7 @@ def case_type_description(value):
 CaseTypeGrapheneEnum = graphene.Enum.from_enum(CaseTypeEnum, description=lambda value: case_type_description(value))
 
 
-class Metrics(graphene.ObjectType):
+class Metrics(graphene.Interface):
     bulk = graphene.Float()
     net = graphene.Float()
     porv = graphene.Float()
@@ -28,6 +28,11 @@ class Metrics(graphene.ObjectType):
     associatedgas = graphene.Float()
     associatedliquid = graphene.Float()
     recoverable = graphene.Float()
+
+
+class MetricsType(graphene.ObjectType):
+    class Meta:
+        interfaces = (Metrics, )
 
 
 class TaskType(graphene.ObjectType):
@@ -40,7 +45,10 @@ class TaskType(graphene.ObjectType):
     message = graphene.String()
 
 
-class VolumetricType(Metrics):
+class VolumetricType(graphene.ObjectType):
+    class Meta:
+        interfaces = (Metrics, )
+
     id = graphene.Int()
     realization = graphene.Int()
     phase = PhaseEnumGraphene
@@ -59,21 +67,21 @@ class VolumetricsType(graphene.ObjectType):
     summed_volumetrics = graphene.List(
         VolumetricType, description='A list of volumetrics, grouped and summed by realization')
     percentiles = graphene.Field(
-        Metrics,
+        MetricsType,
         percentile=graphene.Int(),
         description='The given percentile, calculated on the "summed_volumetrics list"')
-    means = graphene.Field(Metrics, description='The calculated mean on the "summed_volumetrics" list')
+    means = graphene.Field(MetricsType, description='The calculated mean on the "summed_volumetrics" list')
 
     def resolve_percentiles(self, info, percentile):
         volumetrics = self.summed_volumetrics
-        return Metrics(
+        return MetricsType(
             **
             {metric_name: calculate(volumetrics, metric_name, get_pvalue_func(percentile))
              for metric_name in METRICS})
 
     def resolve_means(self, info):
         volumetrics = self.summed_volumetrics
-        return Metrics(**{metric_name: calculate(volumetrics, metric_name, get_mean) for metric_name in METRICS})
+        return MetricsType(**{metric_name: calculate(volumetrics, metric_name, get_mean) for metric_name in METRICS})
 
 
 class LocationType(graphene.ObjectType):
