@@ -24,18 +24,18 @@ const NoData = styled.div`
   padding-right: 24vh;
 `;
 
-const Plot = data => {
+const Plot = ({ data, filterMetrics }) => {
   const singleRealization = data.summedVolumetrics.length === 1;
   return singleRealization ? (
-    <BarChart metrics={data.summedVolumetrics} />
+    <BarChart metrics={data.summedVolumetrics} filterMetrics={filterMetrics} />
   ) : (
-    <Histogram {...data} />
+    <Histogram {...data} filterMetrics={filterMetrics} />
   );
 };
 
 class VisToggler extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       showVis: 'plot',
     };
@@ -49,7 +49,7 @@ class VisToggler extends React.Component {
   }
 
   render() {
-    const { data, isLoading } = this.props;
+    const { data, isLoading, filterMetrics } = this.props;
 
     if (!isLoading && data.summedVolumetrics.length === 0) {
       return <NoData>No data...</NoData>;
@@ -68,11 +68,18 @@ class VisToggler extends React.Component {
           <StyledSpinner isLoading={isLoading}>
             {this.state.showVis === 'table' && (
               <AsyncRender
-                render={() => <Table metrics={data.summedVolumetrics} />}
+                render={() => (
+                  <Table
+                    metrics={data.summedVolumetrics}
+                    filterMetrics={filterMetrics}
+                  />
+                )}
               />
             )}
 
-            {this.state.showVis === 'plot' && <Plot {...data} />}
+            {this.state.showVis === 'plot' && (
+              <Plot data={data} filterMetrics={filterMetrics} />
+            )}
           </StyledSpinner>
         </VisStyled>
       </div>

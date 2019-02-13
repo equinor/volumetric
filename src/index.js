@@ -31,7 +31,6 @@ const client = new ApolloClient({
       metrics: {
         __typename: 'Metrics',
         selectedMetric: 'bulk',
-        metrics: ['bulk', 'net', 'porv', 'hcpv', 'stoiip'],
       },
     },
   },

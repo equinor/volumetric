@@ -1,10 +1,9 @@
 import React from 'react';
-import { FlexibleXYPlot, XAxis, YAxis, VerticalBarSeries } from 'react-vis';
+import { FlexibleXYPlot, VerticalBarSeries, XAxis, YAxis } from 'react-vis';
 import { labelFormater } from '../../utils/text';
 import CenteredAxisLabel from './common/CenteredAxisLabel';
 import { PlotHeader, PlotStyled } from './common/PlotStyle';
 import MetricSelector from './common/MetricSelector';
-import { capitalize } from '../common/utils';
 import StatisticsDisplay from './common/StatisticsDisplay';
 
 const getMinMax = array => ({
@@ -101,10 +100,10 @@ const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
         tickFormat={bucketFormater}
       />
       <YAxis />
-      <CenteredAxisLabel titleLength={27}>
+      <CenteredAxisLabel titleLength={27} YOffset={1.25}>
         Percent of realizations (%)
       </CenteredAxisLabel>
-      <CenteredAxisLabel xAxis titleLength={18}>
+      <CenteredAxisLabel xAxis titleLength={18} YOffset={1.25}>
         <tspan>
           Bucket ranges (m
           <tspan baselineShift="super">3</tspan>)
@@ -115,11 +114,14 @@ const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
 };
 
 export default props => {
+  const numberOfRealizations =
+    props.summedVolumetrics[props.summedVolumetrics.length - 1].realization + 1;
   return (
     <PlotStyled>
       <MetricSelector
-        renderHeader={selectedMetric => (
-          <PlotHeader>{`${capitalize(selectedMetric)} histogram`}</PlotHeader>
+        filterMetrics={props.filterMetrics}
+        renderHeader={() => (
+          <PlotHeader>{`Multi Realization Case (${numberOfRealizations})`}</PlotHeader>
         )}
         renderVis={selectedMetric => (
           <HistogramChart {...props} selectedMetric={selectedMetric} />

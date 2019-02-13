@@ -1,8 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { METRICS } from '../common/variables';
-
-const HEADERS = ['Realization', ...METRICS];
 
 const Table = styled.table`
   border-collapse: collapse;
@@ -24,8 +21,8 @@ const TH = styled.th`
   border: 1px solid lightgray;
 `;
 
-const addUnit = headerText => {
-  return METRICS.includes(headerText) ? (
+const addUnit = (headerText, availableMetrics) => {
+  return availableMetrics.includes(headerText) ? (
     <span>
       {headerText} (m<sup>3</sup>)
     </span>
@@ -34,12 +31,13 @@ const addUnit = headerText => {
   );
 };
 
-const Headers = () => {
+const Headers = ({ filterMetrics }) => {
+  const HEADERS = ['Realization', ...filterMetrics];
   return (
     <thead>
       <tr>
         {HEADERS.map(name => (
-          <TH key={name}>{addUnit(name)}</TH>
+          <TH key={name}>{addUnit(name, filterMetrics)}</TH>
         ))}
       </tr>
     </thead>
@@ -48,7 +46,8 @@ const Headers = () => {
 
 const handleNull = item => (item === null ? '-' : item);
 
-const Body = ({ metrics }) => {
+const Body = ({ metrics, filterMetrics }) => {
+  const HEADERS = ['Realization', ...filterMetrics];
   return (
     <TBody>
       {metrics.map((row, rowIndex) => {
@@ -66,11 +65,11 @@ const Body = ({ metrics }) => {
   );
 };
 
-export default ({ metrics }) => {
+export default ({ metrics, filterMetrics }) => {
   return (
     <Table>
-      <Headers />
-      <Body metrics={metrics} />
+      <Headers filterMetrics={filterMetrics} />
+      <Body metrics={metrics} filterMetrics={filterMetrics} />
     </Table>
   );
 };

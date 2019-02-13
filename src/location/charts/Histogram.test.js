@@ -27,7 +27,11 @@ it('renders without crashing', async () => {
   // First render will give loading=true from the MockedProvider
   ReactDOM.render(
     <MockedProvider mocks={mocks} addTypename={false}>
-      <Histogram {...volumetrics.data} selectedMetric={'bulk'} />
+      <Histogram
+        {...volumetrics.data}
+        selectedMetric={'bulk'}
+        filterMetrics={['bulk', 'net', 'porv', 'hcpv', 'stoiip']}
+      />
     </MockedProvider>,
     div,
   );

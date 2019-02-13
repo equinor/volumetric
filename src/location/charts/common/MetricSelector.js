@@ -31,31 +31,30 @@ export const GET_SELECTED_METRIC = gql`
   {
     metrics {
       selectedMetric @client
-      metrics @client
     }
   }
 `;
 
 export default props => {
-  const { renderHeader, renderVis, renderStats } = props;
+  const { renderHeader, renderVis, renderStats, filterMetrics } = props;
 
   return (
     <Query query={GET_SELECTED_METRIC}>
       {({ data, client, loading }) => {
         if (loading) return null;
-        const { metrics, selectedMetric } = data.metrics;
+        const { selectedMetric } = data.metrics;
         return (
           <React.Fragment>
             {renderHeader(selectedMetric)}
             <MetricSelectorStyled>
-              {metrics.map((metric, index) => {
+              {filterMetrics.map((metric, index) => {
                 const isSelected = selectedMetric === metric.toLowerCase();
                 return (
                   <MetricRadioButtonStyle
                     key={`metric-selector-btn-${metric}`}
                     selected={isSelected}
                     first={index === 0}
-                    last={index === metrics.length - 1}
+                    last={index === filterMetrics.length - 1}
                   >
                     <RadioButton
                       onChange={selectedMetric =>
@@ -77,7 +76,7 @@ export default props => {
                 );
               })}
             </MetricSelectorStyled>
-            {renderVis(selectedMetric)}
+            {renderVis && renderVis(selectedMetric)}
             {renderStats && renderStats(selectedMetric)}
           </React.Fragment>
         );

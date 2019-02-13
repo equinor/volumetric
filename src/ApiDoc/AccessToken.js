@@ -17,7 +17,7 @@ const TokenWrapper = styled.div`
 `;
 
 const TokenCodeBox = styled(CodeBox)`
-  width: -webkit-fill-available;
+  width: 95%;
   margin: 10px 10px 10px 10px;
 `;
 

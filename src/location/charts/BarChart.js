@@ -1,43 +1,57 @@
 import React from 'react';
 import {
   FlexibleXYPlot,
+  HorizontalGridLines,
+  LabelSeries,
+  VerticalBarSeries,
+  VerticalGridLines,
   XAxis,
   YAxis,
-  VerticalBarSeries,
-  HorizontalGridLines,
-  VerticalGridLines,
 } from 'react-vis';
 import { labelFormater } from '../../utils/text';
 import CenteredAxisLabel from './common/CenteredAxisLabel';
 import { PlotHeader, PlotStyled } from './common/PlotStyle';
 
-const ignoreKeys = ['__typename', 'id', 'realization'];
-const filterKeys = key => !ignoreKeys.includes(key);
-
-export default ({ metrics }) => {
-  const verticalBarSeriesList = metrics.map((row, index) => {
-    const data = Object.keys(row)
-      .filter(filterKeys)
-      .map(key => ({ x: key, y: row[key] }));
-    return <VerticalBarSeries key={`bar-series-${index}`} data={data} />;
-  });
+export default ({ metrics, filterMetrics }) => {
+  const singleRealization = metrics[0];
+  const labeledData = Object.keys(singleRealization)
+    .filter(key => filterMetrics.includes(key))
+    .map(key => ({
+      x: key,
+      y: singleRealization[key],
+      label: labelFormater(singleRealization[key]),
+    }));
 
   const marginLeft = 75;
 
   return (
     <PlotStyled>
-      <PlotHeader>All metrics</PlotHeader>
+      <PlotHeader>{`Single Realization Case`}</PlotHeader>
       <FlexibleXYPlot
         style={{ padding: '5px' }}
         xType={'ordinal'}
-        margin={{ left: marginLeft, bottom: 100 }}
+        margin={{ left: marginLeft, bottom: 100, top: 100 }}
       >
         <VerticalGridLines />
         <HorizontalGridLines />
-        {verticalBarSeriesList}
+        <VerticalBarSeries data={labeledData} />
         <XAxis />
         <YAxis tickFormat={tick => labelFormater(tick)} />
-        <CenteredAxisLabel title={'Value'} />
+        <LabelSeries
+          data={labeledData}
+          allowOffsetToBeReversed
+          labelAnchorX={'middle'}
+          labelAnchorY={'after-edge'}
+        />
+        <CenteredAxisLabel yAxis titleLength={40} YOffset={1.85}>
+          <tspan>
+            Volume in cubic squared (m
+            <tspan baselineShift="super">3</tspan>)
+          </tspan>
+        </CenteredAxisLabel>
+        <CenteredAxisLabel xAxis titleLength={20} YOffset={1.85}>
+          <tspan>Volumetrics</tspan>
+        </CenteredAxisLabel>
       </FlexibleXYPlot>
     </PlotStyled>
   );

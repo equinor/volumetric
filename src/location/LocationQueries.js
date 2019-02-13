@@ -22,6 +22,10 @@ export const GET_METRICS = gql`
         porv
         hcpv
         stoiip
+        giip
+        associatedgas
+        associatedliquid
+        recoverable
       }
       p90: percentiles(percentile: 90) {
         stoiip
@@ -29,6 +33,10 @@ export const GET_METRICS = gql`
         hcpv
         porv
         bulk
+        giip
+        associatedgas
+        associatedliquid
+        recoverable
       }
       p10: percentiles(percentile: 10) {
         stoiip
@@ -36,6 +44,10 @@ export const GET_METRICS = gql`
         hcpv
         porv
         bulk
+        giip
+        associatedgas
+        associatedliquid
+        recoverable
       }
       p50: percentiles(percentile: 50) {
         stoiip
@@ -43,6 +55,10 @@ export const GET_METRICS = gql`
         hcpv
         porv
         bulk
+        giip
+        associatedgas
+        associatedliquid
+        recoverable
       }
       means {
         stoiip
@@ -50,6 +66,10 @@ export const GET_METRICS = gql`
         hcpv
         porv
         bulk
+        giip
+        associatedgas
+        associatedliquid
+        recoverable
       }
     }
   }

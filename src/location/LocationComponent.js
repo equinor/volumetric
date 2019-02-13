@@ -8,24 +8,42 @@ import VisToggler from './VisToggler';
 import CaseInfo from './CaseInfo';
 import { H4 } from '../common/Headers';
 import ToggleButtonGroup from '../common/ToggleButtonGroup';
+import filterMetricsForPhase from '../utils/filterMetricsForPhase';
 
 const FilterPage = styled.div`
   display: flex;
   flex-flow: row;
 `;
 
-const VisWithData = ({ currentCase, facies, regions, zones, phase }) => {
+const VisWithData = ({
+  currentCase,
+  facies,
+  regions,
+  zones,
+  phase,
+  metrics,
+}) => {
   const variables = { caseId: currentCase.value, phase: phase.toUpperCase() };
   if (facies && facies.length > 0) variables['faciesNames'] = facies;
   if (regions && regions.length > 0) variables['regionNames'] = regions;
   if (zones && zones.length > 0) variables['zoneNames'] = zones;
+  if (metrics.length === 0) {
+    metrics = currentCase.availableMetrics;
+  }
+  metrics = filterMetricsForPhase(metrics, phase);
 
   return (
     <Query query={GET_METRICS} variables={variables}>
       {({ loading, error, data }) => {
         if (error) return <p>Error :(</p>;
 
-        return <VisToggler data={data.volumetrics} isLoading={loading} />;
+        return (
+          <VisToggler
+            data={data.volumetrics}
+            isLoading={loading}
+            filterMetrics={metrics}
+          />
+        );
       }}
     </Query>
   );
@@ -36,10 +54,19 @@ const LocationFilters = ({
   checkedRegions,
   checkedZones,
   checkedFacies,
+  checkedMetrics,
   currentCase,
+  phase,
 }) => {
   return (
     <React.Fragment>
+      <Filter
+        name="Metrics"
+        filters={filterMetricsForPhase(currentCase.metrics, phase)}
+        handleFilterChange={handleFilterChange}
+        category="metrics"
+        checked={checkedMetrics}
+      />
       <Filter
         name="Regions"
         filters={currentCase.regions}
@@ -88,7 +115,6 @@ class LocationComponent extends React.Component {
 
     const field = this.props.data.fields[0];
     const currentCase = field.cases[0];
-
     this.state = {
       field: {
         label: field.name,
@@ -97,11 +123,13 @@ class LocationComponent extends React.Component {
       currentCase: {
         label: `${currentCase.name} (${currentCase.caseVersion})`,
         value: currentCase.id,
+        availableMetrics: currentCase.metrics,
       },
       phase: currentCase.phases[0],
       regions: [],
       zones: [],
       facies: [],
+      metrics: [],
     };
   }
 
@@ -129,6 +157,7 @@ class LocationComponent extends React.Component {
       stateChanges['currentCase'] = {
         label: `${firstCase.name} (${firstCase.caseVersion})`,
         value: firstCase.id,
+        availableMetrics: firstCase.metrics,
       };
       stateChanges['phase'] = firstCase.phases[0];
     } else {
@@ -171,6 +200,8 @@ class LocationComponent extends React.Component {
               checkedRegions={this.state.regions}
               checkedZones={this.state.zones}
               checkedFacies={this.state.facies}
+              checkedMetrics={this.state.metrics}
+              phase={this.state.phase}
             />
           </FilterWrapper>
           <ContentWrapper>
