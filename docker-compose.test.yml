@@ -12,7 +12,7 @@ services:
 
   web:
     image: git.equinor.com:4567/volumetric/web:$WEB_TAG
-    command: serve -s build
+    command: serve --single build --listen 3000
     env_file:
       - secrets.env
     restart: unless-stopped
@@ -21,6 +21,8 @@ services:
     image: git.equinor.com:4567/volumetric/api:$API_TAG
     depends_on:
       - db
+      - redis
+      - worker
     env_file:
       - secrets.env
     environment:

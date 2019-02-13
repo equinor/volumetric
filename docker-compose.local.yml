@@ -4,7 +4,7 @@ services:
   proxy:
     build: proxy/local_development
     ports:
-      - 80:80
+      - "80:80"
     depends_on:
       - web
       - api
@@ -27,7 +27,7 @@ services:
         GID: $DOCKER_GROUP
     image: git.equinor.com:4567/volumetric/api
     volumes:
-    - ./../api:/code
+      - ./../api:/code
       - ./uploads:/code/instance/uploads
     depends_on:
       - db
@@ -52,8 +52,10 @@ services:
         GID: $DOCKER_GROUP
     image: git.equinor.com:4567/volumetric/api
     command: ["worker"]
+    depends_on:
+      - db
     volumes:
-    - ./../api:/code
+      - ./../api:/code
       - ./uploads:/code/instance/uploads:ro
     environment:
       - DATABASE_HOST=db
@@ -71,7 +73,7 @@ services:
       - "5432:5432"
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
-      - ./../api/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+     # - ./../api/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
     environment:
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
