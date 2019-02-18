@@ -44,7 +44,7 @@ services:
     image: redis:5.0-alpine
     restart: unless-stopped
     networks:
-      - sec-scan:
+      - sec-scan
 
   worker:
     image: $BUILD_IMAGE
