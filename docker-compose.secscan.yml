@@ -9,7 +9,7 @@ services:
     volumes:
       - ./proxy/x.volumetric.equinor.com.key:/etc/nginx/ssl/x.volumetric.equinor.com.key
     networks:
-      - sec-scan:
+      - sec-scan
 
   web:
     image: git.equinor.com:4567/volumetric/web:master
@@ -17,7 +17,7 @@ services:
     env_file:
       - secrets.env
     networks:
-      - sec-scan:
+      - sec-scan
 
   api:
     image: $BUILD_IMAGE
@@ -38,7 +38,7 @@ services:
     volumes:
       - ./uploads:/code/instance/uploads
     networks:
-      - sec-scan:
+      - sec-scan
 
   redis:
     image: redis:5.0-alpine
@@ -62,7 +62,7 @@ services:
     volumes:
       - ./uploads:/code/instance/uploads:ro
     networks:
-      - sec-scan:
+      - sec-scan
 
   db:
     image: postgres:10.2-alpine
@@ -76,7 +76,7 @@ services:
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
     networks:
-      - sec-scan:
+      - sec-scan
 
 networks:
   sec-scan:
