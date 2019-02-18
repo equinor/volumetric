@@ -20,7 +20,7 @@ services:
       - sec-scan:
 
   api:
-    image: git.equinor.com:4567/volumetric/api:master
+    image: $BUILD_IMAGE
     depends_on:
       - db
       - redis
@@ -47,7 +47,7 @@ services:
       - sec-scan:
 
   worker:
-    image: git.equinor.com:4567/volumetric/api:master
+    image: $BUILD_IMAGE
     command: ["worker"]
     env_file:
       - secrets.env
