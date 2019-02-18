@@ -80,3 +80,5 @@ services:
 
 networks:
   sec-scan:
+    external:
+      name: sec-scan-$CI_JOB_ID
