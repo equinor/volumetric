@@ -70,7 +70,7 @@ export const FileInput = ({ inputRef, onChange, filename }) => {
   return (
     <FileInputLabel>
       {buttonText}
-      <FileInputHidden innerRef={inputRef} type="file" onChange={onChange} />
+      <FileInputHidden ref={inputRef} type="file" onChange={onChange} />
     </FileInputLabel>
   );
 };
