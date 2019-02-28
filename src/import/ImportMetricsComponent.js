@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import ImportMutation from './ImportMutation';
 import { H2 } from '../common/Headers';
-import moment from 'moment';
 import { AuthConsumer } from '../auth/AuthContext';
 import ImportForm from './ImportForm';
 import { Link } from 'react-router-dom';
@@ -23,8 +22,8 @@ class ImportMetricsComponent extends React.Component {
       caseType: props.data.caseTypes[0],
       description: null,
       isOfficial: false,
-      officialFromDate: moment(),
-      officialToDate: moment(),
+      officialFromDate: new Date(),
+      officialToDate: new Date(),
     };
     this.handleChange = this.handleChange.bind(this);
   }
