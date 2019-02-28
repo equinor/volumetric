@@ -38,9 +38,10 @@ export class Cases extends React.Component {
 
     const cases =
       data !== undefined
-        ? data.cases.map(({ id, name, caseVersion }) => ({
+        ? data.cases.map(({ id, name, caseVersion, metrics }) => ({
             value: id,
             label: `${name} (${caseVersion})`,
+            availableMetrics: metrics,
           }))
         : [];
 
