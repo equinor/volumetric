@@ -127,11 +127,10 @@ class CaseType(graphene.ObjectType):
     def resolve_facies(self, info):
         return [facies.facies_name for facies in get_distinct_location_keys(self.id, LocationModel.facies_name)]
 
-    @ordered_strings
     def resolve_metrics(self, info):
-        has_metric = []
+        found_metrics = []
         for metric in METRICS:
-            temp = (db.engine.execute(f'''\
+            found_metric = (db.engine.execute(f'''\
                 SELECT  {metric}
                     FROM volumetrics, realization, location
                     WHERE location.case_id = {self.id}
@@ -141,9 +140,10 @@ class CaseType(graphene.ObjectType):
                     LIMIT 1;
             ''')).first()
 
-            if temp:
-                has_metric.append(temp.keys()[0])
-        return has_metric
+            if found_metric:
+                found_metrics.append(found_metric.keys()[0])
+
+        return [metric for metric in METRICS if metric in found_metrics]
 
     def resolve_phases(self, info):
         phases = [

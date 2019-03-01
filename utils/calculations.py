@@ -1,6 +1,7 @@
 import numpy as np
 
-METRICS = ('stoiip', 'bulk', 'net', 'porv', 'hcpv', 'giip', 'associatedgas', 'associatedliquid', 'recoverable')
+# Order matters
+METRICS = ('bulk', 'net', 'porv', 'hcpv', 'stoiip', 'giip', 'associatedgas', 'associatedliquid', 'recoverable')
 
 
 def calculate(volumetrics, metric_name, calculation_function):
