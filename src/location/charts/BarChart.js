@@ -14,13 +14,11 @@ import { PlotHeader, PlotStyled } from './common/PlotStyle';
 
 export default ({ metrics, filterMetrics }) => {
   const singleRealization = metrics[0];
-  const labeledData = Object.keys(singleRealization)
-    .filter(key => filterMetrics.includes(key))
-    .map(key => ({
-      x: key,
-      y: singleRealization[key],
-      label: labelFormater(singleRealization[key]),
-    }));
+  const labeledData = filterMetrics.map(key => ({
+    x: key,
+    y: singleRealization[key],
+    label: labelFormater(singleRealization[key]),
+  }));
 
   const marginLeft = 75;
 

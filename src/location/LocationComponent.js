@@ -137,6 +137,15 @@ class LocationComponent extends React.Component {
     const { checked, value } = event.target;
 
     this.setState(prevState => {
+      if (category === 'metrics') {
+        return checked
+          ? {
+              [category]: this.state.currentCase.availableMetrics.filter(
+                metric => [...prevState[category], value].includes(metric),
+              ),
+            }
+          : { [category]: prevState[category].filter(item => item !== value) };
+      }
       return checked
         ? { [category]: [...prevState[category], value] }
         : { [category]: prevState[category].filter(item => item !== value) };
