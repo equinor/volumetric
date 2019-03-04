@@ -15,6 +15,8 @@ const ToggleButtonStyled = styled(RadioButtonStyled).attrs({
   min-width: 40px;
 `;
 
+ToggleButtonStyled.displayName = 'ToggleButtonStyled';
+
 const ToggleButton = props => {
   const { onChange, value, selected, buttonStyle } = props;
 

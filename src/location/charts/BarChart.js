@@ -20,7 +20,7 @@ export default ({ metrics, filterMetrics }) => {
     label: labelFormater(singleRealization[key]),
   }));
 
-  const marginLeft = 75;
+  const marginLeft = 85;
 
   return (
     <PlotStyled>
@@ -28,7 +28,7 @@ export default ({ metrics, filterMetrics }) => {
       <FlexibleXYPlot
         style={{ padding: '5px' }}
         xType={'ordinal'}
-        margin={{ left: marginLeft, bottom: 100, top: 100 }}
+        margin={{ left: marginLeft, bottom: 100, top: 20 }}
       >
         <VerticalGridLines />
         <HorizontalGridLines />
@@ -39,15 +39,17 @@ export default ({ metrics, filterMetrics }) => {
           data={labeledData}
           allowOffsetToBeReversed
           labelAnchorX={'middle'}
-          labelAnchorY={'after-edge'}
+          labelAnchorY={'text-after-edge'}
         />
-        <CenteredAxisLabel yAxis titleLength={40} YOffset={1.85}>
+        <CenteredAxisLabel titleLength={11}>
           <tspan>
-            Volume in cubic squared (m
-            <tspan baselineShift="super">3</tspan>)
+            Volume (m<tspan dy={-5}>3</tspan>)
           </tspan>
         </CenteredAxisLabel>
-        <CenteredAxisLabel xAxis titleLength={20} YOffset={1.85}>
+        <CenteredAxisLabel xAxis titleLength={7}>
+          Metrics
+        </CenteredAxisLabel>
+        <CenteredAxisLabel xAxis titleLength={20} yOffset={1.85}>
           <tspan>Volumetrics</tspan>
         </CenteredAxisLabel>
       </FlexibleXYPlot>

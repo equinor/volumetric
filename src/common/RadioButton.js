@@ -40,9 +40,9 @@ export const RadioButtonStyled = styled.label`
 `;
 
 RadioButtonStyled.propTypes = {
-  hoverColor: PropTypes.string.isRequired,
-  defaultColor: PropTypes.string.isRequired,
-  selectedColor: PropTypes.string.isRequired,
+  hoverColor: PropTypes.string,
+  defaultColor: PropTypes.string,
+  selectedColor: PropTypes.string,
 };
 
 const RadioButton = props => {

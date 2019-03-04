@@ -27,18 +27,30 @@ const fillBuckets = (data, bucketCount, bucketSize, min) => {
   return buckets.map(nofValues => (nofValues / data.length) * 100);
 };
 
-const BucketRange = ({ bottomBucket, topBucket, isLast }) => (
-  <tspan>
-    <tspan x="0">[{bottomBucket}-</tspan>
-    <tspan x="0" dy="1.3em">
-      {topBucket}
-      {isLast ? ']' : '>'}
-    </tspan>
-  </tspan>
-);
+const BucketRange = props => {
+  const { bottomBucket, topBucket, isLast, dy, transform, textAnchor } = props;
+  // Placement of tick is not handled automatically when the tick is a complex element like this one.
+  // Need to add dy, transform and textAnchor to text-element. Given as props from react-vis
+  return (
+    <text dy={dy} transform={transform} textAnchor={textAnchor}>
+      <tspan x="0">[{bottomBucket}-</tspan>
+      <tspan x="0" dy="1.3em">
+        {topBucket}
+        {isLast ? ']' : '>'}
+      </tspan>
+    </text>
+  );
+};
 
-const getBucketFormater = (bucketData, bucketCount) => bucketIndex => {
-  const { bottomBucket, topBucket } = bucketData[bucketIndex];
+const getBucketFormatter = (bucketData, bucketCount) => (
+  value,
+  bucketIndex,
+) => {
+  let { bottomBucket, topBucket } = bucketData[bucketIndex];
+
+  bottomBucket = labelFormater(bottomBucket);
+  topBucket = labelFormater(topBucket);
+
   switch (parseInt(bucketIndex, 10)) {
     case 0: // First bucket
       return <BucketRange bottomBucket={bottomBucket} topBucket={topBucket} />;
@@ -59,7 +71,22 @@ const getHistogramData = (data, bucketCount = 10) => {
   const { min, max } = getMinMax(data);
   const bucketRange = max - min;
   const bucketSize = bucketRange / bucketCount;
+
+  // return a single bucket when all values are equal
+  if (min === max) {
+    return {
+      histogramData: [{ x: 1, y: 100 }],
+      bucketFormatter: () => labelFormater(min),
+    };
+  }
+
   const buckets = fillBuckets(data, bucketCount, bucketSize, min);
+  const bucketData = buckets.map((value, index) => {
+    return {
+      bottomBucket: bucketSize * index + min,
+      topBucket: bucketSize * (index + 1) + min,
+    };
+  });
   return {
     histogramData: buckets.map((value, index) => {
       return {
@@ -67,12 +94,7 @@ const getHistogramData = (data, bucketCount = 10) => {
         y: value,
       };
     }),
-    bucketData: buckets.map((value, index) => {
-      return {
-        bottomBucket: labelFormater(bucketSize * index + min),
-        topBucket: labelFormater(bucketSize * (index + 1) + min),
-      };
-    }),
+    bucketFormatter: getBucketFormatter(bucketData, bucketCount),
   };
 };
 
@@ -81,9 +103,7 @@ const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
   const data = metrics.map(metric => {
     return metric[selectedMetric];
   });
-  const bucketCount = 10;
-  const { histogramData, bucketData } = getHistogramData(data, bucketCount);
-  const bucketFormater = getBucketFormater(bucketData, bucketCount);
+  const { histogramData, bucketFormatter } = getHistogramData(data);
   return (
     <FlexibleXYPlot
       style={{ padding: '5px' }}
@@ -94,19 +114,20 @@ const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
       <XAxis
         style={{
           ticks: {
-            fontSize: '0.9em',
+            marginTop: '20px',
           },
         }}
-        tickFormat={bucketFormater}
+        tickValues={histogramData.map(({ x }) => x)}
+        tickFormat={bucketFormatter}
       />
       <YAxis />
-      <CenteredAxisLabel titleLength={27} YOffset={1.25}>
+      <CenteredAxisLabel titleLength={27}>
         Percent of realizations (%)
       </CenteredAxisLabel>
-      <CenteredAxisLabel xAxis titleLength={18} YOffset={1.25}>
+      <CenteredAxisLabel xAxis titleLength={18}>
         <tspan>
           Bucket ranges (m
-          <tspan baselineShift="super">3</tspan>)
+          <tspan dy={-5}>3</tspan>)
         </tspan>
       </CenteredAxisLabel>
     </FlexibleXYPlot>
