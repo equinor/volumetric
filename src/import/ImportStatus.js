@@ -1,195 +1,170 @@
 import React from 'react';
 import styled from 'styled-components';
 import { GET_UPLOADS } from '../common/Queries';
-import GraphqlError from '../common/GraphqlErrorHandling';
 import { Query } from 'react-apollo';
-
-const UploadFooter = styled.div`
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
-  width: 100%;
-  display: flex;
-  position: fixed;
-  bottom: 0px;
-  border: 1px solid rgb(230, 230, 230);
-  box-shadow: 0 -2px 4px rgb(230, 230, 230, 0.9);
-`;
+import {
+  SUCCESS_COLOR,
+  FAILED_COLOR,
+  WORKING_COLOR,
+  NEUTRAL_SEPARATOR_COLOR,
+} from '../common/variables';
 
 const TaskContainer = styled.div`
-  background-color: #bfbfbf
   justify-content: space-around;
   display: flex;
-  border: 1px solid white;
-  border-radius: 5px;
-  margin: 2px;
+  padding: 20px 5px;
+  border-bottom: 1px solid ${NEUTRAL_SEPARATOR_COLOR};
+  ${props => props.first && `border-top: 1px solid ${NEUTRAL_SEPARATOR_COLOR};`}
 `;
 
-const TaskStatus = styled.h5`
-  margin: 5px;
+const TaskStatus = styled.div`
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  display: inline-flex;
+  margin-right: 35px;
+  border: 1px solid ${props => props.color};
+  color: ${props => props.color};
+  border-radius: 4px;
+  line-height: 20px;
 `;
 
 const TaskDescription = styled.div`
-  font-size: 14px;
   display: flex;
-  flex-direction: column;
-  margin: 5px;
+  flex-direction: row;
+  flex-grow: 1;
+  align-items: center;
 `;
 
-const TaskCheckMark = styled.span`
-  font-size: 24px;
-  color: green;
-`;
-
-const TaskCheckCross = styled.span`
-  font-size: 24px;
-  color: #e54242;
-`;
-
-const DownArrow = styled.i`
-  border: solid black;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  padding: 3px;
-  transform: rotate(45deg);
-`;
-
-const Circle = styled.div`
-  border: 2px solid #ccc;
-  border-radius: 50%;
+const TaskIcon = styled.div`
   height: 18px;
   width: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin: 5px;
-
-  &:hover {
-    border: 2px solid black;
-  }
+  line-height: 18px;
+  border-radius: 50%;
+  border: 1px solid;
+  font-size: 14px;
+  margin-right: 8px;
 `;
 
-const MaximizeButton = styled.span`
-  cursor: pointer;
-  font-size: 19px;
-  padding: 5px 0px 0px 5px;
-  position: fixed;
-  bottom: 0px;
-  right: 0px;
-  border: 1px solid rgb(230, 230, 230);
-  border-top-left-radius: 15px;
-  box-shadow: 0 -1px 4px rgb(230, 230, 230, 0.9);
+const TaskDescriptionItem = styled.div`
+  flex-grow: ${props => (props.grow ? props.grow : '1')};
+  flex-basis: 0;
+  flex-shrink: ${props => (props.shrink ? props.shrink : '0')};
 `;
 
-function MinimizeButton({ minimizeMaximize }) {
-  return (
-    <Circle onClick={minimizeMaximize}>
-      <DownArrow />
-    </Circle>
-  );
-}
+const TaskStatusWrapper = styled.div`
+  min-width: 140px;
+`;
 
-function Task({ id, caseName, failed, complete, message }) {
-  let status;
-
+const TaskStatusComponent = ({ complete, failed }) => {
   if (failed) {
-    status = <TaskCheckCross>&#10007;</TaskCheckCross>;
+    return (
+      <TaskStatusWrapper>
+        <TaskStatus color={FAILED_COLOR}>
+          <TaskIcon>&#10007;</TaskIcon>
+          failed
+        </TaskStatus>
+      </TaskStatusWrapper>
+    );
+  } else if (complete) {
+    return (
+      <TaskStatusWrapper>
+        <TaskStatus color={SUCCESS_COLOR}>
+          <TaskIcon>&#10003;</TaskIcon>
+          complete
+        </TaskStatus>
+      </TaskStatusWrapper>
+    );
   } else {
-    if (complete) {
-      status = <TaskCheckMark>&#10003;</TaskCheckMark>;
-    } else {
-      status = 'Working...';
-    }
+    return (
+      <TaskStatusWrapper>
+        <TaskStatus color={WORKING_COLOR}>Working...</TaskStatus>
+      </TaskStatusWrapper>
+    );
   }
+};
+
+function Task({ queuedAt, caseName, failed, complete, message, first }) {
+  const queuedAtDate = new Date(queuedAt);
+
   return (
-    <TaskContainer key={id}>
+    <TaskContainer first={first}>
+      <TaskStatusComponent complete={complete} failed={failed} />
       <TaskDescription>
-        <div>
+        <TaskDescriptionItem shrink="3">
           <b>Case: </b>
           {caseName}
-        </div>
-        <div>
-          <b>ID: </b>
-          {id}
-        </div>
+        </TaskDescriptionItem>
+        <TaskDescriptionItem grow={!failed ? '5' : '2'}>
+          <b>Import time: </b>
+          {`${queuedAtDate.toString()}`}
+        </TaskDescriptionItem>
         {failed && (
-          <div>
+          <TaskDescriptionItem grow={'3'}>
             <b>Message: </b>
             {message}
-          </div>
+          </TaskDescriptionItem>
         )}
       </TaskDescription>
-      <TaskStatus>{status}</TaskStatus>
     </TaskContainer>
   );
 }
 
-function ImportFooterWrapper({ tasks, hidden, minimizeMaximize }) {
-  let taskItems = tasks.map(task => Task(task));
+const TasksWrapper = styled.div`
+  margin-bottom: 50px;
+`;
+
+function Tasks({ tasks }) {
   return (
-    <div>
-      {hidden ? (
-        <MaximizeButton onClick={minimizeMaximize}>Show Uploads</MaximizeButton>
-      ) : (
-        <UploadFooter>
-          {taskItems}
-          <MinimizeButton minimizeMaximize={minimizeMaximize} />
-        </UploadFooter>
-      )}
-    </div>
+    <TasksWrapper>
+      {tasks.map((task, index) => (
+        <Task key={`task-${index}`} {...task} first={index === 0} />
+      ))}
+    </TasksWrapper>
   );
 }
 
-class ImportStatus extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hidden: true,
-      tasks: [],
-      pollInterval: 0,
-      variables: {
-        // TODO: Make API CaseInsensitive
-        user: props.user.toLowerCase(),
-        hours: 48,
-      },
-    };
-    this.minimizeMaximize = this.minimizeMaximize.bind(this);
-  }
+const hasWorkingTasks = data => {
+  return data.tasks.some(task => !task.failed && !task.complete);
+};
 
-  minimizeMaximize() {
-    this.setState(prevState => ({
-      hidden: !prevState.hidden,
-      pollInterval: prevState.hidden ? 1500 : 0,
-    }));
-  }
+const ImportStatus = ({ user }) => {
+  return (
+    <Query
+      query={GET_UPLOADS}
+      variables={{
+        user: user.toLowerCase(),
+      }}
+    >
+      {props => {
+        const {
+          loading,
+          error,
+          data,
+          stopPolling,
+          startPolling,
+          client,
+        } = props;
 
-  render() {
-    return (
-      <Query
-        query={GET_UPLOADS}
-        variables={this.state.variables}
-        pollInterval={this.state.pollInterval}
-      >
-        {props => {
-          const { loading, error, data } = props;
+        if (loading) return <p>Loading</p>;
+        if (error) return <p>Could not load imports</p>;
 
-          if (loading) return <p>Loading</p>;
-          if (error) return <GraphqlError graphError={error} />;
+        if (data.tasks.length === 0) {
+          return <div>No tasks</div>;
+        }
 
-          return (
-            data.tasks.length !== 0 && (
-              <ImportFooterWrapper
-                tasks={data.tasks}
-                hidden={this.state.hidden}
-                minimizeMaximize={this.minimizeMaximize}
-              />
-            )
-          );
-        }}
-      </Query>
-    );
-  }
-}
+        if (hasWorkingTasks(data)) {
+          startPolling(1000);
+          client.resetStore();
+        } else {
+          stopPolling();
+        }
+
+        return <Tasks tasks={data.tasks} />;
+      }}
+    </Query>
+  );
+};
 
 export default ImportStatus;

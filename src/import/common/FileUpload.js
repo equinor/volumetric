@@ -51,7 +51,7 @@ class FileUpload extends React.Component {
         });
       })
       .catch(error => {
-        console.log(error);
+        console.error(error);
         this.setState({ errorText: error.message });
       });
   }

@@ -8,7 +8,8 @@ import { Contact } from './contact/';
 import { ApiDoc } from './ApiDoc/';
 import { ImportMetrics } from './import/';
 import { AuthConsumer } from './auth/AuthContext';
-import ImportStatus from './import/ImportStatus';
+import ImportNewCaseContainer from './import/ImportNewCaseContainer';
+import { H3 } from './common/Headers';
 
 const AppContainer = styled.div`
   margin: 0 50px 25px;
@@ -57,6 +58,14 @@ const UserInfo = styled.h5`
   margin-right: 10px;
 `;
 
+const NoMatch = ({ location }) => (
+  <div>
+    <H3>
+      No match for <code>{location.pathname}</code>
+    </H3>
+  </div>
+);
+
 const App = () => (
   <AuthConsumer>
     {({ user }) => (
@@ -69,28 +78,42 @@ const App = () => (
             <div>
               <UserInfo>{user.name}</UserInfo>
               <HeaderLinks>
-                {user.isCreator && <HeaderLink to="import">Import</HeaderLink>}
-                <HeaderLink to="contact">Contact</HeaderLink>
-                <HeaderLink to="api-doc">API</HeaderLink>
-                <HeaderLink to="dictionary">Dictionary</HeaderLink>
+                {user.isCreator && <HeaderLink to="/import">Import</HeaderLink>}
+                <HeaderLink to="/contact">Contact</HeaderLink>
+                <HeaderLink to="/api-doc">API</HeaderLink>
+                <HeaderLink to="/dictionary">Dictionary</HeaderLink>
               </HeaderLinks>
             </div>
           </AppHeader>
           <AppContainer>
             <Switch>
               <Route exact path="/" component={LocationContainer} />
-              <Route path="/dictionary" component={Dictionary} />
-              <Route path="/contact" component={Contact} />
-              <Route path="/api-doc" render={() => <ApiDoc user={user} />} />
+              <Route exact path="/dictionary" component={Dictionary} />
+              <Route exact path="/contact" component={Contact} />
+              <Route
+                exact
+                path="/api-doc"
+                render={() => <ApiDoc user={user} />}
+              />
               {user.isCreator && (
                 <Route
+                  exact
                   path="/import"
                   render={routerProps => <ImportMetrics {...routerProps} />}
                 />
               )}
+              {user.isCreator && (
+                <Route
+                  exact
+                  path="/import/new"
+                  render={routerProps => (
+                    <ImportNewCaseContainer {...routerProps} />
+                  )}
+                />
+              )}
+              <Route component={NoMatch} />
             </Switch>
           </AppContainer>
-          <ImportStatus user={user.shortName} />
         </React.Fragment>
       </Router>
     )}

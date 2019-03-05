@@ -24,10 +24,6 @@ const FileInputHidden = styled(Input)`
   z-index: -1;
 `;
 
-export const Button = styled.button`
-  min-height: 30px;
-`;
-
 export const Label = styled.label`
   display: flex;
   flex-direction: column;

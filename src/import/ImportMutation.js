@@ -2,6 +2,7 @@ import React from 'react';
 import { gql } from 'apollo-boost';
 import { Mutation } from 'react-apollo';
 import { StyledSpinner } from '../common/Spinner';
+import { GET_UPLOADS, TASK_FRAGMENT } from '../common/Queries';
 
 const IMPORT_CASE = gql`
   mutation ImportCase(
@@ -32,13 +33,40 @@ const IMPORT_CASE = gql`
         id
         message
       }
+      task {
+        ...Task
+      }
     }
   }
+  ${TASK_FRAGMENT}
 `;
 
-export default ({ history, ...props }) => {
+export default ({ history, user, ...props }) => {
   return (
-    <Mutation mutation={IMPORT_CASE}>
+    <Mutation
+      mutation={IMPORT_CASE}
+      onCompleted={() => history.push('/import')}
+      update={(
+        cache,
+        {
+          data: {
+            importCase: { task },
+          },
+        },
+      ) => {
+        try {
+          const variables = { user: user.shortName.toLowerCase() };
+          const { tasks } = cache.readQuery({ query: GET_UPLOADS, variables });
+          cache.writeQuery({
+            query: GET_UPLOADS,
+            data: { tasks: [task, ...tasks] },
+            variables,
+          });
+        } catch (e) {
+          console.debug('No cache for tasks');
+        }
+      }}
+    >
       {(importCase, { loading, error, data }) => {
         if (error) return <div>Something went wrong</div>;
 

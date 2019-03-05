@@ -52,3 +52,7 @@ CheckboxWithLabel.propTypes = {
   label: PropTypes.string.isRequired,
   labelLeft: PropTypes.bool,
 };
+
+export const Button = styled.button`
+  min-height: 30px;
+`;

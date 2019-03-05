@@ -4,10 +4,11 @@ import { Label, TextInput } from './common/Input';
 import { CheckboxWithLabel } from '../common/Input';
 import DateRangePicker from './common/DateRangePicker';
 import FileUpload from './common/FileUpload';
-import ImportButton from './ImportButton';
+import { ImportButton, CancelLink } from './ImportActions';
 import React from 'react';
 import styled from 'styled-components';
 import Select from '../common/Select';
+import { NEUTRAL_SEPARATOR_COLOR } from '../common/variables';
 
 const InputWrapper = styled.div`
   display: flex;
@@ -20,6 +21,14 @@ const StyledSelect = styled(Select)`
 
 const ErrorText = styled.div`
   color: red;
+`;
+
+const Footer = styled.div`
+  border-top: 1px solid ${NEUTRAL_SEPARATOR_COLOR};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
 `;
 
 export default ({
@@ -107,7 +116,8 @@ export default ({
           onChange={filename => handleFormChange('filename', filename)}
         />
       </InputWrapper>
-      <InputWrapper>
+      <Footer>
+        <CancelLink to="/import">Cancel</CancelLink>
         <ImportButton
           disabled={
             !(
@@ -120,7 +130,7 @@ export default ({
           }
           importCase={() => importCase({ variables: formState })}
         />
-      </InputWrapper>
+      </Footer>
     </React.Fragment>
   );
 };

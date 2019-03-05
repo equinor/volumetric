@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button } from '../import/common/Input';
+import { Button } from '../common/Input';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { CodeBox } from './common';
 

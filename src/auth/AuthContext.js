@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AuthContext = React.createContext();
+export const AuthContext = React.createContext();
 
 export class AuthProvider extends React.Component {
   constructor(props) {

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import GraphqlError from '../common/GraphqlErrorHandling';
 import { AuthConsumer } from '../auth/AuthContext';
+import { StyledSpinner } from '../common/Spinner';
 
 const NoDataDiv = styled.div`
   margin-top: 50px;
@@ -17,7 +18,7 @@ const NoDataDiv = styled.div`
 export default props => (
   <Query query={GET_FIELDS}>
     {({ loading, error, data }) => {
-      if (loading) return <p>Loading</p>;
+      if (loading) return <StyledSpinner isLoading={true} />;
       if (error) return <GraphqlError graphError={error} />;
 
       return data.fields[0] ? (
@@ -33,7 +34,7 @@ export default props => (
                     <Link to="/import">Import</Link> some..
                   </React.Fragment>
                 ) : (
-                  ''
+                  'You need to have the role "Creator" to be able to import data.'
                 )}
               </div>
             )}
