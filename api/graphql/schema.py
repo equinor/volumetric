@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 import graphene
 from graphql import GraphQLError
+from sqlalchemy import desc
 
 from models import Field as FieldModel, Case as CaseModel, Task as TaskModel, PhaseEnumGraphene
 from services.database_service import DatabaseService
@@ -63,9 +64,14 @@ class Query(graphene.ObjectType):
     def resolve_case_types(self, info):
         return [CaseTypeGrapheneEnum.FULL_FIELD, CaseTypeGrapheneEnum.SEGMENT]
 
-    def resolve_tasks(self, info, **kwargs):
-        return TaskModel.query.filter(TaskModel.user == kwargs['user']).filter(
-            TaskModel.queued_at >= (datetime.now() - timedelta(hours=kwargs['hours']))).all()
+    def resolve_tasks(self, info, user, hours=None):
+
+        tasks_query = TaskModel.query.filter(TaskModel.user == user).order_by(desc(TaskModel.queued_at))
+
+        if hours is not None:
+            tasks_query = tasks_query.filter(TaskModel.queued_at >= (datetime.now() - timedelta(hours=hours)))
+
+        return tasks_query.all()
 
     tasks = graphene.List(TaskType, user=graphene.String(), hours=graphene.Int())
 
