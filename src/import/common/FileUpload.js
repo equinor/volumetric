@@ -14,8 +14,8 @@ class FileUpload extends React.Component {
     errorText: null,
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.fileInput = React.createRef();
     this.handleUpload = this.handleUpload.bind(this);
   }

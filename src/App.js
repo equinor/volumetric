@@ -78,6 +78,7 @@ const App = () => (
             <div>
               <UserInfo>{user.name}</UserInfo>
               <HeaderLinks>
+                <HeaderLink to="/">Home</HeaderLink>
                 {user.isCreator && <HeaderLink to="/import">Import</HeaderLink>}
                 <HeaderLink to="/contact">Contact</HeaderLink>
                 <HeaderLink to="/api-doc">API</HeaderLink>
