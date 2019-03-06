@@ -1,4 +1,5 @@
 import graphene
+from sqlalchemy import func
 
 from models import (Location as LocationModel, PhaseEnum, Volumetrics as VolumetricsModel, Realization as
                     RealizationModel, db)
@@ -128,22 +129,16 @@ class CaseType(graphene.ObjectType):
         return [facies.facies_name for facies in get_distinct_location_keys(self.id, LocationModel.facies_name)]
 
     def resolve_metrics(self, info):
-        found_metrics = []
-        for metric in METRICS:
-            found_metric = (db.engine.execute(f'''\
-                SELECT  {metric}
-                    FROM volumetrics, realization, location
-                    WHERE location.case_id = {self.id}
-                        AND {metric} NOTNULL
-                        AND volumetrics.realization_id = realization.id
-                        AND realization.location_id = location.id
-                    LIMIT 1;
-            ''')).first()
+        count_funcs = (func.count(getattr(VolumetricsModel, metric)) for metric in METRICS)
 
-            if found_metric:
-                found_metrics.append(found_metric.keys()[0])
+        non_null_counts = (db.session.query(
+            LocationModel.case_id,
+            *count_funcs,
+        ).join(LocationModel.realizations).join(
+            RealizationModel.volumetrics).filter(LocationModel.case_id == self.id).group_by(
+                LocationModel.case_id)).first()
 
-        return [metric for metric in METRICS if metric in found_metrics]
+        return [metric for metric_index, metric in enumerate(METRICS, 1) if non_null_counts[metric_index] > 0]
 
     def resolve_phases(self, info):
         phases = [
