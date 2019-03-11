@@ -9,6 +9,7 @@ import CaseInfo from './CaseInfo';
 import { H4 } from '../common/Headers';
 import ToggleButtonGroup from '../common/ToggleButtonGroup';
 import filterMetricsForPhase from '../utils/filterMetricsForPhase';
+import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 
 const FilterPage = styled.div`
   display: flex;
@@ -35,8 +36,8 @@ const VisWithData = ({
   return (
     <Query query={GET_METRICS} variables={variables}>
       {({ loading, error, data }) => {
-        if (error) return <p>Error :(</p>;
-
+        if (error)
+          return error.networkError ? NetworkError(error) : GraphqlError(error);
         return (
           <VisToggler
             data={data.volumetrics}

@@ -4,7 +4,7 @@ import { GET_FIELDS } from '../common/Queries';
 import LocationComponent from './LocationComponent';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import GraphqlError from '../common/GraphqlErrorHandling';
+import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { AuthConsumer } from '../auth/AuthContext';
 import { StyledSpinner } from '../common/Spinner';
 
@@ -19,7 +19,8 @@ export default props => (
   <Query query={GET_FIELDS}>
     {({ loading, error, data }) => {
       if (loading) return <StyledSpinner isLoading={true} />;
-      if (error) return <GraphqlError graphError={error} />;
+      if (error)
+        return error.networkError ? NetworkError(error) : GraphqlError(error);
 
       return data.fields[0] ? (
         <LocationComponent {...props} data={data} />

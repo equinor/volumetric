@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { GET_UPLOADS } from '../common/Queries';
 import { Query } from 'react-apollo';
 import {
@@ -148,7 +149,8 @@ const ImportStatus = ({ user }) => {
         } = props;
 
         if (loading) return <p>Loading</p>;
-        if (error) return <p>Could not load imports</p>;
+        if (error)
+          return error.networkError ? NetworkError(error) : GraphqlError(error);
 
         if (data.tasks.length === 0) {
           return <div>No tasks</div>;

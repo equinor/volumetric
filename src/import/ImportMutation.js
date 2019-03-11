@@ -3,6 +3,7 @@ import { gql } from 'apollo-boost';
 import { Mutation } from 'react-apollo';
 import { StyledSpinner } from '../common/Spinner';
 import { GET_UPLOADS, TASK_FRAGMENT } from '../common/Queries';
+import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 
 const IMPORT_CASE = gql`
   mutation ImportCase(
@@ -68,7 +69,8 @@ export default ({ history, user, ...props }) => {
       }}
     >
       {(importCase, { loading, error, data }) => {
-        if (error) return <div>Something went wrong</div>;
+        if (error)
+          return error.networkError ? NetworkError(error) : GraphqlError(error);
 
         return (
           <StyledSpinner isLoading={loading}>
