@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { GET_UPLOADS } from '../common/Queries';
@@ -98,8 +98,8 @@ function Task({ queuedAt, caseName, failed, complete, message, first }) {
           {caseName}
         </TaskDescriptionItem>
         <TaskDescriptionItem grow={!failed ? '5' : '2'}>
-          <b>Import time: </b>
-          {`${queuedAtDate.toString()}`}
+          <b>Import date: </b>
+          {`${queuedAtDate.toDateString()}`}
         </TaskDescriptionItem>
         {failed && (
           <TaskDescriptionItem grow={'3'}>
@@ -126,27 +126,26 @@ function Tasks({ tasks }) {
   );
 }
 
-const hasWorkingTasks = data => {
+const getHasWorkingTasks = data => {
   return data.tasks.some(task => !task.failed && !task.complete);
 };
 
+const ACTIVE_IMPORT_INTERVAL = 1000;
+
 const ImportStatus = ({ user }) => {
+  const [pollInterval, setPollInterval] = useState(ACTIVE_IMPORT_INTERVAL);
+  const [hasWorkingTasks, setHasWorkingTasks] = useState(true);
   return (
     <Query
       query={GET_UPLOADS}
       variables={{
         user: user.toLowerCase(),
       }}
+      onCompleted={data => setHasWorkingTasks(getHasWorkingTasks(data))}
+      pollInterval={pollInterval}
     >
       {props => {
-        const {
-          loading,
-          error,
-          data,
-          stopPolling,
-          startPolling,
-          client,
-        } = props;
+        const { loading, error, data, stopPolling, client } = props;
 
         if (loading) return <p>Loading</p>;
         if (error)
@@ -156,11 +155,10 @@ const ImportStatus = ({ user }) => {
           return <div>No tasks</div>;
         }
 
-        if (hasWorkingTasks(data)) {
-          startPolling(1000);
-          client.resetStore();
-        } else {
+        if (!hasWorkingTasks && pollInterval === ACTIVE_IMPORT_INTERVAL) {
           stopPolling();
+          setPollInterval(0);
+          client.resetStore();
         }
 
         return <Tasks tasks={data.tasks} />;
