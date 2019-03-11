@@ -1,17 +1,23 @@
+from flask import request, abort
 from flask_graphql import GraphQLView
-from utils.authentication import get_validated_user
-from flask import request
+from jwt import InvalidTokenError
 
 from api.graphql.schema import schema
 from api.rest.cases import case_endpoint
+from utils.authentication import get_validated_user
 from .file_upload import file_upload
 
 
 def auth_required(view):
     def wrapper(*args, **kwargs):
-        user = get_validated_user()
-        request.user = user
-        return view(*args, **kwargs)
+        try:
+            user = get_validated_user()
+            request.user = user
+            return view(*args, **kwargs)
+        except InvalidTokenError as error:
+            abort(401, f'{error}')
+        except AttributeError as error:
+            abort(401, f'{error}')
 
     return wrapper
 
@@ -34,7 +40,7 @@ def case_endpoint_with_auth(case_id):
 
 
 def create_api(app):
-    app.add_url_rule('/graphql', methods=['POST', 'GET'], view_func=graphql_view())
+    app.add_url_rule('/graphql', methods=['POST'], view_func=graphql_view())
 
     app.add_url_rule('/upload', methods=['POST'], view_func=file_upload_with_auth)
 

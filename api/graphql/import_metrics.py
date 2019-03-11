@@ -5,8 +5,8 @@ from flask import current_app
 from graphql import GraphQLError
 
 from utils.case_import.import_data import validate_import
-from utils.graphql.fileformat import FileFormat
 from utils.case_import.queue import create_import_data_job
+from utils.graphql.fileformat import FileFormat
 from .types import CaseTypeGrapheneEnum, TaskType
 
 file_format_enum = graphene.Enum.from_enum(FileFormat)
@@ -36,10 +36,10 @@ class ImportCase(graphene.Mutation):
 
     def mutate(self, info, filename, file_format, field, case, **kwargs):
         if not info.context.user.isCreator:
-            raise GraphQLError('You need to be a creator to import cases!')
+            raise GraphQLError('You need to be a creator to import cases.')
 
         if kwargs['is_official'] and not info.context.user.isAdmin:
-            raise GraphQLError('You need to be an admin to import official cases!')
+            raise GraphQLError('You need to be an administrator to import official cases.')
 
         if not kwargs['is_official']:
             del kwargs['official_from_date']

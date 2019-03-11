@@ -40,7 +40,7 @@ class Query(graphene.ObjectType):
         case = CaseModel.query.filter(CaseModel.id == case_id).first()
 
         if not (user.isAdmin or case.is_official or case.created_user == user.shortname):
-            raise GraphQLError('Forbidden')
+            raise GraphQLError('You are not authorized to view this case.')
 
         filtered_kwargs = {k: v for k, v in kwargs.items() if None not in v}
         # Open for improvements
