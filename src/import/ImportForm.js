@@ -57,11 +57,13 @@ export default ({
           label="Name"
           onChange={e => handleFormChange('case', e.target.value)}
           placeholder="Enter case name..."
+          value={formState.case}
         />
         <TextInput
           label="Version"
           onChange={e => handleFormChange('caseVersion', e.target.value)}
           placeholder="Enter case version..."
+          value={formState.caseVersion}
         />
         <Label>
           Type
