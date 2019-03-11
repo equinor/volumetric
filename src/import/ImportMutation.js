@@ -46,15 +46,20 @@ export default ({ history, user, ...props }) => {
   return (
     <Mutation
       mutation={IMPORT_CASE}
-      onCompleted={() => history.push('/import')}
+      onCompleted={data => {
+        if (!data.importCase.validationError) {
+          history.push('/import');
+        }
+      }}
       update={(
         cache,
         {
           data: {
-            importCase: { task },
+            importCase: { task, validationError },
           },
         },
       ) => {
+        if (validationError) return;
         try {
           const variables = { user: user.shortName.toLowerCase() };
           const { tasks } = cache.readQuery({ query: GET_UPLOADS, variables });
