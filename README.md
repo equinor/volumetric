@@ -8,7 +8,7 @@ Then run `docker-compose up -d`
 
 ## Pip operations
 To add new packages, run;
-`volumetric-pyenv install mypackage`
+`volumetric-pipenv install mypackage`
 and rebuild the image with;
 `volumetric build`
 
