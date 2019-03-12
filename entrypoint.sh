@@ -21,14 +21,33 @@ service_is_ready() {
 first_arg="$1"
 
 # Feature tests are not depended on database service
-if [ ! -z $DATABASE_HOST ] && [ ${first_arg} != 'tests' ] && [ ${first_arg} != 'yapf' ]; then
+if [ ! -z $DATABASE_HOST ] && [ ${first_arg} != 'tests' ] && [ ${first_arg} != 'yapf' ] && [ ${first_arg} != 'pipenv' ]; then
     service_is_ready "DATABASE" ${DATABASE_HOST} ${DATABASE_PORT}
 fi
 
 
 if [ ${first_arg} = 'api' ]; then
     flask db upgrade
-	flask run
+	if [ "$FLASK_ENV" = 'development' ]; then
+        gunicorn -b $FLASK_RUN_HOST:$FLASK_RUN_PORT \
+            --reload \
+            --capture-output \
+            --enable-stdio-inheritance \
+            --access-logfile=- \
+            --log-file=- \
+            --workers 1 \
+            --timeout 120 \
+            app:app
+    else
+        gunicorn -b $FLASK_RUN_HOST:$FLASK_RUN_PORT \
+            --capture-output \
+            --enable-stdio-inheritance \
+            --access-logfile=- \
+            --log-file=- \
+            --workers 4 \
+            --timeout 120 \
+            app:app
+    fi
 	exit $?
 fi
 

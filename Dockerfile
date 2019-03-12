@@ -1,32 +1,21 @@
 FROM python:3.6-alpine3.7
-
 ARG UID=1000
 ARG GID=1000
+ENV PYTHONUNBUFFERED=1 \
+    TZ=Europe/Oslo \
+    FLASK_APP=app.py \
+    FLASK_RUN_PORT=8080 \
+    FLASK_RUN_HOST=0.0.0.0
 RUN addgroup -S volumetric -g $GID \
- && adduser -u $UID -G volumetric -S volumetric \
- && mkdir /code \
- && chown volumetric:volumetric /code
-
-ENV PYTHONUNBUFFERED=1 TZ=Europe/Oslo
-
-# Add Equinor crt for pip to work
-ADD ./ca-bundle.trust.crt /usr/local/share/ca-certificates/ca-bundle.trust.crt
-RUN update-ca-certificates
-ENV PIP_CERT=/usr/local/share/ca-certificates/ca-bundle.trust.crt
-
-# These packages are for development and debugging purposes only.
-RUN apk update && apk add --no-cache curl bind-tools net-tools bash
-RUN apk add --no-cache postgresql-dev gcc python3-dev musl-dev libffi-dev
-
-ENV PATH="/home/volumetric/.local/bin:${PATH}"
-COPY --chown=volumetric:volumetric Pipfile Pipfile.lock ./
-RUN pip3 install -U pip pipenv && \
-    pipenv install --system --deploy --dev
-
-USER volumetric
+    && adduser -u $UID -G volumetric -S volumetric
+RUN apk update \
+    && apk add postgresql-dev gcc python3-dev musl-dev libffi-dev \
+    && pip install -U pip pipenv
 WORKDIR /code
-
-ENV FLASK_APP=app.py FLASK_RUN_PORT=8080 FLASK_RUN_HOST=0.0.0.0
+RUN chown -R volumetric:volumetric /code
+COPY --chown=volumetric:volumetric Pipfile Pipfile.lock ./
+RUN pipenv install --system --deploy --dev --clear
 COPY --chown=volumetric:volumetric . ./
+USER volumetric
 ENTRYPOINT ["/code/entrypoint.sh"]
 CMD ["api"]
