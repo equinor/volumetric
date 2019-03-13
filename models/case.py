@@ -26,7 +26,7 @@ class Case(db.Model):
     official_from_date = Column(DateTime, default=datetime.utcnow)
     official_to_date = Column(DateTime)
     field_name = Column(String, ForeignKey('field.name', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
-    locations = relationship('Location', passive_deletes=True, backref='case')
+    locations = relationship('Location', passive_deletes=True, backref='case', cascade="all, delete-orphan")
 
     @property
     def is_currently_official(self):

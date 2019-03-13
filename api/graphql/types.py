@@ -1,22 +1,7 @@
 import graphene
-from sqlalchemy import func
 
-from models import (Location as LocationModel, PhaseEnum, Volumetrics as VolumetricsModel, Realization as
-                    RealizationModel, db)
-from models.case import CaseTypeEnum
 from models.volumetrics import PhaseEnumGraphene
 from utils.calculations import calculate, get_pvalue_func, get_mean, METRICS
-from utils.ordering import OrderedList, ordered_strings
-
-
-def case_type_description(value):
-    if value == CaseTypeEnum.SEGMENT:
-        return 'Case describing a segmented part of the field'
-    elif value == CaseTypeEnum.FULL_FIELD:
-        return 'Case describing the full field'
-
-
-CaseTypeGrapheneEnum = graphene.Enum.from_enum(CaseTypeEnum, description=lambda value: case_type_description(value))
 
 
 class Metrics(graphene.Interface):
@@ -36,7 +21,7 @@ class MetricsType(graphene.ObjectType):
         interfaces = (Metrics, )
 
 
-class TaskType(graphene.ObjectType):
+class Task(graphene.ObjectType):
     id = graphene.String()
     user = graphene.String()
     case_name = graphene.String()
@@ -91,60 +76,3 @@ class LocationType(graphene.ObjectType):
     zone_name = graphene.String()
     facies_name = graphene.String()
     volumetrics = graphene.List(VolumetricType)
-
-
-def get_distinct_location_keys(case_id, entity):
-    return LocationModel.query.filter_by(case_id=case_id).with_entities(entity).distinct()
-
-
-class CaseType(graphene.ObjectType):
-    id = graphene.Int()
-    name = graphene.String()
-    case_version = graphene.String()
-    case_type = CaseTypeGrapheneEnum()
-    description = graphene.String()
-    is_official = graphene.Boolean()
-    is_currently_official = graphene.Boolean()
-    official_from_date = graphene.DateTime()
-    official_to_date = graphene.DateTime()
-    created_user = graphene.String()
-    created_date = graphene.DateTime()
-    field_name = graphene.String()
-    regions = OrderedList(graphene.String)
-    zones = OrderedList(graphene.String)
-    facies = OrderedList(graphene.String)
-    phases = OrderedList(PhaseEnumGraphene)
-    metrics = OrderedList(graphene.String)
-
-    @ordered_strings
-    def resolve_regions(self, info):
-        return [region.region_name for region in get_distinct_location_keys(self.id, LocationModel.region_name)]
-
-    @ordered_strings
-    def resolve_zones(self, info):
-        return [zone.zone_name for zone in get_distinct_location_keys(self.id, LocationModel.zone_name)]
-
-    @ordered_strings
-    def resolve_facies(self, info):
-        return [facies.facies_name for facies in get_distinct_location_keys(self.id, LocationModel.facies_name)]
-
-    def resolve_metrics(self, info):
-        count_funcs = (func.count(getattr(VolumetricsModel, metric)) for metric in METRICS)
-
-        non_null_counts = (db.session.query(
-            LocationModel.case_id,
-            *count_funcs,
-        ).join(LocationModel.realizations).join(
-            RealizationModel.volumetrics).filter(LocationModel.case_id == self.id).group_by(
-                LocationModel.case_id)).first()
-
-        return [metric for metric_index, metric in enumerate(METRICS, 1) if non_null_counts[metric_index] > 0]
-
-    def resolve_phases(self, info):
-        phases = [
-            phase.phase
-            for phase in db.session.query(VolumetricsModel.phase).join(RealizationModel).join(LocationModel).filter_by(
-                case_id=self.id).distinct()
-        ]
-
-        return [phase for phase in PhaseEnum if phase in phases]  # Keep order from enum

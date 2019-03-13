@@ -84,7 +84,7 @@ def _add_volumetrics(data_dicts, realizations, locations, case):
             'porv': data_dict.get('npv'),
             'hcpv': data_dict.get('hcpv'),
             'stoiip': data_dict.get('stoiip'),
-            'phase': PhaseEnum.GAS,
+            'phase': PhaseEnum.TOTAL,
             'realization_id': realization.id,
         })
     ins = Volumetrics.__table__.insert()

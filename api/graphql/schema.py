@@ -9,8 +9,8 @@ from services.database_service import DatabaseService
 from utils.calculations import sum_volumetrics as calc_sum_volumetrics
 from utils.ordering import ordered_case, OrderedList
 from .field import Field as FieldType, AddField
-from .import_metrics import ImportCase
-from .types import VolumetricsType, VolumetricType, CaseTypeGrapheneEnum, TaskType
+from .types import VolumetricsType, VolumetricType, Task
+from .case import CaseTypeGrapheneEnum, DeleteCase, ImportCase
 
 
 def sum_volumetrics(volumetrics):
@@ -73,7 +73,7 @@ class Query(graphene.ObjectType):
 
         return tasks_query.all()
 
-    tasks = graphene.List(TaskType, user=graphene.String(), hours=graphene.Int())
+    tasks = graphene.List(Task, user=graphene.String(), hours=graphene.Int())
 
     fields = OrderedList(FieldType, name=graphene.String())
 
@@ -91,6 +91,7 @@ class Query(graphene.ObjectType):
 class Mutations(graphene.ObjectType):
     add_field = AddField.Field()
     import_case = ImportCase.Field()
+    delete_case = DeleteCase.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutations)

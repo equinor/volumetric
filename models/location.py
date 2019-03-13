@@ -14,4 +14,4 @@ class Location(db.Model):
     zone_name = Column(String)
     facies_name = Column(String)
     license = Column(String)
-    realizations = relationship('Realization', passive_deletes=True)
+    realizations = relationship('Realization', passive_deletes=True, cascade="all, delete-orphan")

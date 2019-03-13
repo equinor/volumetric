@@ -13,4 +13,4 @@ class Realization(db.Model):
     iteration = Column(Integer, server_default="1")
     location_id = Column(Integer, ForeignKey('location.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
 
-    volumetrics = relationship('Volumetrics', backref='realization', passive_deletes=True)
+    volumetrics = relationship('Volumetrics', backref='realization', passive_deletes=True, cascade="all, delete-orphan")
