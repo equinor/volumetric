@@ -7,6 +7,6 @@ export const API_URL = '/api';
 export const SUCCESS_COLOR = '#1aaa55';
 export const DARKER_SUCCESS_COLOR = '#13a34a';
 export const WORKING_COLOR = '#fc9403';
-export const FAILED_COLOR = '#db3b21';
+export const DANGER_COLOR = '#db3b21';
 
-export const NEUTRAL_SEPARATOR_COLOR = '#f0f0f0';
+export const LIST_SEPARATOR_COLOR = '#f0f0f0';

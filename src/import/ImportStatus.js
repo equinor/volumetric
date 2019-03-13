@@ -5,17 +5,17 @@ import { GET_UPLOADS } from '../common/Queries';
 import { Query } from 'react-apollo';
 import {
   SUCCESS_COLOR,
-  FAILED_COLOR,
+  DANGER_COLOR,
   WORKING_COLOR,
-  NEUTRAL_SEPARATOR_COLOR,
+  LIST_SEPARATOR_COLOR,
 } from '../common/variables';
 
 const TaskContainer = styled.div`
   justify-content: space-around;
   display: flex;
   padding: 20px 5px;
-  border-bottom: 1px solid ${NEUTRAL_SEPARATOR_COLOR};
-  ${props => props.first && `border-top: 1px solid ${NEUTRAL_SEPARATOR_COLOR};`}
+  border-bottom: 1px solid ${LIST_SEPARATOR_COLOR};
+  ${props => props.first && `border-top: 1px solid ${LIST_SEPARATOR_COLOR};`}
 `;
 
 const TaskStatus = styled.div`
@@ -62,7 +62,7 @@ const TaskStatusComponent = ({ complete, failed }) => {
   if (failed) {
     return (
       <TaskStatusWrapper>
-        <TaskStatus color={FAILED_COLOR}>
+        <TaskStatus color={DANGER_COLOR}>
           <TaskIcon>&#10007;</TaskIcon>
           failed
         </TaskStatus>
@@ -151,14 +151,14 @@ const ImportStatus = ({ user }) => {
         if (error)
           return error.networkError ? NetworkError(error) : GraphqlError(error);
 
-        if (data.tasks.length === 0) {
-          return <div>No tasks</div>;
-        }
-
         if (!hasWorkingTasks && pollInterval === ACTIVE_IMPORT_INTERVAL) {
           stopPolling();
           setPollInterval(0);
           client.resetStore();
+        }
+
+        if (data.tasks.length === 0) {
+          return <div>No tasks</div>;
         }
 
         return <Tasks tasks={data.tasks} />;

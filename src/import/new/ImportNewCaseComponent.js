@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ImportMutation from './ImportMutation';
-import { H3 } from '../common/Headers';
+import { H3 } from '../../common/Headers';
 import ImportForm from './ImportForm';
 
 const ImportWrapper = styled.div`

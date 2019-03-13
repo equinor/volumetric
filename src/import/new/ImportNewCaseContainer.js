@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import ImportNewCaseComponent from './ImportNewCaseComponent';
 import { Query } from 'react-apollo';
-import { StyledSpinner } from '../common/Spinner';
+import { StyledSpinner } from '../../common/Spinner';
 import { gql } from 'apollo-boost';
-import { AuthContext } from '../auth/AuthContext';
+import { AuthContext } from '../../auth/AuthContext';
 
 const GET_CASE_TYPES = gql`
   query Fields {

@@ -2,22 +2,21 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { Button } from '../common/Input';
+import { Button } from '../../common/Input';
 import {
   ALMOST_BLACK,
   DARKER_SUCCESS_COLOR,
-  NEUTRAL_SEPARATOR_COLOR,
+  LIST_SEPARATOR_COLOR,
   SUCCESS_COLOR,
-} from '../common/variables';
+} from '../../common/variables';
 
 const SubmitButton = styled(Button)`
   background: ${props =>
-      props.disabled ? NEUTRAL_SEPARATOR_COLOR : SUCCESS_COLOR}
+      props.disabled ? LIST_SEPARATOR_COLOR : SUCCESS_COLOR}
     none;
   color: white;
   border: 1px solid
-    ${props =>
-      props.disabled ? NEUTRAL_SEPARATOR_COLOR : DARKER_SUCCESS_COLOR};
+    ${props => (props.disabled ? LIST_SEPARATOR_COLOR : DARKER_SUCCESS_COLOR)};
   border-radius: 4px;
   padding: 8px 14px;
   font: inherit;

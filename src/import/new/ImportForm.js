@@ -1,14 +1,14 @@
-import { H4 } from '../common/Headers';
-import { CreatableSelect } from './common/CreatableSelect';
-import { Label, TextInput } from './common/Input';
-import { CheckboxWithLabel } from '../common/Input';
-import DateRangePicker from './common/DateRangePicker';
-import FileUpload from './common/FileUpload';
+import { H4 } from '../../common/Headers';
+import { CreatableSelect } from '../common/CreatableSelect';
+import { Label, TextInput } from '../common/Input';
+import { CheckboxWithLabel } from '../../common/Input';
+import DateRangePicker from '../common/DateRangePicker';
+import FileUpload from '../common/FileUpload';
 import { ImportButton, CancelLink } from './ImportActions';
 import React from 'react';
 import styled from 'styled-components';
-import Select from '../common/Select';
-import { NEUTRAL_SEPARATOR_COLOR } from '../common/variables';
+import Select from '../../common/Select';
+import { LIST_SEPARATOR_COLOR } from '../../common/variables';
 
 const InputWrapper = styled.div`
   display: flex;
@@ -24,7 +24,7 @@ const ErrorText = styled.div`
 `;
 
 const Footer = styled.div`
-  border-top: 1px solid ${NEUTRAL_SEPARATOR_COLOR};
+  border-top: 1px solid ${LIST_SEPARATOR_COLOR};
   display: flex;
   justify-content: space-between;
   align-items: center;

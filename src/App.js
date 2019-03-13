@@ -6,10 +6,10 @@ import { Switch } from 'react-router';
 import { Dictionary } from './dictionary/';
 import { Contact } from './contact/';
 import { ApiDoc } from './ApiDoc/';
-import { ImportMetrics } from './import/';
+import { ImportMetrics, ImportNewCase } from './import/';
 import { AuthConsumer } from './auth/AuthContext';
-import ImportNewCaseContainer from './import/ImportNewCaseContainer';
 import { H3 } from './common/Headers';
+import Cases from './case/Cases';
 
 const AppContainer = styled.div`
   margin: 0 50px 25px;
@@ -80,6 +80,7 @@ const App = () => (
               <HeaderLinks>
                 <HeaderLink to="/">Home</HeaderLink>
                 {user.isCreator && <HeaderLink to="/import">Import</HeaderLink>}
+                {user.isCreator && <HeaderLink to="/cases">Cases</HeaderLink>}
                 <HeaderLink to="/contact">Contact</HeaderLink>
                 <HeaderLink to="/api-doc">API</HeaderLink>
                 <HeaderLink to="/dictionary">Dictionary</HeaderLink>
@@ -107,9 +108,14 @@ const App = () => (
                 <Route
                   exact
                   path="/import/new"
-                  render={routerProps => (
-                    <ImportNewCaseContainer {...routerProps} />
-                  )}
+                  render={routerProps => <ImportNewCase {...routerProps} />}
+                />
+              )}
+              {user.isCreator && (
+                <Route
+                  exact
+                  path="/cases"
+                  render={routerProps => <Cases {...routerProps} />}
                 />
               )}
               <Route component={NoMatch} />

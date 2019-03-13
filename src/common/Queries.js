@@ -1,29 +1,36 @@
 import { gql } from 'apollo-boost';
 
+export const CASE_FRAGMENT = gql`
+  fragment Case on Case {
+    id
+    name
+    caseVersion
+    caseType
+    description
+    isOfficial
+    isCurrentlyOfficial
+    regions
+    zones
+    facies
+    phases
+    metrics
+  }
+`;
+
 export const GET_FIELDS = gql`
   query Fields {
     fields(orderBy: "name") {
       name
       cases(orderBy: "name") {
-        id
-        name
-        caseVersion
-        caseType
-        description
-        isOfficial
-        isCurrentlyOfficial
-        regions
-        zones
-        facies
-        phases
-        metrics
+        ...Case
       }
     }
   }
+  ${CASE_FRAGMENT}
 `;
 
 export const TASK_FRAGMENT = gql`
-  fragment Task on TaskType {
+  fragment Task on Task {
     id
     user
     caseName

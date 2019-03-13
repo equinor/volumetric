@@ -1,9 +1,9 @@
 import React from 'react';
 import { gql } from 'apollo-boost';
 import { Mutation } from 'react-apollo';
-import { StyledSpinner } from '../common/Spinner';
-import { GET_UPLOADS, TASK_FRAGMENT } from '../common/Queries';
-import { GraphqlError, NetworkError } from '../common/ErrorHandling';
+import { StyledSpinner } from '../../common/Spinner';
+import { GET_UPLOADS, TASK_FRAGMENT } from '../../common/Queries';
+import { GraphqlError, NetworkError } from '../../common/ErrorHandling';
 
 const IMPORT_CASE = gql`
   mutation ImportCase(
