@@ -11,7 +11,7 @@ export const CodeBox = styled.pre`
   color: #393939;
   margin-top: 0;
   font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-  width: fit-content;
+  white-space: pre-wrap;
 `;
 
 export const DocH2 = styled.h2`
@@ -28,7 +28,6 @@ export const InlineCode = styled.b`
   color: #393939;
   margin-top: 0;
   font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-  width: fit-content;
   display: inline;
   font-weight: 100;
 `;

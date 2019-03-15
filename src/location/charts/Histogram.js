@@ -115,6 +115,7 @@ const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
         style={{
           ticks: {
             marginTop: '20px',
+            fontSize: '11px',
           },
         }}
         tickValues={histogramData.map(({ x }) => x)}
@@ -135,12 +136,20 @@ const HistogramChart = ({ summedVolumetrics: metrics, selectedMetric }) => {
 };
 
 export default props => {
+  const {
+    filterMetrics,
+    selectedMetric,
+    setSelectedMetric,
+    summedVolumetrics,
+  } = props;
   const numberOfRealizations =
-    props.summedVolumetrics[props.summedVolumetrics.length - 1].realization + 1;
+    summedVolumetrics[summedVolumetrics.length - 1].realization + 1;
   return (
     <PlotStyled>
       <MetricSelector
-        filterMetrics={props.filterMetrics}
+        filterMetrics={filterMetrics}
+        selectedMetric={selectedMetric}
+        setSelectedMetric={setSelectedMetric}
         renderHeader={() => (
           <PlotHeader>{`Multi Realization Case (${numberOfRealizations})`}</PlotHeader>
         )}

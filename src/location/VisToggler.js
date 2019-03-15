@@ -24,12 +24,17 @@ const NoData = styled.div`
   padding-right: 24vh;
 `;
 
-const Plot = ({ data, filterMetrics }) => {
+const Plot = ({ data, filterMetrics, selectedMetric, setSelectedMetric }) => {
   const singleRealization = data.summedVolumetrics.length === 1;
   return singleRealization ? (
     <BarChart metrics={data.summedVolumetrics} filterMetrics={filterMetrics} />
   ) : (
-    <Histogram {...data} filterMetrics={filterMetrics} />
+    <Histogram
+      {...data}
+      filterMetrics={filterMetrics}
+      selectedMetric={selectedMetric}
+      setSelectedMetric={setSelectedMetric}
+    />
   );
 };
 
@@ -49,7 +54,13 @@ class VisToggler extends React.Component {
   }
 
   render() {
-    const { data, isLoading, filterMetrics } = this.props;
+    const {
+      data,
+      isLoading,
+      filterMetrics,
+      selectedMetric,
+      setSelectedMetric,
+    } = this.props;
 
     if (!isLoading && data.summedVolumetrics.length === 0) {
       return <NoData>No data...</NoData>;
@@ -78,7 +89,12 @@ class VisToggler extends React.Component {
             )}
 
             {this.state.showVis === 'plot' && (
-              <Plot data={data} filterMetrics={filterMetrics} />
+              <Plot
+                data={data}
+                filterMetrics={filterMetrics}
+                selectedMetric={selectedMetric}
+                setSelectedMetric={setSelectedMetric}
+              />
             )}
           </StyledSpinner>
         </VisStyled>

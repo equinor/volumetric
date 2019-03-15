@@ -4,23 +4,12 @@ import { CASE_FRAGMENT, GET_FIELDS } from '../common/Queries';
 import { SmallSpinner, StyledSpinner } from '../common/Spinner';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import styled from 'styled-components';
-import { DANGER_COLOR, LIST_SEPARATOR_COLOR } from '../common/variables';
+import { DANGER_COLOR } from '../common/variables';
 import gql from 'graphql-tag';
 import Icon, { ICONS } from '../common/Icons';
-
-const UL = styled.ul`
-  list-style-type: none;
-`;
-
-const Case = styled.li`
-  display: flex;
-  padding: 20px;
-  border-bottom: 1px solid ${LIST_SEPARATOR_COLOR};
-`;
-
-const CaseDescriptionStyled = styled.div`
-  flex: 1;
-`;
+import { PageLink } from '../common/Links';
+import { ListPageWithActions } from '../common/Layouts';
+import { Table, TH, TD, Row } from '../common/Table';
 
 const DELETE_CASE = gql`
   mutation DeleteCase($id: Int!) {
@@ -35,10 +24,9 @@ const DELETE_CASE = gql`
 `;
 
 const DeleteButton = styled.button`
-  background: ${DANGER_COLOR} none;
-  color: white;
-  border: none;
-  padding: 15px 15px;
+  background: white none;
+  border: 2px solid ${DANGER_COLOR};
+  padding: 10px 10px;
   border-radius: 4px;
   font: inherit;
   cursor: pointer;
@@ -52,77 +40,86 @@ const DeleteButton = styled.button`
   }
 `;
 
-function CaseDescription({ label, value }) {
-  return (
-    <CaseDescriptionStyled>
-      <div>{label}:</div>
-      <div>{value}</div>
-    </CaseDescriptionStyled>
-  );
-}
-
 function CasesList({ fields }) {
   if (fields.length === 0) {
     return <div>No cases</div>;
   }
 
   return (
-    <div>
-      <h2>Cases</h2>
-      <UL>
-        {fields.map(field => (
-          <li key={`field-${field.id}`}>
-            <h3>
-              <b>{field.name}</b>
-            </h3>
-            <UL>
-              {field.cases.map(
-                ({ id, name, caseVersion, caseType, isCurrentlyOfficial }) => {
-                  return (
-                    <Case key={`case-${id}`}>
-                      <CaseDescription label="Name" value={name} />
-                      <CaseDescription label="Version" value={caseVersion} />
-                      <CaseDescription label="Type" value={caseType} />
-                      <CaseDescription
-                        label="Official"
-                        value={isCurrentlyOfficial ? 'Yes' : 'No'}
-                      />
-                      <Mutation
-                        mutation={DELETE_CASE}
-                        variables={{ id }}
-                        refetchQueries={() => [{ query: GET_FIELDS }]}
-                        awaitRefetchQueries={true}
-                      >
-                        {(deleteCase, { data, loading, error }) => {
-                          if (loading) {
-                            return <SmallSpinner isLoading={loading} />;
-                          }
-                          return (
-                            <DeleteButton
-                              onClick={() => {
-                                if (
-                                  window.confirm(
-                                    'Are you sure you want to delete this case?',
-                                  )
-                                ) {
-                                  deleteCase();
-                                }
-                              }}
-                            >
-                              <Icon icon={ICONS.cross} color="white" />
-                            </DeleteButton>
-                          );
-                        }}
-                      </Mutation>
-                    </Case>
-                  );
-                },
-              )}
-            </UL>
-          </li>
-        ))}
-      </UL>
-    </div>
+    <Table>
+      <thead>
+        <Row>
+          <TH>Field</TH>
+          <TH grow={2}>Case</TH>
+          <TH>Version</TH>
+          <TH>Type</TH>
+          <TH>Imported</TH>
+          <TH>Official</TH>
+          <TH>Delete</TH>
+        </Row>
+      </thead>
+      <tbody>
+        {fields.map(field =>
+          field.cases.map(
+            (
+              {
+                id,
+                name,
+                caseVersion,
+                caseType,
+                isCurrentlyOfficial,
+                createdDate,
+              },
+              index,
+            ) => {
+              return (
+                <Row key={`case-${id}`}>
+                  <TD>{index === 0 && field.name}</TD>
+                  <TD grow={2}>{name}</TD>
+                  <TD>{caseVersion}</TD>
+                  <TD>{caseType}</TD>
+                  <TD>{new Date(createdDate).toLocaleDateString()}</TD>
+                  <TD>{isCurrentlyOfficial ? 'Yes' : 'No'}</TD>
+                  <TD>
+                    <Mutation
+                      mutation={DELETE_CASE}
+                      variables={{ id }}
+                      refetchQueries={() => [{ query: GET_FIELDS }]}
+                      awaitRefetchQueries={true}
+                    >
+                      {(deleteCase, { data, loading, error }) => {
+                        if (loading) {
+                          return <SmallSpinner isLoading={loading} />;
+                        }
+                        return (
+                          <DeleteButton
+                            onClick={() => {
+                              if (
+                                window.confirm(
+                                  'Are you sure you want to delete this case?',
+                                )
+                              ) {
+                                deleteCase();
+                              }
+                            }}
+                          >
+                            <Icon
+                              icon={ICONS.cross}
+                              color={DANGER_COLOR}
+                              size={12}
+                            />
+                          </DeleteButton>
+                        );
+                      }}
+                    </Mutation>
+                  </TD>
+                </Row>
+              );
+            },
+          ),
+        )}
+      </tbody>
+    </Table>
   );
 }
 
@@ -141,7 +138,19 @@ function Cases() {
           );
         }
 
-        return <CasesList {...data} />;
+        return (
+          <ListPageWithActions
+            title="Cases"
+            links={() => (
+              <>
+                <PageLink to="/cases/import">List imports</PageLink>
+                <PageLink to="/cases/import/new">Import new</PageLink>
+              </>
+            )}
+          >
+            <CasesList {...data} />
+          </ListPageWithActions>
+        );
       }}
     </Query>
   );

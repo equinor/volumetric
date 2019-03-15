@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ALMOST_BLACK } from '../common/variables';
-import { H2, H3 } from '../common/Headers';
+import { ALMOST_BLACK } from '../../common/variables';
+import { H2, H3 } from '../../common/Headers';
 
 const DT = styled.dt`
   font-weight: bold;
@@ -46,7 +46,7 @@ const DictItem = ({ name, description }) => {
 const Dictionary = () => {
   return (
     <div>
-      <H2>Dictionary</H2>
+      <H2 id="dictionary">Dictionary</H2>
       <DictionaryHeader>Definitions</DictionaryHeader>
       <UL>
         <DictItem

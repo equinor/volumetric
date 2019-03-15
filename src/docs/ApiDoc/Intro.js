@@ -1,11 +1,11 @@
 import React from 'react';
 import { CodeBox, InlineCode } from './common';
-import { H2 } from '../common/Headers';
+import { H2 } from '../../common/Headers';
 
 const Intro = () => {
   return (
     <div>
-      <H2>API</H2>
+      <H2 id="api-doc">API</H2>
       <p>
         The API is available at <InlineCode>/api</InlineCode>.<br />
         Volumetrics has two different API's. A REST API and a GraphQL API. For

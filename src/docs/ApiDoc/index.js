@@ -1,5 +1,5 @@
 import React from 'react';
-import { getToken } from '../index';
+import { getToken } from '../..';
 import AccessToken from './AccessToken';
 import GraphQL from './GraphQL';
 import RestApi from './RestApi';

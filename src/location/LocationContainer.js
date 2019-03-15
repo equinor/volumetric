@@ -32,7 +32,7 @@ export default props => (
                 No data.{' '}
                 {user.isCreator ? (
                   <React.Fragment>
-                    <Link to="/import">Import</Link> some..
+                    <Link to="/cases/import/new">Import</Link> some..
                   </React.Fragment>
                 ) : (
                   'You need to have the role "Creator" to be able to import data.'

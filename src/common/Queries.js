@@ -9,6 +9,7 @@ export const CASE_FRAGMENT = gql`
     description
     isOfficial
     isCurrentlyOfficial
+    createdDate
     regions
     zones
     facies

@@ -23,6 +23,8 @@ const VisWithData = ({
   zones,
   phase,
   metrics,
+  selectedMetric,
+  setSelectedMetric,
 }) => {
   const variables = { caseId: currentCase.value, phase: phase.toUpperCase() };
   if (facies && facies.length > 0) variables['faciesNames'] = facies;
@@ -43,6 +45,8 @@ const VisWithData = ({
             data={data.volumetrics}
             isLoading={loading}
             filterMetrics={metrics}
+            selectedMetric={selectedMetric}
+            setSelectedMetric={setSelectedMetric}
           />
         );
       }}
@@ -131,6 +135,7 @@ class LocationComponent extends React.Component {
       zones: [],
       facies: [],
       metrics: [],
+      selectedMetric: 'bulk',
     };
   }
 
@@ -215,7 +220,12 @@ class LocationComponent extends React.Component {
             />
           </FilterWrapper>
           <ContentWrapper>
-            <VisWithData {...this.state} />
+            <VisWithData
+              {...this.state}
+              setSelectedMetric={selectedMetric =>
+                this.setState({ selectedMetric })
+              }
+            />
           </ContentWrapper>
         </FilterPage>
       </div>

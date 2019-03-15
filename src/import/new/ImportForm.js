@@ -119,7 +119,7 @@ export default ({
         />
       </InputWrapper>
       <Footer>
-        <CancelLink to="/import">Cancel</CancelLink>
+        <CancelLink to="/cases/import">Cancel</CancelLink>
         <ImportButton
           disabled={
             !(

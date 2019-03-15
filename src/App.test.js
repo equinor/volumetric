@@ -5,9 +5,9 @@ import { LocationContainer } from './location/';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import { Switch } from 'react-router';
-import { Dictionary } from './dictionary/';
-import { Contact } from './contact/';
-import { ApiDoc } from './ApiDoc/';
+import { Dictionary } from './docs/dictionary/';
+import { Contact } from './docs/contact/';
+import { ApiDoc } from './docs/ApiDoc/';
 import { ImportMetrics } from './import/';
 import ImportStatus from './import/ImportStatus';
 

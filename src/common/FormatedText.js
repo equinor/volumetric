@@ -7,11 +7,11 @@ const FormatedTextStyle = styled.div`
   padding: 3px 0 3px 6px;
   border-left: 3px solid ${ALMOST_BLACK};
   cursor: pointer;
-  min-width: 13em;
 `;
 
 const FormatedTextLabel = styled.span`
-  font-weight: bold;
+  font-weight: 600;
+  font-family: Equinor-Medium;
   margin-right: 0.2222em;
   ::after {
     content: ':';

@@ -1,10 +1,10 @@
 import React from 'react';
-import { H2 } from '../common/Headers';
+import { H2 } from '../../common/Headers';
 
 const Contact = () => {
   return (
     <div>
-      <H2>Get help or report a bug</H2>
+      <H2 id="contact">Get help or report a bug</H2>
       <p>
         The Volumetric project is still under development and is not ready for
         use in production.

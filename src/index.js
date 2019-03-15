@@ -26,14 +26,6 @@ const client = new ApolloClient({
     });
   },
   uri: `${API_URL}/graphql`,
-  clientState: {
-    defaults: {
-      metrics: {
-        __typename: 'Metrics',
-        selectedMetric: 'bulk',
-      },
-    },
-  },
 });
 
 const AppWithApollo = (

@@ -7,16 +7,8 @@ import {
   SUCCESS_COLOR,
   DANGER_COLOR,
   WORKING_COLOR,
-  LIST_SEPARATOR_COLOR,
 } from '../common/variables';
-
-const TaskContainer = styled.div`
-  justify-content: space-around;
-  display: flex;
-  padding: 20px 5px;
-  border-bottom: 1px solid ${LIST_SEPARATOR_COLOR};
-  ${props => props.first && `border-top: 1px solid ${LIST_SEPARATOR_COLOR};`}
-`;
+import { Row, TD, TH, Table } from '../common/Table';
 
 const TaskStatus = styled.div`
   text-align: center;
@@ -31,13 +23,6 @@ const TaskStatus = styled.div`
   line-height: 20px;
 `;
 
-const TaskDescription = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1;
-  align-items: center;
-`;
-
 const TaskIcon = styled.div`
   height: 18px;
   width: 18px;
@@ -46,12 +31,6 @@ const TaskIcon = styled.div`
   border: 1px solid;
   font-size: 14px;
   margin-right: 8px;
-`;
-
-const TaskDescriptionItem = styled.div`
-  flex-grow: ${props => (props.grow ? props.grow : '1')};
-  flex-basis: 0;
-  flex-shrink: ${props => (props.shrink ? props.shrink : '0')};
 `;
 
 const TaskStatusWrapper = styled.div`
@@ -86,43 +65,40 @@ const TaskStatusComponent = ({ complete, failed }) => {
   }
 };
 
-function Task({ queuedAt, caseName, failed, complete, message, first }) {
+function Task({ queuedAt, caseName, failed, complete, message }) {
   const queuedAtDate = new Date(queuedAt);
 
   return (
-    <TaskContainer first={first}>
-      <TaskStatusComponent complete={complete} failed={failed} />
-      <TaskDescription>
-        <TaskDescriptionItem shrink="3">
-          <b>Case: </b>
-          {caseName}
-        </TaskDescriptionItem>
-        <TaskDescriptionItem grow={!failed ? '5' : '2'}>
-          <b>Import date: </b>
-          {`${queuedAtDate.toDateString()}`}
-        </TaskDescriptionItem>
-        {failed && (
-          <TaskDescriptionItem grow={'3'}>
-            <b>Message: </b>
-            {message}
-          </TaskDescriptionItem>
-        )}
-      </TaskDescription>
-    </TaskContainer>
+    <Row>
+      <TD>
+        <TaskStatusComponent complete={complete} failed={failed} />
+      </TD>
+      <TD>{caseName}</TD>
+      <TD>{`${queuedAtDate.toDateString()}`}</TD>
+      <TD title={failed ? message : ''} grow={2}>
+        {failed && message}
+      </TD>
+    </Row>
   );
 }
 
-const TasksWrapper = styled.div`
-  margin-bottom: 50px;
-`;
-
 function Tasks({ tasks }) {
   return (
-    <TasksWrapper>
-      {tasks.map((task, index) => (
-        <Task key={`task-${index}`} {...task} first={index === 0} />
-      ))}
-    </TasksWrapper>
+    <Table>
+      <thead>
+        <Row>
+          <TH>Status</TH>
+          <TH>Case</TH>
+          <TH>Import date</TH>
+          <TH grow={2}>Message</TH>
+        </Row>
+      </thead>
+      <tbody>
+        {tasks.map((task, index) => (
+          <Task key={`task-${index}`} {...task} />
+        ))}
+      </tbody>
+    </Table>
   );
 }
 
@@ -133,28 +109,36 @@ const getHasWorkingTasks = data => {
 const ACTIVE_IMPORT_INTERVAL = 1000;
 
 const ImportStatus = ({ user }) => {
-  const [pollInterval, setPollInterval] = useState(ACTIVE_IMPORT_INTERVAL);
-  const [hasWorkingTasks, setHasWorkingTasks] = useState(true);
+  const [isPolling, setIsPolling] = useState(false);
   return (
     <Query
       query={GET_UPLOADS}
       variables={{
         user: user.toLowerCase(),
       }}
-      onCompleted={data => setHasWorkingTasks(getHasWorkingTasks(data))}
-      pollInterval={pollInterval}
     >
       {props => {
-        const { loading, error, data, stopPolling, client } = props;
+        const {
+          loading,
+          error,
+          data,
+          startPolling,
+          stopPolling,
+          client,
+        } = props;
 
         if (loading) return <p>Loading</p>;
         if (error)
           return error.networkError ? NetworkError(error) : GraphqlError(error);
 
-        if (!hasWorkingTasks && pollInterval === ACTIVE_IMPORT_INTERVAL) {
+        const hasWorkingTasks = getHasWorkingTasks(data);
+        if (hasWorkingTasks && !isPolling) {
+          startPolling(ACTIVE_IMPORT_INTERVAL);
+          setIsPolling(true);
+        } else if (!hasWorkingTasks && isPolling) {
           stopPolling();
-          setPollInterval(0);
           client.resetStore();
+          setIsPolling(false);
         }
 
         if (data.tasks.length === 0) {
