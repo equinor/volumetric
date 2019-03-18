@@ -10,6 +10,7 @@ import Icon, { ICONS } from '../common/Icons';
 import { PageLink } from '../common/Links';
 import { ListPageWithActions } from '../common/Layouts';
 import { Table, TH, TD, Row } from '../common/Table';
+import { getFormattedDate } from '../utils/date';
 
 const DELETE_CASE = gql`
   mutation DeleteCase($id: Int!) {
@@ -78,7 +79,7 @@ function CasesList({ fields }) {
                   <TD grow={2}>{name}</TD>
                   <TD>{caseVersion}</TD>
                   <TD>{caseType}</TD>
-                  <TD>{new Date(createdDate).toLocaleDateString()}</TD>
+                  <TD>{getFormattedDate(createdDate)}</TD>
                   <TD>{isCurrentlyOfficial ? 'Yes' : 'No'}</TD>
                   <TD>
                     <Mutation

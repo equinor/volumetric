@@ -9,6 +9,7 @@ import {
   WORKING_COLOR,
 } from '../common/variables';
 import { Row, TD, TH, Table } from '../common/Table';
+import { getFormattedDate } from '../utils/date';
 
 const TaskStatus = styled.div`
   text-align: center;
@@ -66,15 +67,13 @@ const TaskStatusComponent = ({ complete, failed }) => {
 };
 
 function Task({ queuedAt, caseName, failed, complete, message }) {
-  const queuedAtDate = new Date(queuedAt);
-
   return (
     <Row>
       <TD>
         <TaskStatusComponent complete={complete} failed={failed} />
       </TD>
       <TD>{caseName}</TD>
-      <TD>{`${queuedAtDate.toDateString()}`}</TD>
+      <TD>{`${getFormattedDate(queuedAt)}`}</TD>
       <TD title={failed ? message : ''} grow={2}>
         {failed && message}
       </TD>
