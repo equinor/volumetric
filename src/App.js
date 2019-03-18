@@ -5,7 +5,7 @@ import { BrowserRouter as Router, NavLink, Route } from 'react-router-dom';
 import { Switch } from 'react-router';
 import { ImportMetrics, ImportNewCase } from './import/';
 import { AuthContext } from './auth/AuthContext';
-import { H3 } from './common/Headers';
+import { H1, H3 } from './common/Headers';
 import Cases from './case/Cases';
 import Docs from './docs/Docs';
 import { ALMOST_BLACK, SELECTED_COLOR } from './common/variables';
@@ -35,9 +35,8 @@ const AppHeader = styled.header`
   padding-top: 10px;
 `;
 
-const AppTitle = styled.h1`
+const AppTitle = styled(H1)`
   display: flex;
-  font-family: Equinor-Medium;
   align-items: center;
   margin: 0;
   font-size: 24px;
@@ -67,7 +66,7 @@ const UserInfo = styled.div`
   text-align: right;
   color: inherit;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 500;
   font-family: Equinor-Medium;
 `;
 

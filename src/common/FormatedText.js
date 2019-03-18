@@ -5,13 +5,14 @@ import styled from 'styled-components';
 
 const FormatedTextStyle = styled.div`
   padding: 3px 0 3px 6px;
-  border-left: 3px solid ${ALMOST_BLACK};
+  border-left: 2px solid ${ALMOST_BLACK};
   cursor: pointer;
 `;
 
 const FormatedTextLabel = styled.span`
-  font-weight: 600;
+  font-weight: 500;
   font-family: Equinor-Medium;
+  color: ${ALMOST_BLACK}
   margin-right: 0.2222em;
   ::after {
     content: ':';

@@ -8,7 +8,8 @@ const DL = styled.dl`
 `;
 
 const DT = styled.dt`
-  font-weight: bold;
+  font-weight: 500;
+  font-family: Equinor-Medium;
 
   :after {
     content: ':';

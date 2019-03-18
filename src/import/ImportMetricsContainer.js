@@ -3,6 +3,7 @@ import ImportStatus from './ImportStatus';
 import { AuthContext } from '../auth/AuthContext';
 import { PageLink } from '../common/Links';
 import { ListPageWithActions } from '../common/Layouts';
+import { ALMOST_BLACK } from '../common/variables';
 
 const ImportMetricsContainer = () => {
   const { user } = useContext(AuthContext);
@@ -11,7 +12,9 @@ const ImportMetricsContainer = () => {
       title="Imports"
       links={() => (
         <>
-          <PageLink to="/cases">List cases</PageLink>
+          <PageLink color={ALMOST_BLACK} to="/cases">
+            List cases
+          </PageLink>
           <PageLink to="/cases/import/new">Import new case</PageLink>
         </>
       )}

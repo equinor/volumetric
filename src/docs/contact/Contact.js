@@ -1,5 +1,11 @@
 import React from 'react';
 import { H2 } from '../../common/Headers';
+import styled from 'styled-components';
+
+const Bold = styled.span`
+  font-family: Equinor-Medium;
+  font-weight: 400;
+`;
 
 const Contact = () => {
   return (
@@ -14,10 +20,10 @@ const Contact = () => {
         channel. It is also possible to ask for help there.
       </p>
       <p>
-        <b>Slack: </b>The channel #volumetric_develop
+        <Bold>Slack: </Bold>The channel #volumetric_develop
       </p>
       <p>
-        <b>Email: </b>volumetric_develop@equinor.com
+        <Bold>Email: </Bold>volumetric_develop@equinor.com
       </p>
     </div>
   );

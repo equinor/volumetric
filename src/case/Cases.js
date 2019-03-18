@@ -4,7 +4,7 @@ import { CASE_FRAGMENT, GET_FIELDS } from '../common/Queries';
 import { SmallSpinner, StyledSpinner } from '../common/Spinner';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import styled from 'styled-components';
-import { DANGER_COLOR } from '../common/variables';
+import { ALMOST_BLACK, DANGER_COLOR } from '../common/variables';
 import gql from 'graphql-tag';
 import Icon, { ICONS } from '../common/Icons';
 import { PageLink } from '../common/Links';
@@ -62,20 +62,17 @@ function CasesList({ fields }) {
       <tbody>
         {fields.map(field =>
           field.cases.map(
-            (
-              {
-                id,
-                name,
-                caseVersion,
-                caseType,
-                isCurrentlyOfficial,
-                createdDate,
-              },
-              index,
-            ) => {
+            ({
+              id,
+              name,
+              caseVersion,
+              caseType,
+              isCurrentlyOfficial,
+              createdDate,
+            }) => {
               return (
                 <Row key={`case-${id}`}>
-                  <TD>{index === 0 && field.name}</TD>
+                  <TD>{field.name}</TD>
                   <TD grow={2}>{name}</TD>
                   <TD>{caseVersion}</TD>
                   <TD>{caseType}</TD>
@@ -144,7 +141,9 @@ function Cases() {
             title="Cases"
             links={() => (
               <>
-                <PageLink to="/cases/import">List imports</PageLink>
+                <PageLink color={ALMOST_BLACK} to="/cases/import">
+                  List imports
+                </PageLink>
                 <PageLink to="/cases/import/new">Import new</PageLink>
               </>
             )}

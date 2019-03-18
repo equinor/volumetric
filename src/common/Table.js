@@ -27,6 +27,6 @@ export const TH = styled.th`
   text-align: start;
   padding-right: 20px;
   flex: ${props => (props.grow ? props.grow : 1)};
-  font-weight: 600;
+  font-weight: 400;
   font-family: Equinor-Medium;
 `;

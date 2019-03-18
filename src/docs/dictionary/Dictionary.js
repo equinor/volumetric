@@ -4,9 +4,10 @@ import { ALMOST_BLACK } from '../../common/variables';
 import { H2, H3 } from '../../common/Headers';
 
 const DT = styled.dt`
-  font-weight: bold;
   display: inline;
   min-width: 100px;
+  font-family: Equinor-Medium;
+  font-weight: 400;
 `;
 
 const DD = styled.dd`
