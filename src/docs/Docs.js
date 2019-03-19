@@ -14,22 +14,21 @@ const DocsStyled = styled.div`
 
 const UL = styled.ul`
   list-style-type: none;
-  padding-left: 0;
+  margin: 0;
+  padding: 0;
 `;
 
 const LI = styled.li`
-  margin: 20px;
-
   .active {
     color: ${SELECTED_COLOR};
   }
-`;
-
-const SideBar = styled.div`
-  margin-right: 50px;
+  padding: 0;
+  margin: 0;
 `;
 
 const DocLink = styled(NavLink)`
+  display: block;
+  padding: 10px 50px 10px 0;
   text-decoration: none;
   color: ${ALMOST_BLACK};
   outline: none;
@@ -39,7 +38,7 @@ function Docs() {
   const { user } = useContext(AuthContext);
   return (
     <DocsStyled>
-      <SideBar>
+      <div>
         <UL>
           <LI>
             <DocLink to="/docs/api">Api</DocLink>
@@ -51,7 +50,7 @@ function Docs() {
             <DocLink to="/docs/contact">Contact</DocLink>
           </LI>
         </UL>
-      </SideBar>
+      </div>
       <Switch>
         <Redirect exact from="/docs" to="/docs/api" />
         <Route exact path="/docs/dictionary" component={Dictionary} />
