@@ -12,6 +12,7 @@ export const CodeBox = styled.pre`
   margin-top: 0;
   font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
   white-space: pre-wrap;
+  width: fit-content;
 `;
 
 export const DocH2 = styled.h2`

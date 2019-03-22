@@ -19,6 +19,7 @@ const TokenWrapper = styled.div`
 const TokenCodeBox = styled(CodeBox)`
   width: 95%;
   margin: 10px 10px 10px 10px;
+  max-width: 1090px;
 `;
 
 export const AccessToken = props => {
