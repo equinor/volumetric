@@ -1,10 +1,9 @@
 from graphql import GraphQLError
 from rq import get_current_job
-from sqlalchemy.exc import SQLAlchemyError, DataError, IntegrityError
 
 from models import db, Task
-from utils.debug.remote import enable_remote_debugging
 from utils.graphql.fileformat import FileFormat
+from utils.timer import timeit
 from .custom import import_custom_case
 from .fmu import import_fmu_case, validate_fmu_case
 
@@ -34,6 +33,7 @@ def get_import_func(file_format):
         raise GraphQLError('Unsupported file type')
 
 
+@timeit
 def import_case(filename, field_name, case_name, file_format, **kwargs):
     """
     Import a file containing a single model
@@ -46,22 +46,10 @@ def import_case(filename, field_name, case_name, file_format, **kwargs):
     job = get_current_job()
     task = db.session.query(Task).get(job.id)
 
-    try:
-        import_func = get_import_func(file_format)
-        with db.session.begin_nested():  # SAVEPOINT, rollback and commit handled by context manager (with statement)
-            import_func(filename, field_name, case_name, **kwargs)
+    import_func = get_import_func(file_format)
+    with db.session.begin_nested():  # SAVEPOINT, rollback and commit handled by context manager (with statement)
+        import_func(filename, field_name, case_name, **kwargs)
 
-        task.failed = False
-        task.complete = True
-        db.session.commit()
-    except SQLAlchemyError as e:
-        task.failed = True
-        task.complete = True
-        exception_type = type(e)
-        if exception_type is DataError:
-            task.message = 'DataError: Some data in you file is not of the correct type.'
-        elif exception_type is IntegrityError:
-            task.message = 'IntegrityError: Are you sure all your rows are unique?'
-        else:
-            task.message = 'SQLAlchemyError: Something went wrong while importing the file.'
-        db.session.commit()
+    task.failed = False
+    task.complete = True
+    db.session.commit()

@@ -1,6 +1,7 @@
 secrets.env
 .venv/
 venv/
+.venv/
 .idea/
 data/
 .vscode

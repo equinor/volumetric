@@ -2,7 +2,8 @@ import os
 
 
 class Config(object):
-    POSTGRES_HOSTNAME = os.environ.get('DATABASE_HOST', 'db')
+    REMOTE_DEBUG = False
+    POSTGRES_HOSTNAME = os.environ.get('DATABASE_HOST', 'localhost')
     POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD', 'volumetric')
     POSTGRES_USER = os.environ.get('POSTGRES_USER', 'volumetric')
     POSTGRES_DB = os.environ.get('POSTGRES_DB', POSTGRES_USER)
@@ -13,9 +14,8 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = (f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}'
                                f'@{POSTGRES_HOSTNAME}:{POSTGRES_PORT}/{POSTGRES_DB}')
-    REDIS_URL = 'redis'
+    REDIS_URL = os.environ.get('REDIS_HOST', 'localhost')
     REDIS_PORT = 6379
     JSON_SORT_KEYS = False
     UPLOAD_FOLDER = 'uploads'
-    # Remote debugging
-    REMOTE_DEBUG = False
+    JOB_TIMEOUT = '1h'
