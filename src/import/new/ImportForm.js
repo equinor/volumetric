@@ -86,6 +86,7 @@ export default ({
           label="Description"
           onChange={e => handleFormChange('description', e.target.value)}
           placeholder="Enter case description..."
+          value={formState.description}
         />
         <div>
           <CheckboxWithLabel
@@ -116,6 +117,8 @@ export default ({
           style={{ width: '100%' }}
           filename={formState.filename}
           onChange={filename => handleFormChange('filename', filename)}
+          isLoading={formState.isLoading}
+          handleFormChange={handleFormChange}
         />
       </InputWrapper>
       <Footer>

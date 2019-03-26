@@ -50,6 +50,7 @@ const FileInputLabel = styled(Label)`
   cursor: pointer;
   background-color: white;
   min-width: 300px;
+  margin-right: 10px;
 
   :focus-within {
     outline: 1px dotted #212121;

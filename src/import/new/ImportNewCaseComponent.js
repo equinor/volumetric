@@ -16,13 +16,14 @@ class ImportNewCaseComponent extends React.Component {
     this.state = {
       filename: null,
       field: null,
-      case: null,
-      caseVersion: null,
+      case: '',
+      caseVersion: '',
       caseType: props.data.caseTypes[0],
-      description: null,
+      description: '',
       isOfficial: false,
       officialFromDate: new Date(),
       officialToDate: new Date(),
+      isLoading: false,
     };
     this.handleChange = this.handleChange.bind(this);
   }

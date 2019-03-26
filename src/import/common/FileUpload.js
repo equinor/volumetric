@@ -3,21 +3,27 @@ import { API_URL } from '../../common/variables';
 import { FileInput } from './Input';
 import styled from 'styled-components';
 import { AuthConsumer } from '../../auth/AuthContext';
+import { SmallSpinner } from '../../common/Spinner';
 
 const ErrorText = styled.span`
   color: red;
   margin-left: 15px;
 `;
 
-class FileUpload extends React.Component {
-  state = {
-    errorText: null,
-  };
+const FileSelectorWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
+class FileUpload extends React.Component {
   constructor(props) {
     super(props);
     this.fileInput = React.createRef();
     this.handleUpload = this.handleUpload.bind(this);
+    this.handleFormChange = props.handleFormChange;
+    this.state = {
+      errorText: null,
+    };
   }
 
   handleUpload(token, event) {
@@ -31,6 +37,8 @@ class FileUpload extends React.Component {
     if (file === undefined) {
       return;
     }
+
+    this.handleFormChange('isLoading', true);
 
     fetch(`${API_URL}/upload`, {
       method: 'POST',
@@ -53,12 +61,15 @@ class FileUpload extends React.Component {
       .catch(error => {
         console.error(error);
         this.setState({ errorText: error.message });
+      })
+      .finally(() => {
+        this.handleFormChange('isLoading', false);
       });
   }
 
   render() {
     return (
-      <div>
+      <FileSelectorWrapper>
         <AuthConsumer>
           {({ token }) => (
             <React.Fragment>
@@ -74,7 +85,8 @@ class FileUpload extends React.Component {
             </React.Fragment>
           )}
         </AuthConsumer>
-      </div>
+        {this.props.isLoading && <SmallSpinner isLoading={true} />}
+      </FileSelectorWrapper>
     );
   }
 }
