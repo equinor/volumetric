@@ -29,6 +29,7 @@ services:
     env_file:
       - secrets.env
     environment:
+      - REDIS_HOST=redis
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
@@ -49,6 +50,7 @@ services:
     env_file:
       - secrets.env
     environment:
+      - REDIS_HOST=redis
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
