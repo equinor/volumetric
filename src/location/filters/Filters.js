@@ -19,13 +19,15 @@ const DatasetSelectorItem = ({ name, selectedOption, onChange, options }) => {
 
 export class Fields extends React.Component {
   render() {
-    const { data, field, handleChange } = this.props;
-
+    const { fields, field, handleChange } = this.props;
     return (
       <DatasetSelectorItem
         name="Field"
         selectedOption={field}
-        options={data.fields.map(({ name }) => ({ value: name, label: name }))}
+        options={fields.fields.map(({ name }) => ({
+          value: name,
+          label: name,
+        }))}
         onChange={selectedOption => handleChange('field', selectedOption)}
       />
     );
@@ -34,17 +36,15 @@ export class Fields extends React.Component {
 
 export class Cases extends React.Component {
   render() {
-    const { data, currentCase, handleChange } = this.props;
+    const { fields, currentCase, handleChange } = this.props;
 
     const cases =
-      data !== undefined
-        ? data.cases.map(({ id, name, caseVersion, metrics }) => ({
+      fields !== undefined
+        ? fields.cases.map(({ id, name, caseVersion }) => ({
             value: id,
             label: `${name} (${caseVersion})`,
-            availableMetrics: metrics,
           }))
         : [];
-
     return (
       <DatasetSelectorItem
         name="Case"

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Query, Mutation } from 'react-apollo';
-import { CASE_FRAGMENT, GET_FIELDS } from '../common/Queries';
+import { FULL_CASE_FRAGMENT, GET_FIELDS } from '../common/Queries';
 import { SmallSpinner, StyledSpinner } from '../common/Spinner';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import styled from 'styled-components';
@@ -17,11 +17,11 @@ const DELETE_CASE = gql`
     deleteCase(id: $id) {
       ok
       case {
-        ...Case
+        ...FullCase
       }
     }
   }
-  ${CASE_FRAGMENT}
+  ${FULL_CASE_FRAGMENT}
 `;
 
 const DeleteButton = styled.button`

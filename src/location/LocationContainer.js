@@ -1,12 +1,12 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import { GET_FIELDS } from '../common/Queries';
-import LocationComponent from './LocationComponent';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { AuthConsumer } from '../auth/AuthContext';
 import { StyledSpinner } from '../common/Spinner';
+import LocationComponent from './LocationComponent';
 
 const NoDataDiv = styled.div`
   margin-top: 50px;
@@ -23,7 +23,7 @@ export default props => (
         return error.networkError ? NetworkError(error) : GraphqlError(error);
 
       return data.fields[0] ? (
-        <LocationComponent {...props} data={data} />
+        <LocationComponent {...props} fields={data} />
       ) : (
         <NoDataDiv>
           <AuthConsumer>

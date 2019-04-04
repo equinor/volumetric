@@ -1,7 +1,7 @@
 import { gql } from 'apollo-boost';
 
-export const CASE_FRAGMENT = gql`
-  fragment Case on Case {
+export const FULL_CASE_FRAGMENT = gql`
+  fragment FullCase on Case {
     id
     name
     caseVersion
@@ -18,16 +18,38 @@ export const CASE_FRAGMENT = gql`
   }
 `;
 
+export const GET_CASE = gql`
+  query Case($caseId: Int) {
+    case(caseId: $caseId) {
+      ...FullCase
+    }
+  }
+  ${FULL_CASE_FRAGMENT}
+`;
+
+export const SHORT_CASE_FRAGMENT = gql`
+  fragment ShortCase on Case {
+    id
+    name
+    caseVersion
+    caseType
+    description
+    isOfficial
+    isCurrentlyOfficial
+    createdDate
+  }
+`;
+
 export const GET_FIELDS = gql`
   query Fields {
     fields(orderBy: "name") {
       name
       cases(orderBy: "name") {
-        ...Case
+        ...ShortCase
       }
     }
   }
-  ${CASE_FRAGMENT}
+  ${SHORT_CASE_FRAGMENT}
 `;
 
 export const TASK_FRAGMENT = gql`
