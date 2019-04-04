@@ -4,13 +4,13 @@ import graphene
 from graphql import GraphQLError
 from sqlalchemy import desc
 
-from models import Field as FieldModel, Case as CaseModel, Task as TaskModel, PhaseEnumGraphene
+from models import Field as FieldModel, Task as TaskModel, PhaseEnumGraphene, Case as CaseModel
 from services.database_service import DatabaseService
 from utils.calculations import sum_volumetrics as calc_sum_volumetrics
 from utils.ordering import ordered_case, OrderedList
+from .case import CaseTypeGrapheneEnum, DeleteCase, ImportCase, Case
 from .field import Field as FieldType, AddField
 from .types import VolumetricsType, VolumetricType, Task
-from .case import CaseTypeGrapheneEnum, DeleteCase, ImportCase
 
 
 def sum_volumetrics(volumetrics):
@@ -61,6 +61,15 @@ class Query(graphene.ObjectType):
             summed_volumetrics=summed_volumetrics,
         )
 
+    def resolve_case(self, info, case_id):
+        user = info.context.user
+        case = CaseModel.query.filter(CaseModel.id == case_id).first()
+
+        if not (user.isAdmin or case.is_official or case.created_user == user.shortname):
+            raise GraphQLError('You are not authorized to view this case.')
+
+        return [case]
+
     def resolve_case_types(self, info):
         return [CaseTypeGrapheneEnum.FULL_FIELD, CaseTypeGrapheneEnum.SEGMENT]
 
@@ -78,6 +87,8 @@ class Query(graphene.ObjectType):
     fields = OrderedList(FieldType, name=graphene.String())
 
     case_types = graphene.List(CaseTypeGrapheneEnum)
+
+    case = graphene.List(Case, case_id=graphene.Int())
 
     volumetrics = graphene.Field(
         VolumetricsType,
