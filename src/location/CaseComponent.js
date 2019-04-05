@@ -127,16 +127,22 @@ export class CaseComponent extends React.Component {
 
   handleFilterChange = (category, event) => {
     const { checked, value } = event.target;
-
     this.setState(prevState => {
       if (category === 'metrics') {
-        return checked
+        let nextState = checked
           ? {
               [category]: this.state.currentCase.metrics.filter(metric =>
                 [...prevState[category], value].includes(metric),
               ),
             }
           : { [category]: prevState[category].filter(item => item !== value) };
+        const isValidMetric =
+          nextState.metrics.includes(prevState.selectedMetric) ||
+          nextState.metrics.length === 0;
+        if (!isValidMetric) {
+          nextState.selectedMetric = nextState.metrics[0];
+        }
+        return nextState;
       }
       return checked
         ? { [category]: [...prevState[category], value] }
