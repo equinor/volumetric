@@ -58,7 +58,7 @@ deploy_develop:
     - git pull
     - ./bin/activate volumetric pull
     - ./bin/activate volumetric build proxy
-    - ./bin/activate volumetric up -d
+    - ./bin/activate volumetric up -d --scale worker=3
 
 
 deploy_test:
@@ -83,4 +83,4 @@ deploy_test:
     - git pull
     - ./bin/activate volumetric pull
     - ./bin/activate volumetric build proxy
-    - ./bin/activate volumetric up -d
+    - ./bin/activate volumetric up -d --scale worker=3
