@@ -23,6 +23,7 @@ class AddField(graphene.Mutation):
     field = graphene.Field(lambda: Field)
 
     def mutate(self, info, name):
+        # Only creators are allowed to create new fields
         if not info.context.user.isCreator:
             raise GraphQLError('You are not allowed to create fields!')
 

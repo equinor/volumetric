@@ -33,13 +33,18 @@ class User(object):
     name = None
     shortname = None
     isCreator = False
+    isFieldAdmin = False
     isAdmin = False
 
     def __init__(self, name=None, shortname=None, roles=None):
         self.name = name
         self.shortname = shortname
         if roles is not None:
-            self.isCreator = 'VolumetricAdmin' in roles or 'VolumetricCreator' in roles
+            self.isCreator = 'VolumetricAdmin' in roles \
+                             or 'VolumetricCreator' in roles \
+                             or 'VolumetricFieldAdmin' in roles
+            self.isFieldAdmin = 'VolumetricAdmin' in roles \
+                                or 'VolumetricFieldAdmin' in roles
             self.isAdmin = 'VolumetricAdmin' in roles
 
 

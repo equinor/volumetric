@@ -96,8 +96,9 @@ class DeleteCase(graphene.Mutation):
         case = CaseModel.query.get(id)
 
         user = info.context.user
-        if not user.isAdmin and (user.shortname != case.created_user):
-            return GraphQLError('You are not allowed to delete this case')
+        # Only admins and FieldAdmins are allowed to delete none private cases.
+        if not (user.isAdmin or user.isFieldAdmin or user.shortname == case.created_user):
+            return GraphQLError('Unauthorized')
 
         field = case.field
         db.session.delete(case)
@@ -137,8 +138,8 @@ class ImportCase(graphene.Mutation):
         if not info.context.user.isCreator:
             raise GraphQLError('You need to be a creator to import cases!')
 
-        if kwargs['is_official'] and not info.context.user.isAdmin:
-            raise GraphQLError('You need to be an admin to import official cases!')
+        if kwargs['is_official'] and not info.context.user.isFieldAdmin:
+            raise GraphQLError('You need to be an field administrator to import official cases!')
 
         if not kwargs['is_official']:
             del kwargs['official_from_date']

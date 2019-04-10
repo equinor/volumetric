@@ -23,6 +23,7 @@ class Query(graphene.ObjectType):
     def resolve_fields(self, info, **kwargs):
         user = info.context.user
         fields = FieldModel.query.filter_by(**kwargs).all()
+        # Return all fields if user is Admin
         if user.isAdmin:
             return fields
 
@@ -30,6 +31,7 @@ class Query(graphene.ObjectType):
         for field in fields:
             field_type = FieldType()
             field_type.name = field.name
+            # Return only official and personal fields if user not an administrator
             field_type.cases = [case for case in field.cases if case.created_user == user.shortname or case.is_official]
             if len(field_type.cases) > 0:
                 field_types.append(field_type)
@@ -39,6 +41,7 @@ class Query(graphene.ObjectType):
         user = info.context.user
         case = CaseModel.query.filter(CaseModel.id == case_id).first()
 
+        # Return only personal or official data if user is not administrator
         if not (user.isAdmin or case.is_official or case.created_user == user.shortname):
             raise GraphQLError('You are not authorized to view this case.')
 
@@ -65,15 +68,22 @@ class Query(graphene.ObjectType):
         user = info.context.user
         case = CaseModel.query.filter(CaseModel.id == case_id).first()
 
+        # Return only personal or official data if user is not administrator
         if not (user.isAdmin or case.is_official or case.created_user == user.shortname):
             raise GraphQLError('You are not authorized to view this case.')
 
         return [case]
 
     def resolve_case_types(self, info):
+        # No fine grained auth
         return [CaseTypeGrapheneEnum.FULL_FIELD, CaseTypeGrapheneEnum.SEGMENT]
 
     def resolve_tasks(self, info, user, hours=None):
+        authenticated_user = info.context.user
+
+        # Return only personal data if user is not administrator
+        if not (authenticated_user.isAdmin or authenticated_user.shortname == user):
+            raise GraphQLError('You are not authorized to view this data.')
 
         tasks_query = TaskModel.query.filter(TaskModel.user == user).order_by(desc(TaskModel.queued_at))
 
