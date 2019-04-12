@@ -14,19 +14,15 @@ variables:
 build_api:
   stage: build
   script:
-    - docker build -t $BUILD_IMAGE .
+    - docker build --pull -t $BUILD_IMAGE .
 
 format:
   stage: tests
   variables:
     COMPOSE_PROJECT_NAME: api$CI_JOB_ID
-  before_script:
-    - docker network create vlmtrc-ci-net-$CI_JOB_ID
   script:
-    - docker-compose -f docker-compose.ci.yml run --no-deps --rm api yapf --diff --recursive -p .
-  after_script:
-    - docker-compose -f docker-compose.ci.yml down
-    - docker network rm vlmtrc-ci-net-$CI_JOB_ID
+    - docker run --rm $BUILD_IMAGE yapf --version
+    - docker run --rm $BUILD_IMAGE yapf --diff --recursive -p .
 
 features:
   stage: tests
@@ -35,7 +31,7 @@ features:
   before_script:
     - docker network create vlmtrc-ci-net-$CI_JOB_ID
   script:
-    - docker-compose -f docker-compose.ci.yml run --no-deps --rm api tests
+    - docker-compose -f docker-compose.ci.yml run --rm api tests
   after_script:
     - docker-compose -f docker-compose.ci.yml down
     - docker network rm vlmtrc-ci-net-$CI_JOB_ID
@@ -44,13 +40,8 @@ security-check:
   stage: tests
   variables:
     COMPOSE_PROJECT_NAME: api$CI_JOB_ID
-  before_script:
-    - docker network create vlmtrc-ci-net-$CI_JOB_ID
   script:
-    - docker-compose -f docker-compose.ci.yml run --no-deps --rm api pipenv check
-  after_script:
-    - docker-compose -f docker-compose.ci.yml down
-    - docker network rm vlmtrc-ci-net-$CI_JOB_ID
+    - docker run --rm $BUILD_IMAGE pipenv check
 
 publish_image:
   stage: publish

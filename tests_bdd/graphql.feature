@@ -33,6 +33,7 @@ Feature: GraphQL API
       | 4              | GAS   |13.1 | 13.2 | 13.3 | 13.4 | 13.5   | GAS   | 13.7 | 13.8          | 13.9             | 13.99       |
       | 5              | GAS   |1.1  | 1.2  | 1.3  | 1.4  | 1.5    | GAS   | 1.7  | 1.8           | 1.9              | 1.99        |
 
+    Given max_iter_volumetrics is fresh
 
   Scenario: Query for fields
     Given I am an application admin
@@ -127,7 +128,7 @@ Feature: GraphQL API
           },
           "means": {
             "bulk": 0.1
-          },
+          }
         }
       }
     }
@@ -164,17 +165,17 @@ Feature: GraphQL API
           "faciesNames": null,
           "regionNames": ["Region 1", "Region 2"],
           "p10": {
-            "bulk": 1.2
+            "bulk": 37.5
           },
           "means": {
-            "bulk": 1.2
+            "bulk": 37.5
           },
           "summedVolumetrics": [
             {
               "realization": 1,
-              "bulk": 1.2
+              "bulk": 37.5
             }
-          ],
+          ]
         }
       }
     }

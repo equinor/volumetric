@@ -1,12 +1,16 @@
+from psycopg2._psycopg import ProgrammingError
+
 from app import create_app
 from models import db
 from tests_bdd.results import print_overview_features
 import contextlib
 from flask_migrate import Migrate, upgrade
+import os
 
 app = create_app()
 app.config['TESTING'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/mydatabase.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = (f'postgresql://volumetric:{os.environ.get("POSTGRES_PASSWORD", "volumetric")}'
+                                         f'@db:5432/volumetric')
 
 migrate = Migrate(app, db)
 
@@ -17,8 +21,11 @@ def clear():
     with contextlib.closing(db.engine.connect()) as con:
         trans = con.begin()
         for table in reversed(meta.sorted_tables):
-            con.execute(table.delete())
-            # con.execute("ALTER SEQUENCE %s_id_seq RESTART WITH 1" % table) # Needed when using PostgreSQL
+            if table.name != 'max_iter_volumetrics':
+                con.execute(table.delete())
+        for seq in ['case', 'location', 'realization', 'volumetrics']:
+            con.execute(f'ALTER SEQUENCE {seq}_id_seq RESTART WITH 1')  # Needed when using PostgreSQL
+        db.session.execute('REFRESH MATERIALIZED VIEW max_iter_volumetrics')
         trans.commit()
 
 
@@ -27,6 +34,7 @@ def before_all(context):
     context.features = []
     with app.app_context():
         upgrade(revision="head")
+        clear()
 
 
 def after_all(context):

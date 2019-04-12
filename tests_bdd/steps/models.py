@@ -91,3 +91,11 @@ def step_impl(context):
         db.session.add(realization)
         id = id + 1
     db.session.commit()
+
+
+@given("max_iter_volumetrics is fresh")
+def step_impl(context):
+    """
+    :type context: behave.runner.Context
+    """
+    db.session.execute('REFRESH MATERIALIZED VIEW max_iter_volumetrics')
