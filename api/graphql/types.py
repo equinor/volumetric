@@ -39,17 +39,12 @@ class VolumetricType(graphene.ObjectType):
     realization = graphene.Int()
     phase = PhaseEnumGraphene
 
-    def resolve_realization(self, info):
-        return self.realization.realization
-
 
 class VolumetricsType(graphene.ObjectType):
     case_id = graphene.Field(graphene.Int, description='A single case')
     zone_names = graphene.List(graphene.String, description='A list of zones for this case')
     region_names = graphene.List(graphene.String, description='A list of regions for this case')
     facies_names = graphene.List(graphene.String, description='A list of facies for this case')
-    volumetrics = graphene.List(
-        VolumetricType, description='A list of all the realizations of every location in the case')
     summed_volumetrics = graphene.List(
         VolumetricType, description='A list of volumetrics, grouped and summed by realization')
     percentiles = graphene.Field(

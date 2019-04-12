@@ -6,16 +6,10 @@ from sqlalchemy import desc
 
 from models import Field as FieldModel, Task as TaskModel, PhaseEnumGraphene, Case as CaseModel
 from services.database_service import DatabaseService
-from utils.calculations import sum_volumetrics as calc_sum_volumetrics
 from utils.ordering import ordered_case, OrderedList
 from .case import CaseTypeGrapheneEnum, DeleteCase, ImportCase, Case
 from .field import Field as FieldType, AddField
-from .types import VolumetricsType, VolumetricType, Task
-
-
-def sum_volumetrics(volumetrics):
-    summed_volumetrics = calc_sum_volumetrics(volumetrics)
-    return [VolumetricType(**summed_volumetrics[volumetric_dict]) for volumetric_dict in summed_volumetrics]
+from .types import VolumetricsType, Task
 
 
 class Query(graphene.ObjectType):
@@ -50,17 +44,14 @@ class Query(graphene.ObjectType):
         if not filtered_kwargs and not case_id:
             raise GraphQLError('This query requires 1-4 filters.')
 
-        volumetrics = DatabaseService.get_volumetrics(case_id, filtered_kwargs, phase)
-        volumetrics = sorted(volumetrics, key=lambda volumetric: volumetric.realization.realization)
-
-        summed_volumetrics = sum_volumetrics(volumetrics)
+        summed_volumetrics = DatabaseService.get_summed_volumetrics(case_id, filtered_kwargs, phase)
+        summed_volumetrics = sorted(summed_volumetrics, key=lambda volumetric: volumetric.realization)
 
         return VolumetricsType(
             case_id=case_id,
             zone_names=kwargs.get('zone_names'),
             region_names=kwargs.get('region_names'),
             facies_names=kwargs.get('facies_names'),
-            volumetrics=volumetrics,
             summed_volumetrics=summed_volumetrics,
         )
 

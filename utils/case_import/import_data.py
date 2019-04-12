@@ -52,4 +52,5 @@ def import_case(filename, field_name, case_name, file_format, **kwargs):
 
     task.failed = False
     task.complete = True
+    db.session.execute('REFRESH MATERIALIZED VIEW max_iter_volumetrics')
     db.session.commit()

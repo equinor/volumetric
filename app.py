@@ -44,7 +44,10 @@ def empty_database():
     with contextlib.closing(db.engine.connect()) as con:
         trans = con.begin()
         for table in reversed(meta.sorted_tables):
-            con.execute(table.delete())
+            if table.name != 'max_iter_volumetrics':
+                con.execute(table.delete())
+
+        con.execute('REFRESH MATERIALIZED VIEW max_iter_volumetrics')
         trans.commit()
 
 

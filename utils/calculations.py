@@ -34,29 +34,3 @@ def get_mean(data):
 def _get_metric_value(volumetric, key):
     metric = getattr(volumetric, key)
     return metric if metric is not None else 0
-
-
-def sum_volumetrics(volumetrics):
-    volumetrics_by_realization = {}
-    volumetric_key_list = METRICS + ('realization', )
-
-    for volumetric in volumetrics:
-        if volumetric.realization.realization not in volumetrics_by_realization:
-            volumetrics_by_realization.update({
-                volumetric.realization.realization:
-                {key: _get_metric_value(volumetric, key)
-                 for key in volumetric_key_list}
-            })
-        else:
-            volumetrics_by_realization[volumetric.realization.realization].update({
-                key: sum([
-                    _get_metric_value(volumetric, key),
-                    volumetrics_by_realization[volumetric.realization.realization][key]
-                ])
-                for key in METRICS
-            })
-
-    for realization in volumetrics_by_realization:
-        volumetrics_by_realization[realization].update({'id': realization})
-
-    return volumetrics_by_realization

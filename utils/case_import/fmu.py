@@ -3,6 +3,7 @@ from collections import namedtuple
 from models import Case, db, Field, Realization
 from models import Location as LocationModel
 from models.volumetrics import Volumetrics, PhaseEnum
+from utils.calculations import METRICS
 from utils.db import get_or_create
 from utils.file import read_file
 
@@ -96,20 +97,63 @@ def _add_volumetrics(lines_as_ordered_dicts, realizations, locations):
         realization = realizations.get(_get_realization_tuple(line_dict, locations))
 
         for phase in ['oil', 'gas', 'total']:
-            inserts.append(_get_volumetrics_for_phase(line_dict, phase, realization))
+            volumetric = _get_volumetrics_for_phase(line_dict, phase, realization)
+            bulk_metric = volumetric.get('bulk')
+            if bulk_metric is not None and float(bulk_metric) != 0.0:
+                inserts.append(volumetric)
 
     ins = Volumetrics.__table__.insert()
     db.session.execute(ins, inserts)
 
 
-def import_fmu_case(filename, field_name, case_name, **kwargs):
+def _read_fmu_file(filename):
     lines_as_ordered_dicts = read_file(filename, delimiter=",")
+    bulks = [f'bulk_{phase.value.lower()}' for phase in PhaseEnum]
+    return [
+        line for line in lines_as_ordered_dicts if any(
+            line.get(bulk) is not None and float(line.get(bulk)) != 0.0 for bulk in bulks)
+    ]
+
+
+def _get_column(lines_as_ordered_dicts, metric=None):
+    phases = [phase.value for phase in PhaseEnum]
+    return [line.get(f'{metric}_{phase.lower()}') for line in lines_as_ordered_dicts for phase in phases]
+
+
+def _get_metrics_with_data(lines_as_ordered_dicts):
+    metrics_with_data = []
+    for metric in METRICS:
+        metric_values = _get_column(lines_as_ordered_dicts, metric)
+        for value in metric_values:
+            if value is not None:
+                metrics_with_data.append(metric)
+                break
+    return metrics_with_data
+
+
+def _get_phases_with_data(lines_as_ordered_dicts):
+    phases = []
+    for phase in PhaseEnum:
+        phase_data = [
+            line.get(f'{metric}_{phase.value.lower()}') for line in lines_as_ordered_dicts for metric in METRICS
+        ]
+        for phase_value in phase_data:
+            if phase_value is not None:
+                phases.append(phase)
+                break
+    return phases
+
+
+def import_fmu_case(filename, field_name, case_name, **kwargs):
+    lines_as_ordered_dicts = _read_fmu_file(filename)
 
     field, was_created = get_or_create(db.session, Field, name=field_name)
     db.session.add(field)
 
     case_name = case_name if case_name else lines_as_ordered_dicts[0]['case']
-    case = Case(name=case_name, field=field, **kwargs)
+    metrics = _get_metrics_with_data(lines_as_ordered_dicts)
+    phases = _get_phases_with_data(lines_as_ordered_dicts)
+    case = Case(name=case_name, field=field, metrics=metrics, phases=phases, **kwargs)
     db.session.flush()
 
     locations = _add_locations(lines_as_ordered_dicts, case)
@@ -126,10 +170,10 @@ REQUIRED_HEADERS = ['region', 'zone']
 
 
 def validate_fmu_case(filename):
-    lines_as_ordered_dicts = read_file(filename, delimiter=",")
+    lines_as_ordered_dicts = _read_fmu_file(filename)
 
     if len(lines_as_ordered_dicts) == 0:
-        return False
+        return False, f'The file has no valid lines'
 
     line_dict = lines_as_ordered_dicts[0]
     has_required_headers = all(header in line_dict for header in REQUIRED_HEADERS)

@@ -110,11 +110,6 @@ Feature: GraphQL API
         means {
           bulk
         }
-        volumetrics {
-          id
-          realization
-          bulk
-        }
       }
     }
     """
@@ -133,13 +128,6 @@ Feature: GraphQL API
           "means": {
             "bulk": 0.1
           },
-          "volumetrics": [
-            {
-              "id": 1,
-              "realization": 1,
-              "bulk": 0.1
-            }
-          ]
         }
       }
     }
@@ -161,10 +149,6 @@ Feature: GraphQL API
           bulk
         }
         summedVolumetrics {
-          realization
-          bulk
-        }
-        volumetrics {
           realization
           bulk
         }
@@ -191,16 +175,6 @@ Feature: GraphQL API
               "bulk": 1.2
             }
           ],
-          "volumetrics": [
-            {
-              "realization": 1,
-              "bulk": 0.1
-            },
-            {
-              "realization": 1,
-              "bulk": 1.1
-            }
-          ]
         }
       }
     }

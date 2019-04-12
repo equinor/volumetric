@@ -91,6 +91,17 @@ def _add_volumetrics(data_dicts, realizations, locations, case):
     db.session.execute(ins, inserts)
 
 
+METRICS_MAP = {'grv': 'bulk', 'nrv': 'net', 'npv': 'porv', 'hcpv': 'hcpv', 'stoiip': 'stoiip'}
+
+
+def _get_metrics_with_data(lines_as_ordered_dicts):
+    return {
+        correct_metric
+        for line in lines_as_ordered_dicts for old_metric, correct_metric in METRICS_MAP.items()
+        if line.get(old_metric) is not None
+    }
+
+
 def import_custom_case(filename, field_name, case_name, **kwargs):
     lines_as_ordered_dicts = read_file(filename)
 
@@ -100,7 +111,8 @@ def import_custom_case(filename, field_name, case_name, **kwargs):
     data_dicts = [line_dict for line_dict in lines_as_ordered_dicts if not _should_ignore(line_dict)]
 
     case_name = case_name if case_name else lines_as_ordered_dicts[0]['model']
-    case = Case(name=case_name, field=field, **kwargs)
+    metrics = _get_metrics_with_data(lines_as_ordered_dicts)
+    case = Case(name=case_name, field=field, phases=['TOTAL'], metrics=metrics, **kwargs)
     db.session.flush()
 
     locations = _add_locations(data_dicts, case=case)

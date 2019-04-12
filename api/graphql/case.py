@@ -45,7 +45,7 @@ class Case(graphene.ObjectType):
     regions = OrderedList(graphene.String)
     zones = OrderedList(graphene.String)
     facies = OrderedList(graphene.String)
-    phases = OrderedList(PhaseEnumGraphene)
+    phases = OrderedList(graphene.String)
     metrics = OrderedList(graphene.String)
 
     @ordered_strings
@@ -59,30 +59,6 @@ class Case(graphene.ObjectType):
     @ordered_strings
     def resolve_facies(self, info):
         return [facies.facies_name for facies in get_distinct_location_keys(self.id, LocationModel.facies_name)]
-
-    def resolve_metrics(self, info):
-        count_funcs = (func.count(getattr(VolumetricsModel, metric)) for metric in METRICS)
-
-        non_null_counts = (db.session.query(
-            LocationModel.case_id,
-            *count_funcs,
-        ).join(LocationModel.realizations).join(
-            RealizationModel.volumetrics).filter(LocationModel.case_id == self.id).group_by(
-                LocationModel.case_id)).first()
-
-        if non_null_counts is None or len(non_null_counts) == 0:
-            return []
-
-        return [metric for metric_index, metric in enumerate(METRICS, 1) if non_null_counts[metric_index] > 0]
-
-    def resolve_phases(self, info):
-        phases = [
-            phase.phase
-            for phase in db.session.query(VolumetricsModel.phase).join(RealizationModel).join(LocationModel).filter_by(
-                case_id=self.id).distinct()
-        ]
-
-        return [phase for phase in PhaseEnum if phase in phases]  # Keep order from enum
 
 
 class DeleteCase(graphene.Mutation):

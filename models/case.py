@@ -2,6 +2,7 @@ import enum
 from datetime import datetime
 
 from sqlalchemy import Column, String, ForeignKey, Boolean, DateTime, Integer, Enum
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 
 from models import db
@@ -27,6 +28,8 @@ class Case(db.Model):
     official_to_date = Column(DateTime)
     field_name = Column(String, ForeignKey('field.name', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     locations = relationship('Location', passive_deletes=True, backref='case', cascade="all, delete-orphan")
+    metrics = Column(ARRAY(String))
+    phases = Column(ARRAY(String))
 
     @property
     def is_currently_official(self):

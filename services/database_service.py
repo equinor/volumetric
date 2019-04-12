@@ -1,32 +1,33 @@
-from sqlalchemy import func, and_
-from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 
-from models import db, Location, Volumetrics, Realization
+from models import db, Location, MaxIterVolumetrics
 
 
 class DatabaseService:
     @staticmethod
-    def get_volumetrics(case_id, location_filters, phase):
+    def get_summed_volumetrics(case_id, location_filters, phase):
         filter_queries = [getattr(Location, key[:-1]).in_(value) for key, value in location_filters.items()]
-        location_query = db.session.query(Location.id).filter(Location.case_id == case_id)
+
+        volumetrics_query = db.session.query(
+            Location.case_id,
+            MaxIterVolumetrics.phase,
+            MaxIterVolumetrics.realization,
+            func.sum(MaxIterVolumetrics.bulk).label('bulk'),
+            func.sum(MaxIterVolumetrics.net).label('net'),
+            func.sum(MaxIterVolumetrics.porv).label('porv'),
+            func.sum(MaxIterVolumetrics.hcpv).label('hcpv'),
+            func.sum(MaxIterVolumetrics.stoiip).label('stoiip'),
+            func.sum(MaxIterVolumetrics.giip).label('giip'),
+            func.sum(MaxIterVolumetrics.associatedgas).label('associatedgas'),
+            func.sum(MaxIterVolumetrics.associatedliquid).label('associatedliquid'),
+            func.sum(MaxIterVolumetrics.recoverable).label('recoverable'),
+        ).join(
+            MaxIterVolumetrics.location).filter(Location.case_id == case_id).filter(MaxIterVolumetrics.phase == phase)
+
         for filter_query in filter_queries:
-            location_query = location_query.filter(filter_query)
-        location_ids = location_query.all()
-        if not location_ids:
-            return []
+            volumetrics_query = volumetrics_query.filter(filter_query)
 
-        realization_max_iteration_query = db.session.query(Realization.realization, Realization.location_id,
-                                                           func.max(Realization.iteration).label('max_iter')).group_by(
-                                                               Realization.realization,
-                                                               Realization.location_id).subquery()
+        volumetrics_query = volumetrics_query.group_by(Location.case_id, MaxIterVolumetrics.phase,
+                                                       MaxIterVolumetrics.realization)
 
-        realization_query = db.session.query(Realization.id).join(
-            realization_max_iteration_query,
-            and_(
-                Realization.realization == realization_max_iteration_query.c.realization,
-                Realization.location_id == realization_max_iteration_query.c.location_id,
-                Realization.iteration == realization_max_iteration_query.c.max_iter,
-            )).filter(Realization.location_id.in_([location.id for location in location_ids])).subquery()
-
-        return (Volumetrics.query.filter(Volumetrics.phase == phase).filter(
-            Volumetrics.realization_id.in_(realization_query)).options(joinedload(Volumetrics.realization)).all())
+        return volumetrics_query.all()
