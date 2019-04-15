@@ -15,7 +15,11 @@ export class AuthProvider extends React.Component {
         tokenExpire: exp,
         isCreator:
           roles.includes('VolumetricAdmin') ||
-          roles.includes('VolumetricCreator'),
+          roles.includes('VolumetricCreator') ||
+          roles.includes('VolumetricFieldAdmin'),
+        isFieldAdmin:
+          roles.includes('VolumetricAdmin') ||
+          roles.includes('VolumetricFieldAdmin'),
         isAdmin: roles.includes('VolumetricAdmin'),
       },
       token,

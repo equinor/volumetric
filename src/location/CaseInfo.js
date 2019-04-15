@@ -30,6 +30,8 @@ export default ({ currentCase }) => {
       <DD>{currentCase.description}</DD>
       <DT>Case id</DT>
       <DD>{currentCase.id}</DD>
+      <DT>Official</DT>
+      {currentCase.isOfficial ? <DD>Yes</DD> : <DD>No</DD>}
     </DL>
   );
 };

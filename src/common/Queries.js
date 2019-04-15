@@ -37,6 +37,7 @@ export const SHORT_CASE_FRAGMENT = gql`
     isOfficial
     isCurrentlyOfficial
     createdDate
+    createdUser
   }
 `;
 

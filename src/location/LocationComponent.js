@@ -19,6 +19,7 @@ class LocationComponent extends React.Component {
         caseType: field.cases[0].caseType,
         description: field.cases[0].description,
         id: field.cases[0].id,
+        isOfficial: field.cases[0].isOfficial,
       },
     };
   }
@@ -37,6 +38,7 @@ class LocationComponent extends React.Component {
         caseType: firstCase.caseType,
         description: firstCase.description,
         id: firstCase.id,
+        isOfficial: firstCase.isOfficial,
       };
     } else {
       const currentCase = fields.fields
@@ -48,6 +50,7 @@ class LocationComponent extends React.Component {
         caseType: currentCase.caseType,
         description: currentCase.description,
         id: currentCase.id,
+        isOfficial: currentCase.isOfficial,
       };
     }
     this.setState(stateChanges);

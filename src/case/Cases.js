@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Query, Mutation } from 'react-apollo';
 import { FULL_CASE_FRAGMENT, GET_FIELDS } from '../common/Queries';
 import { SmallSpinner, StyledSpinner } from '../common/Spinner';
@@ -11,6 +11,7 @@ import { PageLink } from '../common/Links';
 import { ListPageWithActions } from '../common/Layouts';
 import { Table, TH, TD, Row } from '../common/Table';
 import { getFormattedDate } from '../utils/date';
+import { AuthContext } from '../auth/AuthContext';
 
 const DELETE_CASE = gql`
   mutation DeleteCase($id: Int!) {
@@ -27,7 +28,7 @@ const DELETE_CASE = gql`
 const DeleteButton = styled.button`
   background: white none;
   border: 2px solid ${DANGER_COLOR};
-  padding: 10px 10px;
+  padding: 5px 7px;
   border-radius: 4px;
   font: inherit;
   cursor: pointer;
@@ -35,13 +36,14 @@ const DeleteButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+  display: ${props => (props.disabled ? 'none' : 'block')};
 
   :hover {
     filter: brightness(75%);
   }
 `;
 
-function CasesList({ fields }) {
+function CasesList({ fields, user }) {
   if (fields.length === 0) {
     return <div>No cases</div>;
   }
@@ -69,7 +71,13 @@ function CasesList({ fields }) {
               caseType,
               isCurrentlyOfficial,
               createdDate,
+              createdUser,
             }) => {
+              // If the user did not import the case, or the user is not a FieldAdmin, the "DeleteButton" is disabled.
+              const disableDelete = !(
+                createdUser.toUpperCase() === user.shortName ||
+                user.isFieldAdmin
+              );
               return (
                 <Row key={`case-${id}`}>
                   <TD>{field.name}</TD>
@@ -89,6 +97,13 @@ function CasesList({ fields }) {
                         if (loading) {
                           return <SmallSpinner isLoading={loading} />;
                         }
+                        if (error) {
+                          return error.networkError ? (
+                            <NetworkError {...error} />
+                          ) : (
+                            <GraphqlError {...error} />
+                          );
+                        }
                         return (
                           <DeleteButton
                             onClick={() => {
@@ -100,6 +115,7 @@ function CasesList({ fields }) {
                                 deleteCase();
                               }
                             }}
+                            disabled={disableDelete}
                           >
                             <Icon
                               icon={ICONS.cross}
@@ -122,6 +138,7 @@ function CasesList({ fields }) {
 }
 
 function Cases() {
+  const { user } = useContext(AuthContext);
   return (
     <Query query={GET_FIELDS}>
       {({ loading, error, data }) => {
@@ -148,7 +165,7 @@ function Cases() {
               </>
             )}
           >
-            <CasesList {...data} />
+            <CasesList {...data} user={user} />
           </ListPageWithActions>
         );
       }}

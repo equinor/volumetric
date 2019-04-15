@@ -13,6 +13,7 @@ export const Row = styled.tr`
   align-items: center;
   border-bottom: 1px solid ${LIST_SEPARATOR_COLOR};
   padding: 10px 5px;
+  min-height: 32px;
 `;
 
 export const TD = styled.td`

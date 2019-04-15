@@ -95,9 +95,9 @@ export default ({
             checked={formState.isOfficial}
             label="Official?"
             block={false}
-            disabled={!user.isAdmin}
+            disabled={!user.isFieldAdmin}
             title={
-              !user.isAdmin
+              !user.isFieldAdmin
                 ? 'You need to be admin to import official cases.'
                 : 'Is this an official case?'
             }
