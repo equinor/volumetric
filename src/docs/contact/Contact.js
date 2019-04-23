@@ -20,10 +20,7 @@ const Contact = () => {
         channel. It is also possible to ask for help there.
       </p>
       <p>
-        <Bold>Slack: </Bold>The channel #volumetric_develop
-      </p>
-      <p>
-        <Bold>Email: </Bold>volumetric_develop@equinor.com
+        <Bold>Slack: </Bold>The channel #volumetric
       </p>
     </div>
   );
