@@ -83,9 +83,8 @@ const NoMatch = ({ location }) => (
   </div>
 );
 
-function App(user) {
+function App({ user }) {
   const [{ currentRole }] = useFieldValue();
-
   return (
     <React.Fragment>
       <GlobalStyle />

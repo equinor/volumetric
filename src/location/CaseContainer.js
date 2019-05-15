@@ -8,7 +8,6 @@ import { useFieldValue } from '../field/FieldContext';
 
 const CaseContainer = caseId => {
   const [{ currentField, currentRole }] = useFieldValue();
-  console.log(currentField, currentRole);
   return (
     <Query query={GET_CASE} variables={caseId}>
       {({ data, loading, error }) => {
