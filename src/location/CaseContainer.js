@@ -4,10 +4,8 @@ import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { GET_CASE } from '../common/Queries';
 import { CaseComponent } from './CaseComponent';
 import { StyledSpinner } from '../common/Spinner';
-import { useFieldValue } from '../field/FieldContext';
 
 const CaseContainer = caseId => {
-  const [{ currentField, currentRole }] = useFieldValue();
   return (
     <Query query={GET_CASE} variables={caseId}>
       {({ data, loading, error }) => {

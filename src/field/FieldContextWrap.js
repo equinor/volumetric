@@ -7,6 +7,7 @@ import { AuthContext } from '../auth/AuthContext';
 function FieldContextWrap(roles) {
   const { user } = useContext(AuthContext);
   let initialState;
+
   if (roles.roles.length === 0) {
     initialState = {
       currentField: 'No fields',

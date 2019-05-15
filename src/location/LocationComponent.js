@@ -8,20 +8,23 @@ class LocationComponent extends React.Component {
     super(props);
     this.handleCaseSelectorChange = this.handleCaseSelectorChange.bind(this);
     const field = this.props.fields.fields[0];
-    this.state = {
-      field: {
-        label: field.name,
-        value: field.name,
-      },
-      currentCase: {
-        label: `${field.cases[0].name} (${field.cases[0].caseVersion})`,
-        value: field.cases[0].id,
-        caseType: field.cases[0].caseType,
-        description: field.cases[0].description,
-        id: field.cases[0].id,
-        isOfficial: field.cases[0].isOfficial,
-      },
-    };
+
+    if (field.cases.length !== 0) {
+      this.state = {
+        field: {
+          label: field.name,
+          value: field.name,
+        },
+        currentCase: {
+          label: `${field.cases[0].name} (${field.cases[0].caseVersion})`,
+          value: field.cases[0].id,
+          caseType: field.cases[0].caseType,
+          description: field.cases[0].description,
+          id: field.cases[0].id,
+          isOfficial: field.cases[0].isOfficial,
+        },
+      };
+    }
   }
 
   handleCaseSelectorChange(key, value) {
@@ -58,7 +61,11 @@ class LocationComponent extends React.Component {
 
   render() {
     const { fields } = this.props;
-    return (
+    return fields.fields[0].cases.length === 0 ? (
+      <div>
+        <p>There is no cases in this field yet</p>
+      </div>
+    ) : (
       <div>
         <CaseSelector
           field={this.state.field}
