@@ -1,5 +1,4 @@
 import { H4 } from '../../common/Headers';
-import { CreatableSelect } from '../common/CreatableSelect';
 import { Label, TextInput } from '../common/Input';
 import { CheckboxWithLabel } from '../../common/Input';
 import DateRangePicker from '../common/DateRangePicker';
@@ -42,16 +41,6 @@ export default ({
 }) => {
   return (
     <React.Fragment>
-      <H4>Field</H4>
-      <InputWrapper>
-        <CreatableSelect
-          options={fields}
-          selectedOption={formState.field}
-          onChange={selected => handleFormChange('field', selected.value)}
-          placeholder="Select or create a field..."
-        />
-      </InputWrapper>
-      <H4>Case</H4>
       <InputWrapper>
         <TextInput
           label="Name"

@@ -53,6 +53,27 @@ export const GET_FIELDS = gql`
   ${SHORT_CASE_FRAGMENT}
 `;
 
+export const GET_CASES = gql`
+  query Cases($field: String) {
+    fields(name: $field) {
+      name
+      cases(orderBy: "name") {
+        ...ShortCase
+      }
+    }
+  }
+  ${SHORT_CASE_FRAGMENT}
+`;
+
+export const GET_ROLES = gql`
+  query Roles($user: String) {
+    role(user: $user) {
+      field
+      role
+    }
+  }
+`;
+
 export const TASK_FRAGMENT = gql`
   fragment Task on Task {
     id

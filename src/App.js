@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { LocationContainer } from './location/';
-import styled from 'styled-components';
-import { BrowserRouter as Router, NavLink, Route } from 'react-router-dom';
+import styled, { createGlobalStyle } from 'styled-components';
+import { NavLink, Route } from 'react-router-dom';
 import { Switch } from 'react-router';
 import { ImportMetrics, ImportNewCase } from './import/';
-import { AuthContext } from './auth/AuthContext';
 import { H1, H3 } from './common/Headers';
 import Cases from './case/Cases';
 import Docs from './docs/Docs';
 import { ALMOST_BLACK, SELECTED_COLOR } from './common/variables';
-import { createGlobalStyle } from 'styled-components';
+import FieldRole from './field/FieldRole';
+import { isCreator, useFieldValue } from './field/FieldContext';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -83,61 +83,63 @@ const NoMatch = ({ location }) => (
   </div>
 );
 
-function App() {
-  const { user } = useContext(AuthContext);
+function App(user) {
+  const [{ currentRole }] = useFieldValue();
+
   return (
-    <Router>
-      <React.Fragment>
-        <GlobalStyle />
-        <AppHeader>
-          <UserInfo>{user.name}</UserInfo>
-          <InnerHeader>
-            <AppTitle>
-              <HeaderLink to="/">Volumetric</HeaderLink>
-            </AppTitle>
-            <HeaderLinks>
-              <HeaderLink right exact to="/">
-                Home
+    <React.Fragment>
+      <GlobalStyle />
+      <AppHeader>
+        <UserInfo>{user.name}</UserInfo>
+        <UserInfo>
+          <FieldRole />
+        </UserInfo>
+        <InnerHeader>
+          <AppTitle>
+            <HeaderLink to="/">Volumetric</HeaderLink>
+          </AppTitle>
+          <HeaderLinks>
+            <HeaderLink right exact to="/">
+              Home
+            </HeaderLink>
+            {isCreator(currentRole) && (
+              <HeaderLink right to="/cases">
+                Manage cases
               </HeaderLink>
-              {user.isCreator && (
-                <HeaderLink right to="/cases">
-                  Manage cases
-                </HeaderLink>
-              )}
-              <HeaderLink right to="/docs">
-                Docs
-              </HeaderLink>
-            </HeaderLinks>
-          </InnerHeader>
-        </AppHeader>
-        <Switch>
-          <Route exact path="/" component={LocationContainer} />
-          <Route path="/docs" component={Docs} />
-          {user.isCreator && (
-            <Route
-              exact
-              path="/cases/import"
-              render={routerProps => <ImportMetrics {...routerProps} />}
-            />
-          )}
-          {user.isCreator && (
-            <Route
-              exact
-              path="/cases/import/new"
-              render={routerProps => <ImportNewCase {...routerProps} />}
-            />
-          )}
-          {user.isCreator && (
-            <Route
-              exact
-              path="/cases"
-              render={routerProps => <Cases {...routerProps} />}
-            />
-          )}
-          <Route component={NoMatch} />
-        </Switch>
-      </React.Fragment>
-    </Router>
+            )}
+            <HeaderLink right to="/docs">
+              Docs
+            </HeaderLink>
+          </HeaderLinks>
+        </InnerHeader>
+      </AppHeader>
+      <Switch>
+        <Route exact path="/" component={LocationContainer} />
+        <Route path="/docs" component={Docs} />
+        {isCreator(currentRole) && (
+          <Route
+            exact
+            path="/cases/import"
+            render={routerProps => <ImportMetrics {...routerProps} />}
+          />
+        )}
+        {isCreator(currentRole) && (
+          <Route
+            exact
+            path="/cases/import/new"
+            render={routerProps => <ImportNewCase {...routerProps} />}
+          />
+        )}
+        {isCreator(currentRole) && (
+          <Route
+            exact
+            path="/cases"
+            render={routerProps => <Cases {...routerProps} />}
+          />
+        )}
+        <Route component={NoMatch} />
+      </Switch>
+    </React.Fragment>
   );
 }
 

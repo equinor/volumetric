@@ -12,6 +12,8 @@ import { ListPageWithActions } from '../common/Layouts';
 import { Table, TH, TD, Row } from '../common/Table';
 import { getFormattedDate } from '../utils/date';
 import { AuthContext } from '../auth/AuthContext';
+import { GET_CASES } from '../common/Queries';
+import { useFieldValue } from '../field/FieldContext';
 
 const DELETE_CASE = gql`
   mutation DeleteCase($id: Int!) {
@@ -52,7 +54,6 @@ function CasesList({ fields, user }) {
     <Table>
       <thead>
         <Row>
-          <TH>Field</TH>
           <TH grow={2}>Case</TH>
           <TH>Version</TH>
           <TH>Type</TH>
@@ -80,7 +81,6 @@ function CasesList({ fields, user }) {
               );
               return (
                 <Row key={`case-${id}`}>
-                  <TD>{field.name}</TD>
                   <TD grow={2}>{name}</TD>
                   <TD>{caseVersion}</TD>
                   <TD>{caseType}</TD>
@@ -139,8 +139,9 @@ function CasesList({ fields, user }) {
 
 function Cases() {
   const { user } = useContext(AuthContext);
+  const [{ currentField }] = useFieldValue();
   return (
-    <Query query={GET_FIELDS}>
+    <Query query={GET_CASES} variables={{ field: currentField }}>
       {({ loading, error, data }) => {
         if (loading) {
           return <StyledSpinner isLoading={true} />;
@@ -159,7 +160,7 @@ function Cases() {
             links={() => (
               <>
                 <PageLink color={ALMOST_BLACK} to="/cases/import">
-                  List imports
+                  My imports
                 </PageLink>
                 <PageLink to="/cases/import/new">Import new</PageLink>
               </>

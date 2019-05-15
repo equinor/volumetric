@@ -10,6 +10,8 @@
     "graphql": "^14.2.0",
     "npm": "^6.9.0",
     "prop-types": "^15.7.2",
+    "rc-dropdown": "^2.4.1",
+    "rc-menu": "^7.4.22",
     "react": "^16.8.5",
     "react-adal": "^0.4.22",
     "react-apollo": "2.4.1",

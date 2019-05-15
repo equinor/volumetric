@@ -15,7 +15,7 @@ class ImportNewCaseComponent extends React.Component {
     super(props);
     this.state = {
       filename: null,
-      field: null,
+      field: this.props.currentField,
       case: '',
       caseVersion: '',
       caseType: props.data.caseTypes[0],
@@ -36,7 +36,7 @@ class ImportNewCaseComponent extends React.Component {
 
   render() {
     const {
-      data: { fields, caseTypes },
+      data: { caseTypes },
       user,
     } = this.props;
     return (
@@ -63,7 +63,6 @@ class ImportNewCaseComponent extends React.Component {
                 mutationData={data}
                 handleFormChange={this.handleChange}
                 user={user}
-                fields={fields}
                 caseTypes={caseTypes}
               />
             );

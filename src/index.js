@@ -5,12 +5,12 @@ import React from 'react';
 import { render } from 'react-dom';
 import './index.css';
 import ApolloClient from 'apollo-boost';
-import App from './App';
 import { ApolloProvider } from 'react-apollo';
 import { API_URL } from './common/variables';
 import { authContext } from './auth/AdalConfig';
 import { runWithAdal } from 'react-adal';
 import { AuthProvider } from './auth/AuthContext';
+import RoleWrapApp from './field/RoleWrapApp';
 
 export const getToken = () => {
   return authContext.getCachedToken(authContext.config.clientId);
@@ -34,7 +34,7 @@ const AppWithApollo = (
       getUser={() => authContext.getCachedUser()}
       getToken={() => getToken()}
     >
-      <App />
+      <RoleWrapApp />
     </AuthProvider>
   </ApolloProvider>
 );

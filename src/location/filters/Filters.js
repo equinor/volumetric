@@ -17,23 +17,6 @@ const DatasetSelectorItem = ({ name, selectedOption, onChange, options }) => {
   );
 };
 
-export class Fields extends React.Component {
-  render() {
-    const { fields, field, handleChange } = this.props;
-    return (
-      <DatasetSelectorItem
-        name="Field"
-        selectedOption={field}
-        options={fields.fields.map(({ name }) => ({
-          value: name,
-          label: name,
-        }))}
-        onChange={selectedOption => handleChange('field', selectedOption)}
-      />
-    );
-  }
-}
-
 export class Cases extends React.Component {
   render() {
     const { fields, currentCase, handleChange } = this.props;
