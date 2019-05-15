@@ -7,7 +7,10 @@ from flask import request, abort
 from jwt.algorithms import RSAAlgorithm
 
 from config import Config
+from models import db
 from models.role import Role
+from models.user import User as UserModel
+from utils.db import get_or_create
 
 
 class AzureCert(object):
@@ -67,6 +70,7 @@ class User(object):
     def __init__(self, name=None, shortname=None, roles=None):
         self.name = name
         self.shortname = shortname
+        get_or_create(db.session, UserModel, defaults=None, shortname=shortname)
         field_roles = [role.__dict__ for role in Role.query.filter(Role.user == shortname).all()]
         role_dict = {field['field']: field['role'] for field in field_roles}
         self.roles = role_dict
