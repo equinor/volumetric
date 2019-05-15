@@ -1,15 +1,15 @@
-"""add_group_access
+"""add_rbac
 
-Revision ID: 89b4d1b83f85
+Revision ID: 3bafb236af9e
 Revises: 828d58d2e6c2
-Create Date: 2019-05-08 08:18:56.647099
+Create Date: 2019-05-15 13:59:07.673115
 
 """
 from alembic import op, context
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision = '89b4d1b83f85'
+revision = '3bafb236af9e'
 down_revision = '828d58d2e6c2'
 branch_labels = None
 depends_on = None
@@ -33,13 +33,9 @@ def schema_upgrades():
     op.create_table('user', sa.Column('shortname', sa.String(), nullable=False), sa.PrimaryKeyConstraint('shortname'))
     op.create_table('role', sa.Column('user', sa.String(), nullable=False),
                     sa.Column('field', sa.String(), nullable=False), sa.Column('role', sa.String(), nullable=True),
-                    sa.ForeignKeyConstraint(
-                        ['field'],
-                        ['field.name'],
-                    ), sa.ForeignKeyConstraint(
-                        ['user'],
-                        ['user.shortname'],
-                    ), sa.PrimaryKeyConstraint('user', 'field'))
+                    sa.ForeignKeyConstraint(['field'], ['field.name'], onupdate='CASCADE', ondelete='CASCADE'),
+                    sa.ForeignKeyConstraint(['user'], ['user.shortname'], onupdate='CASCADE', ondelete='CASCADE'),
+                    sa.PrimaryKeyConstraint('user', 'field'))
     # ### end Alembic commands ###
 
 
