@@ -47,28 +47,38 @@ function getRoleOfField(field, roles) {
   function isSameField(element) {
     return element.field === field;
   }
+
   return roles[roles.findIndex(isSameField)].role;
 }
 
 const FieldRole = () => {
   const [{ roles, currentField }, dispatch] = useFieldValue();
-  const fields = roles.map(field => (
-    <MenuItem key={field.field}>
-      {field.field} ({prettyRole(field.role)})
-    </MenuItem>
-  ));
-  const menu = (
-    <Menu
-      onSelect={({ key }) =>
-        dispatch({
-          currentField: key,
-          currentRole: getRoleOfField(key, roles),
-        })
-      }
-    >
-      {fields}
-    </Menu>
-  );
+  let menu;
+  if (roles !== '') {
+    const fields = roles.map(field => (
+      <MenuItem key={field.field}>
+        {field.field} ({prettyRole(field.role)})
+      </MenuItem>
+    ));
+    menu = (
+      <Menu
+        onSelect={({ key }) =>
+          dispatch({
+            currentField: key,
+            currentRole: getRoleOfField(key, roles),
+          })
+        }
+      >
+        {fields}
+      </Menu>
+    );
+  } else {
+    menu = (
+      <Menu defaultActiveFirst={true}>
+        <MenuItem key={'none'}>{'No fields'}</MenuItem>
+      </Menu>
+    );
+  }
   return (
     <FieldWrapper>
       <Dropdown trigger={['click']} overlay={menu} animation="slide-up">

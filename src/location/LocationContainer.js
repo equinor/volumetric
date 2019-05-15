@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Query } from 'react-apollo';
 import { GET_CASES } from '../common/Queries';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
-import { AuthConsumer } from '../auth/AuthContext';
+import { AuthConsumer, AuthContext } from '../auth/AuthContext';
 import { StyledSpinner } from '../common/Spinner';
 import LocationComponent from './LocationComponent';
-import { useFieldValue } from '../field/FieldContext';
+import { useFieldValue, isCreator } from '../field/FieldContext';
 
 const NoDataDiv = styled.div`
   margin-top: 50px;
@@ -17,7 +17,8 @@ const NoDataDiv = styled.div`
 `;
 
 function LocationContainer() {
-  const [{ currentField }] = useFieldValue();
+  const [{ currentField, currentRole, roles }] = useFieldValue();
+  const { user } = useContext(AuthContext);
   return (
     <Query query={GET_CASES} variables={{ field: currentField }}>
       {({ loading, error, data }) => {
@@ -29,11 +30,12 @@ function LocationContainer() {
           <LocationComponent fields={data} key={currentField} />
         ) : (
           <NoDataDiv>
-            <AuthConsumer>
-              {({ user }) => (
+            <div>
+              {roles === '' ? (
+                <p>No dont have access to any fields.</p>
+              ) : (
                 <div>
-                  No data.{' '}
-                  {user.isCreator ? (
+                  {isCreator(currentRole) ? (
                     <React.Fragment>
                       <Link to="/cases/import/new">Import</Link> some..
                     </React.Fragment>
@@ -42,7 +44,7 @@ function LocationContainer() {
                   )}
                 </div>
               )}
-            </AuthConsumer>
+            </div>
           </NoDataDiv>
         );
       }}

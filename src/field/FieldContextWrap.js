@@ -6,12 +6,21 @@ import { AuthContext } from '../auth/AuthContext';
 
 function FieldContextWrap(roles) {
   const { user } = useContext(AuthContext);
-  console.log(user);
-  const initialState = {
-    currentField: roles.roles[0].field,
-    currentRole: roles.roles[0].role,
-    roles: roles.roles,
-  };
+  let initialState;
+  if (roles.roles.length === 0) {
+    initialState = {
+      currentField: 'No fields',
+      currentRole: '',
+      roles: '',
+    };
+  } else {
+    initialState = {
+      currentField: roles.roles[0].field,
+      currentRole: roles.roles[0].role,
+      roles: roles.roles,
+    };
+  }
+
   const reducer = (state, action) => {
     return {
       ...state,
