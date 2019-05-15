@@ -3,16 +3,34 @@ import os
 import graphene
 from flask import current_app
 from graphql import GraphQLError
-from sqlalchemy import func
 
-from models import db, PhaseEnumGraphene, Location as LocationModel, CaseTypeEnum, Volumetrics as VolumetricsModel, \
-    Realization as RealizationModel, PhaseEnum, Case as CaseModel
-from utils.calculations import METRICS
+from models import db, Location as LocationModel, CaseTypeEnum, Case as CaseModel
 from utils.case_import.import_data import validate_import
 from utils.case_import.queue import create_import_data_job
 from utils.graphql.fileformat import FileFormat
 from utils.ordering import OrderedList, ordered_strings
-from .types import Task
+from utils.authentication import is_creator, is_fieldadmin, is_reader
+from .tasks import Task
+from .validation_error import ValidationError
+
+
+def resolve_case(self, info, case_id):
+    user = info.context.user
+    case = CaseModel.query.filter(CaseModel.id == case_id).first()
+
+    # Deny if user dont have access to field
+    if not is_reader(user, case.field.name):
+        raise GraphQLError('You are not authorized to view this case.')
+    # Return only personal or official data if user is not administrator
+    if not (case.is_official or case.created_user == user.shortname):
+        raise GraphQLError('You are not authorized to view this case.')
+
+    return case
+
+
+def resolve_case_types(self, info):
+    # No fine grained auth
+    return [CaseTypeGrapheneEnum.FULL_FIELD, CaseTypeGrapheneEnum.SEGMENT]
 
 
 def case_type_description(value):
@@ -69,11 +87,13 @@ class DeleteCase(graphene.Mutation):
     case = graphene.Field(lambda: Case)
 
     def mutate(self, info, id):
+        user = info.context.user
         case = CaseModel.query.get(id)
 
-        user = info.context.user
         # Only admins and FieldAdmins are allowed to delete none private cases.
-        if not (user.isAdmin or user.isFieldAdmin or user.shortname == case.created_user):
+        if case.is_official and not is_fieldadmin(user, case.field.name):
+            return GraphQLError('Unauthorized')
+        if not case.is_official and user.shortname != case.created_user:
             return GraphQLError('Unauthorized')
 
         field = case.field
@@ -86,11 +106,6 @@ class DeleteCase(graphene.Mutation):
 
 
 file_format_enum = graphene.Enum.from_enum(FileFormat)
-
-
-class ValidationError(graphene.ObjectType):
-    id = graphene.String()
-    message = graphene.String()
 
 
 class ImportCase(graphene.Mutation):
@@ -111,11 +126,12 @@ class ImportCase(graphene.Mutation):
     task = graphene.Field(Task)
 
     def mutate(self, info, filename, file_format, field, case, **kwargs):
-        if not info.context.user.isCreator:
-            raise GraphQLError('You need to be a creator to import cases!')
+        user = info.context.user
+        if not is_creator(user, field):
+            raise GraphQLError('You need to be a creator to import cases')
 
-        if kwargs['is_official'] and not info.context.user.isFieldAdmin:
-            raise GraphQLError('You need to be an field administrator to import official cases!')
+        if kwargs['is_official'] and not is_fieldadmin(user, field):
+            raise GraphQLError('You need to be an field administrator to import official cases')
 
         if not kwargs['is_official']:
             del kwargs['official_from_date']

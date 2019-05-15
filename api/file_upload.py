@@ -1,10 +1,13 @@
 import os
+
 from flask import request, jsonify, current_app, abort
 from werkzeug.utils import secure_filename
 
+from utils.authentication import is_user
+
 
 def file_upload():
-    if not request.user.isCreator:
+    if not is_user(request.user):
         return abort(403)
 
     target = os.path.join(current_app.instance_path, current_app.config.get('UPLOAD_FOLDER'))

@@ -19,3 +19,5 @@ from models.realization import Realization
 from models.volumetrics import Volumetrics, PhaseEnum, PhaseEnumGraphene, MaxIterVolumetrics
 from models.tasks import Task
 from models.case import CaseTypeEnum
+from models.role import Role
+from models.user import User

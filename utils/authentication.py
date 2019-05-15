@@ -7,11 +7,40 @@ from flask import request, abort
 from jwt.algorithms import RSAAlgorithm
 
 from config import Config
+from models.role import Role
 
 
 class AzureCert(object):
     timestamp = ''
     cert = ''
+
+
+def is_user(user):
+    if user.isAdmin:
+        return True
+    elif len(user.roles) > 0:
+        return True
+
+
+def is_reader(user, field):
+    if user.isAdmin:
+        return True
+    elif user.roles.get(field) in ('reader', 'creator', 'fieldadmin'):
+        return True
+
+
+def is_creator(user, field):
+    if user.isAdmin:
+        return True
+    elif user.roles.get(field) in ('creator', 'fieldadmin'):
+        return True
+
+
+def is_fieldadmin(user, field):
+    if user.isAdmin:
+        return True
+    elif user.roles.get(field) in ('fieldadmin'):
+        return True
 
 
 def get_azure_active_directory_cert():
@@ -32,19 +61,16 @@ def select_cert_from_token_key(azure_keys, token_header):
 class User(object):
     name = None
     shortname = None
-    isCreator = False
-    isFieldAdmin = False
+    roles = None
     isAdmin = False
 
     def __init__(self, name=None, shortname=None, roles=None):
         self.name = name
         self.shortname = shortname
+        field_roles = [role.__dict__ for role in Role.query.filter(Role.user == shortname).all()]
+        role_dict = {field['field']: field['role'] for field in field_roles}
+        self.roles = role_dict
         if roles is not None:
-            self.isCreator = 'VolumetricAdmin' in roles \
-                             or 'VolumetricCreator' in roles \
-                             or 'VolumetricFieldAdmin' in roles
-            self.isFieldAdmin = 'VolumetricAdmin' in roles \
-                                or 'VolumetricFieldAdmin' in roles
             self.isAdmin = 'VolumetricAdmin' in roles
 
 

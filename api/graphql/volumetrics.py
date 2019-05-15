@@ -1,6 +1,10 @@
 import graphene
+from graphql import GraphQLError
 
+from models import Case as CaseModel
 from models.volumetrics import PhaseEnumGraphene
+from services.database_service import DatabaseService
+from utils.authentication import is_reader
 from utils.calculations import calculate, get_pvalue_func, get_mean, METRICS
 
 
@@ -19,16 +23,6 @@ class Metrics(graphene.Interface):
 class MetricsType(graphene.ObjectType):
     class Meta:
         interfaces = (Metrics, )
-
-
-class Task(graphene.ObjectType):
-    id = graphene.String()
-    user = graphene.String()
-    case_name = graphene.String()
-    queued_at = graphene.DateTime()
-    complete = graphene.Boolean()
-    failed = graphene.Boolean()
-    message = graphene.String()
 
 
 class VolumetricType(graphene.ObjectType):
@@ -71,3 +65,29 @@ class LocationType(graphene.ObjectType):
     zone_name = graphene.String()
     facies_name = graphene.String()
     volumetrics = graphene.List(VolumetricType)
+
+
+def resolve_volumetrics(self, info, case_id, phase, **kwargs):
+    user = info.context.user
+    case = CaseModel.query.filter(CaseModel.id == case_id).first()
+
+    # Deny if user dont have access to field
+    if not is_reader(user, case.field.name):
+        raise GraphQLError('You are not authorized to view this case.')
+
+    # Return only personal or official data if user is not administrator
+    if not user.isAdmin and not (case.is_official or case.created_user == user.shortname):
+        raise GraphQLError('You are not authorized to view this case.')
+
+    filtered_kwargs = {key: value for key, value in kwargs.items() if None not in value}
+
+    summed_volumetrics = DatabaseService.get_summed_volumetrics(case_id, filtered_kwargs, phase)
+    summed_volumetrics = sorted(summed_volumetrics, key=lambda volumetric: volumetric.realization)
+
+    return VolumetricsType(
+        case_id=case_id,
+        zone_names=kwargs.get('zone_names'),
+        region_names=kwargs.get('region_names'),
+        facies_names=kwargs.get('facies_names'),
+        summed_volumetrics=summed_volumetrics,
+    )
