@@ -86,7 +86,6 @@ const NoMatch = ({ location }) => (
 );
 
 it('renders without crashing', () => {
-  // const {user} = useContext(AuthContext);
   const initialState = {
     currentField: 'Snorre',
     roles: [{ field: 'Snorre', role: 'fieldadmin' }],
