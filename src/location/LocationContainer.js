@@ -18,7 +18,6 @@ const NoDataDiv = styled.div`
 
 function LocationContainer() {
   const [{ currentField, currentRole, roles }] = useFieldValue();
-  const { user } = useContext(AuthContext);
   return (
     <Query query={GET_CASES} variables={{ field: currentField }}>
       {({ loading, error, data }) => {

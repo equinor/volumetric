@@ -1,17 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { MockedProvider } from 'react-apollo/test-utils';
 import { MockAuthConsumer, MockAuthProvider } from './auth/MockAuthContext';
 import { LocationContainer } from './location/';
 import styled, { createGlobalStyle } from 'styled-components';
-import {
-  BrowserRouter as Router,
-  Link,
-  NavLink,
-  Route,
-} from 'react-router-dom';
+import { BrowserRouter as Router, NavLink, Route } from 'react-router-dom';
 import { Switch } from 'react-router';
 import { ImportMetrics, ImportNewCase } from './import/';
-import { AuthContext } from './auth/AuthContext';
 import Cases from './case/Cases';
 import Docs from './docs/Docs';
 import FieldRole from './field/FieldRole';
