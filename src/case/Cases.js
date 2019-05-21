@@ -3,17 +3,17 @@ import { Query, Mutation } from 'react-apollo';
 import { FULL_CASE_FRAGMENT, GET_FIELDS } from '../common/Queries';
 import { SmallSpinner, StyledSpinner } from '../common/Spinner';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
-import styled from 'styled-components';
 import { ALMOST_BLACK, DANGER_COLOR } from '../common/variables';
 import gql from 'graphql-tag';
 import Icon, { ICONS } from '../common/Icons';
 import { PageLink } from '../common/Links';
 import { ListPageWithActions } from '../common/Layouts';
-import { Table, TH, TD, Row } from '../common/Table';
+import { Table, TH, OverflowTD, Row } from '../common/Table';
 import { getFormattedDate } from '../utils/date';
 import { AuthContext } from '../auth/AuthContext';
 import { GET_CASES } from '../common/Queries';
 import { useFieldValue } from '../field/FieldContext';
+import { DeleteButton } from '../common/Buttons';
 
 const DELETE_CASE = gql`
   mutation DeleteCase($id: Int!) {
@@ -25,24 +25,6 @@ const DELETE_CASE = gql`
     }
   }
   ${FULL_CASE_FRAGMENT}
-`;
-
-const DeleteButton = styled.button`
-  background: white none;
-  border: 2px solid ${DANGER_COLOR};
-  padding: 5px 7px;
-  border-radius: 4px;
-  font: inherit;
-  cursor: pointer;
-  outline: inherit;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  display: ${props => (props.disabled ? 'none' : 'block')};
-
-  :hover {
-    filter: brightness(75%);
-  }
 `;
 
 function CasesList({ fields, user }) {
@@ -81,12 +63,12 @@ function CasesList({ fields, user }) {
               );
               return (
                 <Row key={`case-${id}`}>
-                  <TD grow={2}>{name}</TD>
-                  <TD>{caseVersion}</TD>
-                  <TD>{caseType}</TD>
-                  <TD>{getFormattedDate(createdDate)}</TD>
-                  <TD>{isCurrentlyOfficial ? 'Yes' : 'No'}</TD>
-                  <TD>
+                  <OverflowTD grow={2}>{name}</OverflowTD>
+                  <OverflowTD>{caseVersion}</OverflowTD>
+                  <OverflowTD>{caseType}</OverflowTD>
+                  <OverflowTD>{getFormattedDate(createdDate)}</OverflowTD>
+                  <OverflowTD>{isCurrentlyOfficial ? 'Yes' : 'No'}</OverflowTD>
+                  <OverflowTD>
                     <Mutation
                       mutation={DELETE_CASE}
                       variables={{ id }}
@@ -126,7 +108,7 @@ function CasesList({ fields, user }) {
                         );
                       }}
                     </Mutation>
-                  </TD>
+                  </OverflowTD>
                 </Row>
               );
             },

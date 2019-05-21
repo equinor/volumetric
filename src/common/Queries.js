@@ -67,7 +67,7 @@ export const GET_CASES = gql`
 
 export const GET_ROLES = gql`
   query Roles($user: String) {
-    role(user: $user) {
+    roleByUser(user: $user) {
       field
       role
     }

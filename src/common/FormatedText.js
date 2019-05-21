@@ -19,6 +19,19 @@ const FormatedTextLabel = styled.span`
   }
 `;
 
+export function prettyRole(role) {
+  switch (role) {
+    case 'reader':
+      return 'Reader';
+    case 'creator':
+      return 'Creator';
+    case 'fieldadmin':
+      return 'Field Admin';
+    default:
+      return 'None';
+  }
+}
+
 export class FormatedText extends React.Component {
   constructor(props) {
     super(props);

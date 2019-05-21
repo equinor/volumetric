@@ -14,7 +14,7 @@ const RoleWrapApp = () => {
         if (loading) return <StyledSpinner isLoading={true} />;
         if (error)
           return error.networkError ? NetworkError(error) : GraphqlError(error);
-        return <FieldContextWrap roles={data.role} />;
+        return <FieldContextWrap roles={data.roleByUser} />;
       }}
     </Query>
   );

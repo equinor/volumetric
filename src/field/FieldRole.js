@@ -4,6 +4,9 @@ import { useFieldValue } from './FieldContext';
 import Dropdown from 'rc-dropdown';
 import Menu, { Item as MenuItem } from 'rc-menu';
 import 'rc-dropdown/assets/index.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleDoubleDown } from '@fortawesome/free-solid-svg-icons';
+import { prettyRole } from '../common/FormatedText';
 
 const FieldButton = styled.button`
   width: 100;
@@ -20,28 +23,9 @@ const FieldWrapper = styled.div`
   float: right;
 `;
 
-const DownArrow = styled.div`
-  border: double black;
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 3px;
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  margin-left: 6px;
+const DownArrow = styled(FontAwesomeIcon)`
+  margin-left: 5px;
 `;
-
-function prettyRole(role) {
-  switch (role) {
-    case 'reader':
-      return 'Reader';
-    case 'creator':
-      return 'Creator';
-    case 'fieldadmin':
-      return 'Field Admin';
-    default:
-      return 'None';
-  }
-}
 
 function getRoleOfField(field, roles) {
   function isSameField(element) {
@@ -84,7 +68,7 @@ const FieldRole = () => {
       <Dropdown trigger={['click']} overlay={menu} animation="slide-up">
         <FieldButton>
           {currentField}
-          <DownArrow />
+          <DownArrow icon={faAngleDoubleDown} />
         </FieldButton>
       </Dropdown>
     </FieldWrapper>

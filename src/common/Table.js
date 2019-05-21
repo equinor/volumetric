@@ -20,8 +20,11 @@ export const TD = styled.td`
   flex: ${props => (props.grow ? props.grow : 1)};
   padding-right: 20px;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+export const OverflowTD = styled(TD)`
+  overflow: hidden;
 `;
 
 export const TH = styled.th`

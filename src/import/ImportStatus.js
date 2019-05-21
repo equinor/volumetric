@@ -8,7 +8,7 @@ import {
   DANGER_COLOR,
   WORKING_COLOR,
 } from '../common/variables';
-import { Row, TD, TH, Table } from '../common/Table';
+import { Row, OverflowTD, TH, Table } from '../common/Table';
 import { getFormattedDate } from '../utils/date';
 
 const TaskStatus = styled.div`
@@ -69,14 +69,14 @@ const TaskStatusComponent = ({ complete, failed }) => {
 function Task({ queuedAt, caseName, failed, complete, message }) {
   return (
     <Row>
-      <TD>
+      <OverflowTD>
         <TaskStatusComponent complete={complete} failed={failed} />
-      </TD>
-      <TD>{caseName}</TD>
-      <TD>{`${getFormattedDate(queuedAt)}`}</TD>
-      <TD title={failed ? message : ''} grow={2}>
+      </OverflowTD>
+      <OverflowTD>{caseName}</OverflowTD>
+      <OverflowTD>{`${getFormattedDate(queuedAt)}`}</OverflowTD>
+      <OverflowTD title={failed ? message : ''} grow={2}>
         {failed && message}
-      </TD>
+      </OverflowTD>
     </Row>
   );
 }

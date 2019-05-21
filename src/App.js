@@ -9,7 +9,8 @@ import Cases from './case/Cases';
 import Docs from './docs/Docs';
 import { ALMOST_BLACK, SELECTED_COLOR } from './common/variables';
 import FieldRole from './field/FieldRole';
-import { isCreator, useFieldValue } from './field/FieldContext';
+import UsersContainer from './users/UsersContainer';
+import { isCreator, isFieldAdmin, useFieldValue } from './field/FieldContext';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -106,6 +107,11 @@ function App({ user }) {
                 Manage cases
               </HeaderLink>
             )}
+            {isFieldAdmin(currentRole) && (
+              <HeaderLink right to="/users">
+                Manage users
+              </HeaderLink>
+            )}
             <HeaderLink right to="/docs">
               Docs
             </HeaderLink>
@@ -134,6 +140,13 @@ function App({ user }) {
             exact
             path="/cases"
             render={routerProps => <Cases {...routerProps} />}
+          />
+        )}
+        {isFieldAdmin(currentRole) && (
+          <Route
+            exact
+            path="/users"
+            render={routerProps => <UsersContainer {...routerProps} />}
           />
         )}
         <Route component={NoMatch} />
