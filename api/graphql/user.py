@@ -1,5 +1,4 @@
 import graphene
-from graphql import GraphQLError
 
 from models import db, User as UserModel
 from .validation_error import ValidationError
@@ -29,6 +28,5 @@ class CreateUser(graphene.Mutation):
         user = UserModel(shortname=shortname)
         db.session.add(user)
         db.session.commit()
-        ok = True
 
         return CreateUser(ok=True, validation_error=None)

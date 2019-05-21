@@ -3,23 +3,17 @@ from graphql import GraphQLError
 
 from models import db, User as UserModel, Field as FieldModel, Role as RoleModel
 from utils.authentication import is_fieldadmin
+from utils.db import get_or_create
 
 ROLES = ('admin', 'fieldadmin', 'creator', 'reader')
 
 
-def validate_role_assignment(shortname, role, field):
-    if not UserModel.query.filter(UserModel.shortname == shortname).first():
-        return False
+def validate_role_assignment(role, field):
     if not FieldModel.query.filter(FieldModel.name == field).first():
         return False
     if role not in ROLES:
         return False
     return True
-
-
-def validate_get_role(shortname):
-    if UserModel.query.filter(UserModel.shortname == shortname).first():
-        return True
 
 
 class Role(graphene.ObjectType):
@@ -35,6 +29,7 @@ class AssignRole(graphene.Mutation):
         field = graphene.String()
 
     ok = graphene.Boolean()
+    role = graphene.Field(Role)
 
     def mutate(self, info, user, role, field):
         auth_user = info.context.user
@@ -42,8 +37,10 @@ class AssignRole(graphene.Mutation):
         if not is_fieldadmin(auth_user, field):
             raise GraphQLError('Unauthorized')
 
-        if not validate_role_assignment(user, role, field):
-            raise GraphQLError('The user or field does not exist, or the role is not a valid role')
+        get_or_create(db.session, UserModel, defaults=None, shortname=user)
+
+        if not validate_role_assignment(role, field):
+            raise GraphQLError('The field does not exist, or the role is not a valid role')
 
         role_model = RoleModel.query.filter(RoleModel.user == user, RoleModel.field == field).first()
         if not role_model:
@@ -52,13 +49,36 @@ class AssignRole(graphene.Mutation):
 
         db.session.add(role_model)
         db.session.commit()
-        return AssignRole(ok=True)
+        return AssignRole(ok=True, role=Role(user=user, field=field, role=role))
 
 
-def resolve_role(self, info, user):
+class DeleteRole(graphene.Mutation):
+    class Arguments:
+        user = graphene.String()
+        field = graphene.String()
+
+    ok = graphene.Boolean()
+    role = graphene.Field(Role)
+
+    def mutate(self, info, user, field):
+        auth_user = info.context.user
+
+        if not is_fieldadmin(auth_user, field):
+            raise GraphQLError('Unauthorized')
+
+        role_model = RoleModel.query.filter(RoleModel.user == user, RoleModel.field == field).first()
+        if not role_model:
+            return DeleteRole(ok=True, role=Role(user=user, field=field))
+
+        db.session.delete(role_model)
+        db.session.commit()
+        return DeleteRole(ok=True, role=Role(user=user, field=field))
+
+
+def resolve_role_by_user(self, info, user):
     auth_user = info.context.user
-    if not validate_get_role(shortname=user):
-        raise GraphQLError('The user does not exist')
+
+    get_or_create(db.session, UserModel, defaults=None, shortname=user)
     roles = RoleModel.query.filter(RoleModel.user == user).all()
 
     if user == auth_user.shortname:
@@ -72,3 +92,11 @@ def resolve_role(self, info, user):
         reduced_roles.append(role)
 
     return reduced_roles
+
+
+def resolve_role_by_field(self, info, field):
+    user = info.context.user
+    if not is_fieldadmin(user, field):
+        raise GraphQLError('Unauthorized')
+
+    return RoleModel.query.filter(RoleModel.field == field).all()
