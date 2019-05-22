@@ -9,11 +9,11 @@ const ImportMetricsContainer = () => {
   const { user } = useContext(AuthContext);
   return (
     <ListPageWithActions
-      title="Imports"
+      title="My imports"
       links={() => (
         <>
           <PageLink color={ALMOST_BLACK} to="/cases">
-            List cases
+            All cases
           </PageLink>
           <PageLink to="/cases/import/new">Import new case</PageLink>
         </>

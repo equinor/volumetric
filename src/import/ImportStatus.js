@@ -141,7 +141,7 @@ const ImportStatus = ({ user }) => {
         }
 
         if (data.tasks.length === 0) {
-          return <div>No tasks</div>;
+          return <div>No imports</div>;
         }
 
         return <Tasks tasks={data.tasks} />;

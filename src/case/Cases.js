@@ -138,13 +138,13 @@ function Cases() {
 
         return (
           <ListPageWithActions
-            title="Cases"
+            title="All cases"
             links={() => (
               <>
                 <PageLink color={ALMOST_BLACK} to="/cases/import">
                   My imports
                 </PageLink>
-                <PageLink to="/cases/import/new">Import new</PageLink>
+                <PageLink to="/cases/import/new">Import new case</PageLink>
               </>
             )}
           >

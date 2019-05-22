@@ -29,7 +29,7 @@ function LocationContainer() {
           <NoDataDiv>
             <div>
               {roles === '' ? (
-                <p>No dont have access to any fields.</p>
+                <p>You don't have access to any fields.</p>
               ) : (
                 <div>
                   {isCreator(currentRole) ? (

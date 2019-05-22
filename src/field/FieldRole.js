@@ -9,7 +9,7 @@ import { faAngleDoubleDown } from '@fortawesome/free-solid-svg-icons';
 import { prettyRole } from '../common/FormatedText';
 
 const FieldButton = styled.button`
-  width: 100;
+  width: 100px;
   border: 0;
   background-color: transparent;
   cursor: pointer;
