@@ -33,6 +33,8 @@ services:
       - ./uploads:/code/instance/uploads
     depends_on:
       - db
+      - redis
+      - worker
     environment:
       - REDIS_HOST=redis
       - DATABASE_HOST=db
