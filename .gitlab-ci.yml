@@ -89,7 +89,6 @@ deploy_develop:
     - ./bin/activate volumetric build proxy
     - ./bin/activate volumetric down
     - ./bin/activate volumetric up -d --scale worker=3
-    - ./bin/activate volumetric exec -T api flask import-test
 
 deploy_test:
   stage: deploy
