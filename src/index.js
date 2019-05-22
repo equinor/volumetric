@@ -10,7 +10,10 @@ import { API_URL } from './common/variables';
 import { authContext } from './auth/AdalConfig';
 import { runWithAdal } from 'react-adal';
 import { AuthProvider } from './auth/AuthContext';
-import RoleWrapApp from './field/RoleWrapApp';
+import App from './App';
+import { BrowserRouter as Router } from 'react-router-dom';
+import RoleQuery from './field/RoleQuery';
+import { FieldProvider } from './field/FieldContext';
 
 export const getToken = () => {
   return authContext.getCachedToken(authContext.config.clientId);
@@ -34,7 +37,17 @@ const AppWithApollo = (
       getUser={() => authContext.getCachedUser()}
       getToken={() => getToken()}
     >
-      <RoleWrapApp />
+      <Router>
+        <Router>
+          <RoleQuery>
+            {roles => (
+              <FieldProvider roles={roles}>
+                <App />
+              </FieldProvider>
+            )}
+          </RoleQuery>
+        </Router>
+      </Router>
     </AuthProvider>
   </ApolloProvider>
 );

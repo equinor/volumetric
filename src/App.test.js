@@ -86,15 +86,7 @@ const NoMatch = ({ location }) => (
 );
 
 it('renders without crashing', () => {
-  const initialState = {
-    currentField: 'Snorre',
-    roles: [{ field: 'Snorre', role: 'fieldadmin' }],
-  };
-  const reducer = (state, action) => {
-    return {
-      initialState,
-    };
-  };
+  const roles = [{ field: 'Snorre', role: 'fieldadmin' }];
 
   ReactDOM.render(
     <MockedProvider addTypename={true}>
@@ -102,7 +94,7 @@ it('renders without crashing', () => {
         <MockAuthConsumer>
           {({ user }) => (
             <Router>
-              <FieldProvider initialState={initialState} reducer={reducer}>
+              <FieldProvider roles={roles}>
                 <React.Fragment>
                   <GlobalStyle />
                   <AppHeader>

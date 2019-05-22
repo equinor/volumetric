@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, NavLink, Route } from 'react-router-dom';
+import {
+  FieldProvider,
+  isCreator,
+  isFieldAdmin,
+  useFieldValue,
+} from './field/FieldContext';
+import { AuthContext } from './auth/AuthContext';
+import RoleQuery from './field/RoleQuery';
+import FieldRole from './field/FieldRole';
+import { ImportMetrics, ImportNewCase } from './import';
+import Cases from './case/Cases';
+import UsersContainer from './users/UsersContainer';
+import { H1, H3 } from './common/Headers';
+
 import { LocationContainer } from './location/';
 import styled, { createGlobalStyle } from 'styled-components';
-import { NavLink, Route } from 'react-router-dom';
 import { Switch } from 'react-router';
-import { ImportMetrics, ImportNewCase } from './import/';
-import { H1, H3 } from './common/Headers';
-import Cases from './case/Cases';
 import Docs from './docs/Docs';
 import { ALMOST_BLACK, SELECTED_COLOR } from './common/variables';
-import FieldRole from './field/FieldRole';
-import UsersContainer from './users/UsersContainer';
-import { isCreator, isFieldAdmin, useFieldValue } from './field/FieldContext';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -84,7 +92,8 @@ const NoMatch = ({ location }) => (
   </div>
 );
 
-function App({ user }) {
+function App() {
+  const { user } = useContext(AuthContext);
   const [{ currentRole }] = useFieldValue();
   return (
     <React.Fragment>
