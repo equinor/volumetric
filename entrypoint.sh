@@ -30,6 +30,7 @@ if [ ${first_arg} = 'api' ]; then
     flask db upgrade
 	if [ "$FLASK_ENV" = 'development' ]; then
         gunicorn -b $FLASK_RUN_HOST:$FLASK_RUN_PORT \
+            --worker-tmp-dir /dev/shm \
             --reload \
             --capture-output \
             --enable-stdio-inheritance \
@@ -40,6 +41,7 @@ if [ ${first_arg} = 'api' ]; then
             app:app
     else
         gunicorn -b $FLASK_RUN_HOST:$FLASK_RUN_PORT \
+            --worker-tmp-dir /dev/shm \
             --capture-output \
             --enable-stdio-inheritance \
             --access-logfile=- \
