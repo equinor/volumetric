@@ -2,7 +2,7 @@ import React from 'react';
 import { gql } from 'apollo-boost';
 import { Mutation } from 'react-apollo';
 import { StyledSpinner } from '../../common/Spinner';
-import { GET_UPLOADS, TASK_FRAGMENT } from '../../common/Queries';
+import { GET_IMPORTS, TASK_FRAGMENT } from '../../common/Queries';
 import { GraphqlError, NetworkError } from '../../common/ErrorHandling';
 
 const IMPORT_CASE = gql`
@@ -62,9 +62,9 @@ export default ({ history, user, ...props }) => {
         if (validationError) return;
         try {
           const variables = { user: user.shortName.toLowerCase() };
-          const { tasks } = cache.readQuery({ query: GET_UPLOADS, variables });
+          const { tasks } = cache.readQuery({ query: GET_IMPORTS, variables });
           cache.writeQuery({
-            query: GET_UPLOADS,
+            query: GET_IMPORTS,
             data: { tasks: [task, ...tasks] },
             variables,
           });

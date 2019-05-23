@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
-import { GET_UPLOADS } from '../common/Queries';
+import { GET_IMPORTS } from '../common/Queries';
 import { Query } from 'react-apollo';
 import {
   SUCCESS_COLOR,
@@ -107,13 +107,14 @@ const getHasWorkingTasks = data => {
 
 const ACTIVE_IMPORT_INTERVAL = 1000;
 
-const ImportStatus = ({ user }) => {
+const ImportStatus = ({ user, field }) => {
   const [isPolling, setIsPolling] = useState(false);
   return (
     <Query
-      query={GET_UPLOADS}
+      query={GET_IMPORTS}
       variables={{
         user: user.toLowerCase(),
+        field: field,
       }}
     >
       {props => {

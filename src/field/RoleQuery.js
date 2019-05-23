@@ -1,12 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Query } from 'react-apollo';
 import { GET_ROLES } from '../common/Queries';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { StyledSpinner } from '../common/Spinner';
-import { AuthContext } from '../auth/AuthContext';
 
-const RoleQuery = ({ children }) => {
-  const { user } = useContext(AuthContext);
+const RoleQuery = ({ user, children }) => {
   return (
     <Query query={GET_ROLES} variables={{ user: user.shortName.toLowerCase() }}>
       {({ loading, error, data }) => {

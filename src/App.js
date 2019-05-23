@@ -1,13 +1,6 @@
-import React, { useContext } from 'react';
-import { BrowserRouter as Router, NavLink, Route } from 'react-router-dom';
-import {
-  FieldProvider,
-  isCreator,
-  isFieldAdmin,
-  useFieldValue,
-} from './field/FieldContext';
-import { AuthContext } from './auth/AuthContext';
-import RoleQuery from './field/RoleQuery';
+import React from 'react';
+import { NavLink, Route } from 'react-router-dom';
+import { useUserSettings } from './auth/AuthContext';
 import FieldRole from './field/FieldRole';
 import { ImportMetrics, ImportNewCase } from './import';
 import Cases from './case/Cases';
@@ -93,14 +86,13 @@ const NoMatch = ({ location }) => (
 );
 
 function App() {
-  const { user } = useContext(AuthContext);
-  const [{ currentRole }] = useFieldValue();
+  const { user } = useUserSettings();
   return (
     <React.Fragment>
       <GlobalStyle />
       <AppHeader>
-        <UserInfo>{user.name}</UserInfo>
         <UserInfo>
+          {user.name}
           <FieldRole />
         </UserInfo>
         <InnerHeader>
@@ -111,12 +103,12 @@ function App() {
             <HeaderLink right exact to="/">
               Home
             </HeaderLink>
-            {isCreator(currentRole) && (
+            {user.isCreator && (
               <HeaderLink right to="/cases">
                 Manage cases
               </HeaderLink>
             )}
-            {isFieldAdmin(currentRole) && (
+            {user.isFieldAdmin && (
               <HeaderLink right to="/users">
                 Manage users
               </HeaderLink>
@@ -130,28 +122,28 @@ function App() {
       <Switch>
         <Route exact path="/" component={LocationContainer} />
         <Route path="/docs" component={Docs} />
-        {isCreator(currentRole) && (
+        {user.isCreator && (
           <Route
             exact
             path="/cases/import"
             render={routerProps => <ImportMetrics {...routerProps} />}
           />
         )}
-        {isCreator(currentRole) && (
+        {user.isCreator && (
           <Route
             exact
             path="/cases/import/new"
             render={routerProps => <ImportNewCase {...routerProps} />}
           />
         )}
-        {isCreator(currentRole) && (
+        {user.isCreator && (
           <Route
             exact
             path="/cases"
             render={routerProps => <Cases {...routerProps} />}
           />
         )}
-        {isFieldAdmin(currentRole) && (
+        {user.isFieldAdmin && (
           <Route
             exact
             path="/users"

@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { Query, Mutation } from 'react-apollo';
-import { FULL_CASE_FRAGMENT, GET_FIELDS } from '../common/Queries';
+import React from 'react';
+import { Mutation, Query } from 'react-apollo';
+import { FULL_CASE_FRAGMENT, GET_CASES, GET_FIELDS } from '../common/Queries';
 import { SmallSpinner, StyledSpinner } from '../common/Spinner';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { ALMOST_BLACK, DANGER_COLOR } from '../common/variables';
@@ -8,11 +8,9 @@ import gql from 'graphql-tag';
 import Icon, { ICONS } from '../common/Icons';
 import { PageLink } from '../common/Links';
 import { ListPageWithActions } from '../common/Layouts';
-import { Table, TH, OverflowTD, Row } from '../common/Table';
+import { OverflowTD, Row, Table, TH } from '../common/Table';
 import { getFormattedDate } from '../utils/date';
-import { AuthContext } from '../auth/AuthContext';
-import { GET_CASES } from '../common/Queries';
-import { useFieldValue } from '../field/FieldContext';
+import { useUserSettings } from '../auth/AuthContext';
 import { DeleteButton } from '../common/Buttons';
 
 const DELETE_CASE = gql`
@@ -120,8 +118,7 @@ function CasesList({ fields, user }) {
 }
 
 function Cases() {
-  const { user } = useContext(AuthContext);
-  const [{ currentField }] = useFieldValue();
+  const { user, currentField } = useUserSettings();
   return (
     <Query query={GET_CASES} variables={{ field: currentField }}>
       {({ loading, error, data }) => {

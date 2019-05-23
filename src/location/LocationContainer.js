@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { StyledSpinner } from '../common/Spinner';
 import LocationComponent from './LocationComponent';
-import { isCreator, useFieldValue } from '../field/FieldContext';
+import { useUserSettings } from '../auth/AuthContext';
 
 const NoDataDiv = styled.div`
   margin-top: 50px;
@@ -16,7 +16,7 @@ const NoDataDiv = styled.div`
 `;
 
 function LocationContainer() {
-  const [{ currentField, currentRole, roles }] = useFieldValue();
+  const { currentField, user } = useUserSettings();
   return (
     <Query query={GET_CASES} variables={{ field: currentField }}>
       {({ loading, error, data }) => {
@@ -28,11 +28,11 @@ function LocationContainer() {
         ) : (
           <NoDataDiv>
             <div>
-              {roles === '' ? (
+              {user.roles.length === 0 ? (
                 <p>You don't have access to any fields.</p>
               ) : (
                 <div>
-                  {isCreator(currentRole) ? (
+                  {user.isCreator ? (
                     <React.Fragment>
                       <Link to="/cases/import/new">Import</Link> some..
                     </React.Fragment>

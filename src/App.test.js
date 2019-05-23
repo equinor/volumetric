@@ -1,162 +1,29 @@
 import React from 'react';
 import { MockedProvider } from 'react-apollo/test-utils';
-import { MockAuthConsumer, MockAuthProvider } from './auth/MockAuthContext';
-import { LocationContainer } from './location/';
-import styled, { createGlobalStyle } from 'styled-components';
-import { BrowserRouter as Router, NavLink, Route } from 'react-router-dom';
-import { Switch } from 'react-router';
-import { ImportMetrics, ImportNewCase } from './import/';
-import Cases from './case/Cases';
-import Docs from './docs/Docs';
-import FieldRole from './field/FieldRole';
-import { FieldProvider } from './field/FieldContext';
-import { ALMOST_BLACK, SELECTED_COLOR } from './common/variables';
-import { H1, H3 } from './common/Headers';
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    padding: 0;
-    margin: 0 auto 25px;
-    max-width: 1200px;
-    font-family: Equinor-Regular, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  #root {
-    max-width: 1200px;
-  }
-`;
-
-const AppHeader = styled.header`
-  display: flex;
-  flex-direction: column;
-  color: ${ALMOST_BLACK};
-  min-height: 80px;
-  margin-bottom: 20px;
-  padding-top: 10px;
-`;
-
-const AppTitle = styled(H1)`
-  display: flex;
-  align-items: center;
-  margin: 0;
-  font-size: 24px;
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+/Edge */
-  user-select: none; /* Standard */
-`;
-
-const HeaderLink = styled(({ right, ...props }) => <NavLink {...props} />)`
-  text-decoration: none;
-  color: inherit;
-  ${props => (props.right ? 'margin-left: 25px' : 'margin-right: 25px')};
-  outline: none;
-  padding-bottom: 5px;
-`;
-
-const HeaderLinks = styled.div`
-  margin-left: auto;
-
-  .active {
-    border-bottom: 2px solid ${SELECTED_COLOR};
-  }
-`;
-
-const UserInfo = styled.div`
-  text-align: right;
-  color: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  font-family: Equinor-Medium;
-`;
-
-const InnerHeader = styled.div`
-  display: flex;
-  align-items: flex-end;
-`;
-
-const NoMatch = ({ location }) => (
-  <div>
-    <H3>
-      No match for <code>{location.pathname}</code>
-    </H3>
-  </div>
-);
+import { AuthProvider } from './auth/AuthContext';
+import { MemoryRouter as Router } from 'react-router-dom';
+import App from './App';
 
 it('renders without crashing', () => {
-  const roles = [{ field: 'Snorre', role: 'fieldadmin' }];
+  const user = {
+    name: 'Jon von Neumann',
+    shortName: 'jon@equinor.com',
+    exp: 32472144000,
+    isAdmin: true,
+    upn: 'jon@equinor.com',
+  };
 
+  // This is an invalid mock JWT. Only usable for rendering Web components.
+  const token =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjMDQ5ZjIzNi03ZTM4LTQxYmEtYmU3Ny0yODdiYzFjODU0M2MiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8zYWE0YTIzNS1iNmUyLTQ4ZDUtOTE5NS03ZmNmMDViNDU5YjAvIiwiaWF0IjoxNTQ5MDA0MzI2LCJuYmYiOjE1NDkwMDQzMjYsImV4cCI6MTU0OTAwODY4NSwiYWlvIjoiNDJKZ1lGZ1dIaFZ6bitmQjR2bUJtMVFPUHBFT1kvTlQxY3VjTll2ajgzbS8vNnFNaXZzQiIsImFtciI6WyJ3aWEiXSwiZmFtaWx5X25hbWUiOiJ2b24gTmV1bWFubiIsImdpdmVuX25hbWUiOiJKb24iLCJpcGFkZHIiOiIxNDMuOTcuMi40MiIsIm5hbWUiOiJKb24gdm9uIE5ldW1hbm4iLCJub25jZSI6IjhmOTFjNzI5LTUwZDYtNDhmNC1iM2JhLThmM2JjZmNhYWFmOSIsIm9pZCI6IjBlZjk0MmE0LTNlNWItNGM1OC05OWE2LTQxYzcyNDMzZTFkYiIsIm9ucHJlbV9zaWQiOiJTLTEtNS0yMS0yMjA1MjMzODgtMTA4NTAzMTIxNC03MjUzNDU1NDMtMjMzMDY5MiIsInJvbGVzIjpbIlZvbHVtZXRyaWNBZG1pbiJdLCJzdWIiOiJMay1RQk1HYWVsdXFYYVFEeEFEeE1wVEZuZ01YWlUzNHhISkk4SW5rLWpBIiwidGlkIjoiM2FhNGEyMzUtYjZlMi00OGQ1LTkxOTUtN2ZjZjA1YjQ1OWIwIiwidW5pcXVlX25hbWUiOiJqb25AZXF1aW5vci5jb20iLCJ1cG4iOiJKT05AZXF1aW5vci5jb20iLCJ1dGkiOiJ1ZEFhV3hTZHIwbXVmZEhfYlRZSEFBIiwidmVyIjoiMS4wIiwianRpIjoiMTg0MjRlNDUtOTk3ZS00ZTg3LThiNTItYzkxMzdhNDg0ZjBhIn0.vPOoDK6cqXnXf2VM-5HRzEfzwTOP1325--UIR6n7Sg8';
+  const roles = [{ field: 'Snorre', role: 'fieldadmin' }];
   ReactDOM.render(
     <MockedProvider addTypename={true}>
-      <MockAuthProvider>
-        <MockAuthConsumer>
-          {({ user }) => (
-            <Router>
-              <FieldProvider roles={roles}>
-                <React.Fragment>
-                  <GlobalStyle />
-                  <AppHeader>
-                    <UserInfo>{user.name}</UserInfo>
-                    <UserInfo>
-                      <FieldRole />
-                    </UserInfo>
-                    <InnerHeader>
-                      <AppTitle>
-                        <HeaderLink to="/">Volumetric</HeaderLink>
-                      </AppTitle>
-                      <HeaderLinks>
-                        <HeaderLink right exact to="/">
-                          Home
-                        </HeaderLink>
-                        {user.isCreator && (
-                          <HeaderLink right to="/cases">
-                            Manage cases
-                          </HeaderLink>
-                        )}
-                        <HeaderLink right to="/docs">
-                          Docs
-                        </HeaderLink>
-                      </HeaderLinks>
-                    </InnerHeader>
-                  </AppHeader>
-                  <Switch>
-                    <Route exact path="/" component={LocationContainer} />
-                    <Route path="/docs" component={Docs} />
-                    {user.isCreator && (
-                      <Route
-                        exact
-                        path="/cases/import"
-                        render={routerProps => (
-                          <ImportMetrics {...routerProps} />
-                        )}
-                      />
-                    )}
-                    {user.isCreator && (
-                      <Route
-                        exact
-                        path="/cases/import/new"
-                        render={routerProps => (
-                          <ImportNewCase {...routerProps} />
-                        )}
-                      />
-                    )}
-                    {user.isCreator && (
-                      <Route
-                        exact
-                        path="/cases"
-                        render={routerProps => <Cases {...routerProps} />}
-                      />
-                    )}
-                    <Route component={NoMatch} />
-                  </Switch>
-                </React.Fragment>
-              </FieldProvider>
-            </Router>
-          )}
-        </MockAuthConsumer>
-      </MockAuthProvider>
+      <AuthProvider user={user} token={token} roles={roles}>
+        <Router>
+          <App />
+        </Router>
+      </AuthProvider>
     </MockedProvider>,
     document.createElement('div'),
   );

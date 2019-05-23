@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import ImportStatus from './ImportStatus';
-import { AuthContext } from '../auth/AuthContext';
+import { useUserSettings } from '../auth/AuthContext';
 import { PageLink } from '../common/Links';
 import { ListPageWithActions } from '../common/Layouts';
 import { ALMOST_BLACK } from '../common/variables';
 
 const ImportMetricsContainer = () => {
-  const { user } = useContext(AuthContext);
+  const { user, currentField } = useUserSettings();
   return (
     <ListPageWithActions
       title="My imports"
@@ -19,7 +19,7 @@ const ImportMetricsContainer = () => {
         </>
       )}
     >
-      <ImportStatus user={user.shortName} />
+      <ImportStatus user={user.shortName} field={currentField} />
     </ListPageWithActions>
   );
 };

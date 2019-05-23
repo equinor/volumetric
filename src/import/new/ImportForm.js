@@ -36,7 +36,6 @@ export default ({
   importCase,
   mutationData,
   user,
-  fields,
   caseTypes,
 }) => {
   return (

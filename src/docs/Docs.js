@@ -1,11 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { NavLink, Redirect, Switch } from 'react-router-dom';
+import { NavLink, Redirect, Route, Switch } from 'react-router-dom';
 import { Dictionary } from './dictionary';
 import { Contact } from './contact';
 import { ApiDoc } from './ApiDoc';
-import { Route } from 'react-router-dom';
-import { AuthContext } from '../auth/AuthContext';
+import { useUserSettings } from '../auth/AuthContext';
 import { ALMOST_BLACK, SELECTED_COLOR } from '../common/variables';
 
 const DocsStyled = styled.div`
@@ -35,7 +34,7 @@ const DocLink = styled(NavLink)`
 `;
 
 function Docs() {
-  const { user } = useContext(AuthContext);
+  const { user } = useUserSettings();
   return (
     <DocsStyled>
       <div>

@@ -9,11 +9,10 @@ import { ApolloProvider } from 'react-apollo';
 import { API_URL } from './common/variables';
 import { authContext } from './auth/AdalConfig';
 import { runWithAdal } from 'react-adal';
-import { AuthProvider } from './auth/AuthContext';
+import { AuthProvider, getUser } from './auth/AuthContext';
 import App from './App';
 import { BrowserRouter as Router } from 'react-router-dom';
 import RoleQuery from './field/RoleQuery';
-import { FieldProvider } from './field/FieldContext';
 
 export const getToken = () => {
   return authContext.getCachedToken(authContext.config.clientId);
@@ -31,31 +30,27 @@ const client = new ApolloClient({
   uri: `${API_URL}/graphql`,
 });
 
-const AppWithApollo = (
-  <ApolloProvider client={client}>
-    <AuthProvider
-      getUser={() => authContext.getCachedUser()}
-      getToken={() => getToken()}
-    >
-      <Router>
-        <Router>
-          <RoleQuery>
-            {roles => (
-              <FieldProvider roles={roles}>
-                <App />
-              </FieldProvider>
-            )}
-          </RoleQuery>
-        </Router>
-      </Router>
-    </AuthProvider>
-  </ApolloProvider>
-);
+const AppWithProviders = () => {
+  const user = getUser(authContext.getCachedUser());
+  return (
+    <ApolloProvider client={client}>
+      <RoleQuery user={user}>
+        {roles => (
+          <AuthProvider user={user} roles={roles} token={getToken()}>
+            <Router>
+              <App />
+            </Router>
+          </AuthProvider>
+        )}
+      </RoleQuery>
+    </ApolloProvider>
+  );
+};
 
 runWithAdal(
   authContext,
   () => {
-    render(AppWithApollo, document.getElementById('root'));
+    render(<AppWithProviders />, document.getElementById('root'));
   },
   false,
 );

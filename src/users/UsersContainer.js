@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Mutation, Query } from 'react-apollo';
 import { ListPageWithActions } from '../common/Layouts';
 import { Row, Table, TD, TH } from '../common/Table';
-import { useFieldValue } from '../field/FieldContext';
 import styled from 'styled-components';
 import { SmallSpinner, StyledSpinner } from '../common/Spinner';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
@@ -19,6 +18,7 @@ import {
   DeleteButton as DeleteButtonStyled,
   SubmitButton,
 } from '../common/Buttons';
+import { useUserSettings } from '../auth/AuthContext';
 
 const EditButton = styled(FontAwesomeIcon)`
   margin-left: 20px;
@@ -74,7 +74,7 @@ function DeleteButton({ field, user }) {
     <Mutation
       mutation={DELETE_ROLE}
       variables={{ field: field, user: user }}
-      update={(cache, { data: { deleteRole: deleteRole } }) => {
+      update={cache => {
         let roles = cache.readQuery({
           query: GET_ROLES_IN_FIELD,
           variables: { field: field },
@@ -285,7 +285,7 @@ function ExistingUsers({ roles, field }) {
 }
 
 function UserManagement() {
-  const [{ currentField }] = useFieldValue();
+  const { currentField } = useUserSettings();
   return (
     <ListPageWithActions title="Manage users" links={() => <></>}>
       <Query query={GET_ROLES_IN_FIELD} variables={{ field: currentField }}>

@@ -86,9 +86,9 @@ export const TASK_FRAGMENT = gql`
   }
 `;
 
-export const GET_UPLOADS = gql`
-  query Uploads($user: String, $hours: Int) {
-    tasks(user: $user, hours: $hours) {
+export const GET_IMPORTS = gql`
+  query Imports($user: String, $field: String, $hours: Int) {
+    tasks(user: $user, field: $field, hours: $hours) {
       ...Task
     }
   }
