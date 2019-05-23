@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, DateTime
+from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey
 
 from models import db
 
@@ -13,3 +13,4 @@ class Task(db.Model):
     complete = Column(Boolean, default=False)
     failed = Column(Boolean, default=False)
     message = Column(String)
+    field_name = Column(String, ForeignKey('field.name', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)

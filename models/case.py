@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime
 
-from sqlalchemy import Column, String, ForeignKey, Boolean, DateTime, Integer, Enum
+from sqlalchemy import Column, String, ForeignKey, Boolean, DateTime, Integer, Enum, UniqueConstraint
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 
@@ -15,6 +15,7 @@ class CaseTypeEnum(str, enum.Enum):
 
 class Case(db.Model):
     __tablename__ = 'case'
+    __table_args__ = (UniqueConstraint('name', 'case_version', 'field_name'), )
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)

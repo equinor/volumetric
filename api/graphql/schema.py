@@ -11,7 +11,8 @@ from .volumetrics import VolumetricsType, resolve_volumetrics
 
 
 class Query(graphene.ObjectType):
-    tasks = graphene.List(Task, user=graphene.String(), hours=graphene.Int(), resolver=resolve_tasks)
+    tasks = graphene.List(
+        Task, user=graphene.String(), field=graphene.String(), hours=graphene.Int(), resolver=resolve_tasks)
     fields = OrderedList(FieldType, name=graphene.String(), resolver=resolve_fields)
     case_types = graphene.List(CaseTypeGrapheneEnum, resolver=resolve_case_types)
     case = graphene.Field(Case, case_id=graphene.Int(), resolver=resolve_case)
