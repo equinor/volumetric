@@ -37,6 +37,8 @@ export default ({
   mutationData,
   user,
   caseTypes,
+  fileHasChanged,
+  setFileHasChanged,
 }) => {
   return (
     <React.Fragment>
@@ -97,9 +99,13 @@ export default ({
         )}
       </InputWrapper>
       <H4>File</H4>
-      {mutationData && mutationData.importCase.validationError && (
-        <ErrorText>{mutationData.importCase.validationError.message}</ErrorText>
-      )}
+      {mutationData &&
+        !fileHasChanged &&
+        mutationData.importCase.validationError && (
+          <ErrorText>
+            {mutationData.importCase.validationError.message}
+          </ErrorText>
+        )}
       <InputWrapper>
         <FileUpload
           style={{ width: '100%' }}
@@ -121,7 +127,10 @@ export default ({
               formState.caseType
             )
           }
-          importCase={() => importCase({ variables: formState })}
+          importCase={() => {
+            setFileHasChanged(false);
+            importCase({ variables: formState });
+          }}
         />
       </Footer>
     </React.Fragment>

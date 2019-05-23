@@ -14,24 +14,36 @@ class ImportNewCaseComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filename: null,
-      field: this.props.currentField,
-      case: '',
-      caseVersion: '',
-      caseType: props.data.caseTypes[0],
-      description: '',
-      isOfficial: false,
-      officialFromDate: new Date(),
-      officialToDate: new Date(),
-      isLoading: false,
+      formState: {
+        filename: null,
+        field: this.props.currentField,
+        case: '',
+        caseVersion: '',
+        caseType: props.data.caseTypes[0],
+        description: '',
+        isOfficial: false,
+        officialFromDate: new Date(),
+        officialToDate: new Date(),
+        isLoading: false,
+      },
+      fileHasChanged: false,
     };
     this.handleChange = this.handleChange.bind(this);
+    this.setFileHasChanged = this.setFileHasChanged.bind(this);
   }
 
   handleChange(key, selectedOption) {
-    this.setState({
-      [key]: selectedOption,
-    });
+    this.setState(state => ({
+      formState: {
+        ...state.formState,
+        [key]: selectedOption,
+      },
+      fileHasChanged: key === 'filename',
+    }));
+  }
+
+  setFileHasChanged(fileHasChanged) {
+    this.setState({ fileHasChanged });
   }
 
   render() {
@@ -58,7 +70,9 @@ class ImportNewCaseComponent extends React.Component {
           {(importCase, data) => {
             return (
               <ImportForm
-                formState={this.state}
+                formState={this.state.formState}
+                fileHasChanged={this.state.fileHasChanged}
+                setFileHasChanged={this.setFileHasChanged}
                 importCase={importCase}
                 mutationData={data}
                 handleFormChange={this.handleChange}
