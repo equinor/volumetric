@@ -1,9 +1,10 @@
-import { LIST_SEPARATOR_COLOR } from './variables';
+import { ALMOST_BLACK, LIST_SEPARATOR_COLOR } from './variables';
 import styled from 'styled-components';
 
 export const Table = styled.table`
   display: flex;
   flex-flow: column;
+  color: ${ALMOST_BLACK};
 `;
 
 export const Row = styled.tr`
