@@ -9,7 +9,7 @@ export const getUser = cachedUser => {
     name: name,
     shortName: upn.toString().substring(0, upn.lastIndexOf('@')),
     tokenExpire: exp,
-    isAdmin: roles.includes('VolumetricAdmin'),
+    isAdmin: roles && roles.includes('VolumetricAdmin'),
   };
 };
 
