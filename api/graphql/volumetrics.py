@@ -76,7 +76,7 @@ def resolve_volumetrics(self, info, case_id, phase, **kwargs):
         raise GraphQLError('You are not authorized to view this case.')
 
     # Return only personal or official data if user is not administrator
-    if not user.isAdmin and not (case.is_official or case.created_user == user.shortname):
+    if not user.isAdmin and not (case.is_shared or case.created_user == user.shortname):
         raise GraphQLError('You are not authorized to view this case.')
 
     filtered_kwargs = {key: value for key, value in kwargs.items() if None not in value}

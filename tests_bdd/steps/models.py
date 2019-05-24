@@ -23,6 +23,7 @@ def step_impl(context):
         description = row['description']
         created_user = row['created_user']
         is_official = row['is_official'] == 'True'
+        is_shared = row['is_shared'] == 'True'
         case = Case(
             name=name,
             case_version=case_version,
@@ -30,6 +31,7 @@ def step_impl(context):
             description=description,
             created_user=created_user,
             is_official=is_official,
+            is_shared=is_shared,
             field=context.fields[row['field']],
         )
         context.cases[name] = case

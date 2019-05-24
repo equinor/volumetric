@@ -31,7 +31,7 @@ class CaseSchema(marshmallow.ModelSchema):
     class Meta:
         ordered = True
         fields = ('id', 'name', 'created_user', 'case_type', 'created_date', 'case_version', 'description',
-                  'is_official', 'official_from_date', 'official_to_date', 'field_name', 'locations')
+                  'is_official', 'is_shared', 'official_from_date', 'official_to_date', 'field_name', 'locations')
 
     locations = marshmallow.Nested(LocationSchema, many=True)
 

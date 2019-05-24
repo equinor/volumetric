@@ -31,7 +31,7 @@ def resolve_fields(self, info, **kwargs):
         field_type = Field()
         field_type.name = field.name
         # Return only official and personal fields if user is not an administrator
-        field_type.cases = [case for case in field.cases if case.created_user == user.shortname or case.is_official]
+        field_type.cases = [case for case in field.cases if case.created_user == user.shortname or case.is_shared]
         if len(field_type.cases) > 0:
             field_types.append(field_type)
     return field_types

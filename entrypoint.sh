@@ -27,7 +27,7 @@ fi
 
 
 if [ ${first_arg} = 'api' ]; then
-    flask db upgrade
+    flask db upgrade -x data=true
 	if [ "$FLASK_ENV" = 'development' ]; then
         gunicorn -b $FLASK_RUN_HOST:$FLASK_RUN_PORT \
             --worker-tmp-dir /dev/shm \

@@ -25,6 +25,7 @@ class Case(db.Model):
     case_version = Column(String, nullable=False)
     description = Column(String)
     is_official = Column(Boolean, default=False)
+    is_shared = Column(Boolean, server_default="False")
     official_from_date = Column(DateTime, default=datetime.utcnow)
     official_to_date = Column(DateTime)
     field_name = Column(String, ForeignKey('field.name', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)

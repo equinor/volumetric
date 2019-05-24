@@ -25,7 +25,7 @@ def resolve_case(self, info, case_id):
     if not is_reader(user, case.field.name):
         raise GraphQLError('You are not authorized to view this case.')
     # Return only personal or official data if user is not administrator
-    if not (case.is_official or case.created_user == user.shortname):
+    if not (case.is_shared or case.created_user == user.shortname):
         raise GraphQLError('You are not authorized to view this case.')
 
     return case
@@ -57,6 +57,7 @@ class Case(graphene.ObjectType):
     case_type = CaseTypeGrapheneEnum()
     description = graphene.String()
     is_official = graphene.Boolean()
+    is_shared = graphene.Boolean()
     is_currently_official = graphene.Boolean()
     official_from_date = graphene.DateTime()
     official_to_date = graphene.DateTime()
@@ -93,10 +94,11 @@ class DeleteCase(graphene.Mutation):
         user = info.context.user
         case = CaseModel.query.get(id)
 
-        # Only admins and FieldAdmins are allowed to delete none private cases.
+        # Only admins and FieldAdmins are allowed to delete official cases.
         if case.is_official and not is_fieldadmin(user, case.field.name):
             return GraphQLError('Unauthorized')
-        if not case.is_official and user.shortname != case.created_user:
+        # Only owners are allowed to delete private cases
+        if not case.is_shared and user.shortname != case.created_user:
             return GraphQLError('Unauthorized')
 
         field = case.field
@@ -121,6 +123,7 @@ class ImportCase(graphene.Mutation):
         case_type = CaseTypeGrapheneEnum(required=True)
         description = graphene.String()
         is_official = graphene.Boolean(default_value=False)
+        is_shared = graphene.Boolean(default_value=True)
         official_from_date = graphene.DateTime()
         official_to_date = graphene.DateTime()
 
@@ -139,6 +142,8 @@ class ImportCase(graphene.Mutation):
         if not kwargs['is_official']:
             del kwargs['official_from_date']
             del kwargs['official_to_date']
+        else:
+            kwargs['is_shared'] = True
 
         filepath = os.path.join(current_app.instance_path, current_app.config.get('UPLOAD_FOLDER'), filename)
         is_valid, message = validate_import(filepath, file_format=file_format)
