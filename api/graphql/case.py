@@ -4,14 +4,29 @@ import graphene
 from flask import current_app
 from graphql import GraphQLError
 
-from models import db, Location as LocationModel, CaseTypeEnum, Case as CaseModel
+from models import db, Location as LocationModel, CaseTypeEnum, Case as CaseModel, Field as FieldModel
 from utils.case_import.import_data import validate_import
 from utils.case_import.queue import create_import_data_job
 from utils.graphql.fileformat import FileFormat
-from utils.ordering import OrderedList, ordered_strings
+from utils.ordering import OrderedList, ordered_strings, ordered_case
 from utils.authentication import is_creator, is_fieldadmin, is_reader
 from .tasks import Task
 from .validation_error import ValidationError
+
+
+@ordered_case
+def resolve_cases(self, info, field_name):
+    user = info.context.user
+    cases = CaseModel.query.filter(CaseModel.field_name == field_name).all()
+    # Return all fields if user is Admin
+    if user.isAdmin:
+        return cases
+
+    if user.roles.get(field_name, False):
+        raise GraphQLError("You don't have access to this field.")
+
+    # Return only official and personal cases if user is not an administrator
+    return [case for case in cases if case.created_user == user.shortname or case.is_shared]
 
 
 def resolve_case(self, info, case_id):

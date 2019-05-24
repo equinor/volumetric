@@ -35,60 +35,20 @@ Feature: GraphQL API
 
     Given max_iter_volumetrics is fresh
 
-  Scenario: Query for fields
-    Given I am an application admin
-    When I make a graphql query
-    """
-    {
-      fields {
-        name
-      }
-    }
-    """
-    Then the graphql response should contain
-    """
-    {
-      "data": {
-        "fields": [
-          {
-            "name": "Field 1"
-          },
-          {
-            "name": "Field 2"
-          }
-        ]
-      }
-    }
-    """
-
   Scenario: Query for cases
     Given I am an application admin
     When I make a graphql query
     """
-    { fields { name cases { name isOfficial } } }
+    { cases(fieldName: "Field 1") { name isOfficial } }
     """
     Then the graphql response should contain
     """
     {
       "data": {
-        "fields": [
+        "cases": [
           {
-            "name": "Field 1",
-            "cases": [
-              {
-                "name": "Case 1",
-                "isOfficial": true
-              }
-            ]
-          },
-          {
-            "name": "Field 2",
-            "cases": [
-              {
-                "name": "Case 2",
-                "isOfficial": false
-              }
-            ]
+            "name": "Case 1",
+            "isOfficial": true
           }
         ]
       }
