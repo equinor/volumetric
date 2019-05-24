@@ -13,7 +13,7 @@ import { H4 } from '../common/Headers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons/faPen';
 import Icon, { ICONS } from '../common/Icons';
-import { prettyRole } from '../common/FormatedText';
+import { prettyRole } from '../common/FormattedText';
 import {
   DeleteButton as DeleteButtonStyled,
   SubmitButton,

@@ -7,7 +7,7 @@ import { Query } from 'react-apollo';
 import { GET_METRICS } from './LocationQueries';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import VisToggler from './VisToggler';
-import { LocationFilters } from './filters';
+import { Filter, LocationFilters } from './filters';
 
 const FilterPage = styled.div`
   display: flex;
@@ -81,7 +81,7 @@ const reducer = (state, action) => {
       const { checked, value } = action;
       let nextState = checked
         ? {
-            [key]: this.state.currentCase.metrics.filter(metric =>
+            [key]: state.currentCase.metrics.filter(metric =>
               [...state[key], value].includes(metric),
             ),
           }
@@ -145,21 +145,35 @@ export const CaseComponent = props => {
               }
             />
           </div>
+          <Filter
+            name="Metrics"
+            filters={filterMetricsForPhase(
+              state.currentCase.metrics,
+              state.phase,
+            )}
+            handleFilterChange={(_, { target: { checked, value } }) => {
+              dispatch({
+                type: 'METRIC_FILTER_CHANGE',
+                checked,
+                value,
+              });
+            }}
+            category="metrics"
+            checked={state.metrics}
+          />
           <LocationFilters
             currentCase={state.currentCase}
-            handleFilterChange={(category, { target: { checked, value } }) =>
+            handleFilterChange={(category, { target: { checked, value } }) => {
               dispatch({
                 type: 'LOCATION_FILTER_CHANGE',
                 category,
                 checked,
                 value,
-              })
-            }
+              });
+            }}
             checkedRegions={state.regions}
             checkedZones={state.zones}
             checkedFacies={state.facies}
-            checkedMetrics={state.metrics}
-            phase={state.phase}
           />
         </FilterWrapper>
         <ContentWrapper>

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FormatedText } from '../../../common/FormatedText';
+import { FormattedText } from '../../../common/FormattedText';
 
 const StatisticsDisplayStyled = styled.div`
   display: flex;
@@ -11,10 +11,10 @@ const StatisticsDisplayStyled = styled.div`
 export default ({ selectedMetric, p10, p50, p90, means }) => {
   return (
     <StatisticsDisplayStyled>
-      <FormatedText value={p10[selectedMetric]} label={'p10'} />
-      <FormatedText value={p50[selectedMetric]} label={'p50'} />
-      <FormatedText value={p90[selectedMetric]} label={'p90'} />
-      <FormatedText value={means[selectedMetric]} label={'mean'} />
+      <FormattedText value={p10[selectedMetric]} label={'p10'} />
+      <FormattedText value={p50[selectedMetric]} label={'p50'} />
+      <FormattedText value={p90[selectedMetric]} label={'p90'} />
+      <FormattedText value={means[selectedMetric]} label={'mean'} />
     </StatisticsDisplayStyled>
   );
 };

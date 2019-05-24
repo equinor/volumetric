@@ -145,8 +145,7 @@ function Cases() {
           );
         }
 
-        const cases =
-          data.fields && data.fields.length === 1 && data.fields[0].cases;
+        const cases = data.cases;
 
         return (
           <ListPageWithActions

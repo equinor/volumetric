@@ -91,7 +91,6 @@ const SpinnerComponent = styled.div`
 
 export const Spinner = props => {
   const { isLoading } = props;
-
   return isLoading ? (
     <div className={props.className}>
       <SpinnerComponent>

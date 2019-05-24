@@ -57,11 +57,8 @@ export const GET_FIELDS = gql`
 
 export const GET_CASES = gql`
   query Cases($field: String) {
-    fields(name: $field) {
-      name
-      cases(orderBy: "name") {
-        ...ShortCase
-      }
+    cases(fieldName: $field, orderBy: "name") {
+      ...ShortCase
     }
   }
   ${SHORT_CASE_FRAGMENT}

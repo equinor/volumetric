@@ -6,18 +6,14 @@ const ModelSelectorStyled = styled.div`
   display: flex;
 `;
 
-export default ({ handleChange, field, currentCase, fields }) => {
+export default ({ handleChange, currentCase, cases }) => {
   return (
     <ModelSelectorStyled>
-      <React.Fragment>
-        <Cases
-          fields={fields.fields.find(
-            otherField => otherField.name === field.value,
-          )}
-          currentCase={currentCase}
-          handleChange={handleChange}
-        />
-      </React.Fragment>
+      <Cases
+        cases={cases}
+        currentCase={currentCase}
+        handleChange={handleChange}
+      />
     </ModelSelectorStyled>
   );
 };

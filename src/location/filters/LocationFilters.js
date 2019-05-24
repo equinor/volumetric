@@ -1,25 +1,15 @@
 import React from 'react';
 import { Filter } from './Filters';
-import filterMetricsForPhase from '../../utils/filterMetricsForPhase';
 
 const LocationFilters = ({
   handleFilterChange,
   checkedRegions,
   checkedZones,
   checkedFacies,
-  checkedMetrics,
   currentCase,
-  phase,
 }) => {
   return (
     <React.Fragment>
-      <Filter
-        name="Metrics"
-        filters={filterMetricsForPhase(currentCase.metrics, phase)}
-        handleFilterChange={handleFilterChange}
-        category="metrics"
-        checked={checkedMetrics}
-      />
       <Filter
         name="Regions"
         filters={currentCase.regions}

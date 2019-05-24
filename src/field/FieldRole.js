@@ -6,7 +6,7 @@ import Menu, { Item as MenuItem } from 'rc-menu';
 import 'rc-dropdown/assets/index.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleDown } from '@fortawesome/free-solid-svg-icons';
-import { prettyRole } from '../common/FormatedText';
+import { prettyRole } from '../common/FormattedText';
 
 const FieldButton = styled.div`
   width: 100px;

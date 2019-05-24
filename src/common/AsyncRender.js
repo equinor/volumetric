@@ -1,37 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledSpinner } from './Spinner';
 
-class AsyncRender extends React.Component {
+function useAsyncRender() {
+  const [shouldRender, setShouldRender] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShouldRender(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return shouldRender;
+}
+
+const AsyncRender = props => {
   /**
-   * Delay the rendering of render prop, showing a Spinner while rendering.
+   * Delay the rendering of render prop until after rendering
+   * a spinner so that a spinner is shown while render prop is rendering.
    * @param props
    */
-  constructor(props) {
-    super();
-    this.state = {
-      shouldRender: false,
-    };
-  }
 
-  renderCallback() {
-    setTimeout(() => {
-      this.setState(() => ({
-        shouldRender: true,
-      }));
-    }, 0);
-  }
+  const shouldRender = useAsyncRender();
 
-  componentDidMount() {
-    this.renderCallback();
-  }
-
-  render() {
-    return (
-      <StyledSpinner isLoading={!this.state.shouldRender}>
-        {this.props.render()}
-      </StyledSpinner>
-    );
-  }
-}
+  return (
+    <StyledSpinner isLoading={!shouldRender}>{props.render()}</StyledSpinner>
+  );
+};
 
 export default AsyncRender;

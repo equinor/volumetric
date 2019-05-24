@@ -8,7 +8,7 @@ import { StyledSpinner } from '../common/Spinner';
 import LocationComponent from './LocationComponent';
 import { useUserSettings } from '../auth/AuthContext';
 
-const NoDataDiv = styled.div`
+export const NoDataDiv = styled.div`
   margin-top: 50px;
   display: flex;
   justify-content: center;
@@ -17,33 +17,36 @@ const NoDataDiv = styled.div`
 
 function LocationContainer() {
   const { currentField, user } = useUserSettings();
+
+  if (currentField === 'No field') {
+    return (
+      <NoDataDiv>
+        <div>
+          {user.roles.length === 0 ? (
+            <p>You don't have access to any fields.</p>
+          ) : (
+            <div>
+              {user.isCreator ? (
+                <React.Fragment>
+                  <Link to="/cases/import/new">Import</Link> some..
+                </React.Fragment>
+              ) : (
+                'You need to have the role "Creator" to be able to import data.'
+              )}
+            </div>
+          )}
+        </div>
+      </NoDataDiv>
+    );
+  }
+
   return (
     <Query query={GET_CASES} variables={{ field: currentField }}>
       {({ loading, error, data }) => {
         if (loading) return <StyledSpinner isLoading={true} />;
         if (error)
           return error.networkError ? NetworkError(error) : GraphqlError(error);
-        return data.fields[0] ? (
-          <LocationComponent fields={data} key={currentField} />
-        ) : (
-          <NoDataDiv>
-            <div>
-              {user.roles.length === 0 ? (
-                <p>You don't have access to any fields.</p>
-              ) : (
-                <div>
-                  {user.isCreator ? (
-                    <React.Fragment>
-                      <Link to="/cases/import/new">Import</Link> some..
-                    </React.Fragment>
-                  ) : (
-                    'You need to have the role "Creator" to be able to import data.'
-                  )}
-                </div>
-              )}
-            </div>
-          </NoDataDiv>
-        );
+        return <LocationComponent cases={data.cases} key={currentField} />;
       }}
     </Query>
   );

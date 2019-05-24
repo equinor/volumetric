@@ -19,21 +19,21 @@ const DatasetSelectorItem = ({ name, selectedOption, onChange, options }) => {
 
 export class Cases extends React.Component {
   render() {
-    const { fields, currentCase, handleChange } = this.props;
+    const { currentCase, handleChange, cases } = this.props;
 
-    const cases =
-      fields !== undefined
-        ? fields.cases.map(({ id, name, caseVersion }) => ({
-            value: id,
-            label: `${name} (${caseVersion})`,
-          }))
-        : [];
+    const options = cases.map(({ id, name, caseVersion }) => ({
+      value: id,
+      label: `${name} (${caseVersion})`,
+    }));
     return (
       <DatasetSelectorItem
         name="Case"
-        selectedOption={currentCase}
-        options={cases}
-        onChange={selectedOption => handleChange('currentCase', selectedOption)}
+        selectedOption={{
+          id: currentCase.id,
+          label: `${currentCase.name} (${currentCase.caseVersion})`,
+        }}
+        options={options}
+        onChange={selectedOption => handleChange(selectedOption)}
       />
     );
   }
