@@ -1,13 +1,13 @@
 import { H4 } from '../../common/Headers';
 import { Label, TextInput } from '../common/Input';
-import { CheckboxWithLabel } from '../../common/Input';
 import DateRangePicker from '../common/DateRangePicker';
 import FileUpload from '../common/FileUpload';
-import { ImportButton, CancelLink } from './ImportActions';
+import { CancelLink, ImportButton } from './ImportActions';
 import React from 'react';
 import styled from 'styled-components';
 import Select from '../../common/Select';
 import { LIST_SEPARATOR_COLOR } from '../../common/variables';
+import ToggleButtonGroup from '../../common/ToggleButtonGroup';
 
 const InputWrapper = styled.div`
   display: flex;
@@ -30,6 +30,35 @@ const Footer = styled.div`
   padding: 15px 0;
 `;
 
+const VisibilityButtonGroup = ({
+  isShared,
+  isOfficial,
+  setVisibility,
+  user,
+}) => {
+  let currentSelected = 'Private';
+  if (isOfficial) {
+    currentSelected = 'Official';
+  } else if (isShared) {
+    currentSelected = 'Shared';
+  }
+  let visibilities = ['Private', 'Shared'];
+  if (user.isFieldAdmin) {
+    visibilities.push('Official');
+  }
+
+  return (
+    <Label>
+      Visibility
+      <ToggleButtonGroup
+        buttons={visibilities}
+        currentSelected={currentSelected}
+        onChange={setVisibility}
+      />
+    </Label>
+  );
+};
+
 export default ({
   formState,
   handleFormChange,
@@ -39,6 +68,7 @@ export default ({
   caseTypes,
   fileHasChanged,
   setFileHasChanged,
+  setVisibility,
 }) => {
   return (
     <React.Fragment>
@@ -79,19 +109,11 @@ export default ({
           value={formState.description}
         />
         <div>
-          <CheckboxWithLabel
-            value="isOfficial"
-            onChange={e => handleFormChange('isOfficial', e.target.checked)}
-            checked={formState.isOfficial}
-            label="Official?"
-            block={false}
-            disabled={!user.isFieldAdmin}
-            title={
-              !user.isFieldAdmin
-                ? 'You need to be admin to import official cases.'
-                : 'Is this an official case?'
-            }
-            labelLeft
+          <VisibilityButtonGroup
+            user={user}
+            isShared={formState.isShared}
+            isOfficial={formState.isOfficial}
+            setVisibility={setVisibility}
           />
         </div>
         {formState.isOfficial && (

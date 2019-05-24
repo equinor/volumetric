@@ -40,7 +40,7 @@ const CaseTable = styled(Table)`
 
 function CasesList({ cases, user, isOfficials }) {
   if (cases.length === 0) {
-    return <div>No cases</div>;
+    return <div style={{ marginLeft: '5px' }}>No cases</div>;
   }
 
   return (
@@ -145,10 +145,6 @@ function Cases() {
           );
         }
 
-        console.log(data);
-        console.log(data.fields);
-        console.log(data.fields[0].cases);
-
         const cases =
           data.fields && data.fields.length === 1 && data.fields[0].cases;
 
@@ -170,9 +166,16 @@ function Cases() {
               user={user}
               isOfficials
             />
+            <SubListHeader>Shared cases</SubListHeader>
+            <CasesList
+              cases={cases.filter(_case => !_case.isOfficial && _case.isShared)}
+              user={user}
+            />
             <SubListHeader>My cases</SubListHeader>
             <CasesList
-              cases={cases.filter(_case => !_case.isOfficial)}
+              cases={cases.filter(
+                _case => !_case.isOfficial && !_case.isShared,
+              )}
               user={user}
             />
           </ListPageWithActions>

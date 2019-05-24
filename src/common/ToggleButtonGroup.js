@@ -3,7 +3,14 @@ import ToggleButton from './ToggleButton';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
-function createToggleButton({ onChange, selected, label, buttonStyle }) {
+function createToggleButton({
+  onChange,
+  selected,
+  label,
+  buttonStyle,
+  first,
+  last,
+}) {
   const value = label.toLowerCase();
   return (
     <ToggleButton
@@ -12,6 +19,8 @@ function createToggleButton({ onChange, selected, label, buttonStyle }) {
       value={value}
       selected={selected.toLowerCase() === value}
       buttonStyle={buttonStyle}
+      first={first}
+      last={last}
     >
       {label}
     </ToggleButton>
@@ -28,12 +37,14 @@ const RadioButtonGroupStyled = styled.div`
 const ToggleButtonGroup = props => {
   const { className, currentSelected, onChange, buttons, buttonStyle } = props;
 
-  const radioButtons = buttons.map(button => {
+  const radioButtons = buttons.map((button, index) => {
     return createToggleButton({
       onChange,
       selected: currentSelected,
       label: button,
       buttonStyle,
+      last: index === buttons.length - 1,
+      first: index === 0,
     });
   });
 

@@ -14,6 +14,7 @@ const IMPORT_CASE = gql`
     $caseType: CaseTypeEnum!
     $description: String
     $isOfficial: Boolean
+    $isShared: Boolean
     $officialFromDate: DateTime
     $officialToDate: DateTime
   ) {
@@ -26,6 +27,7 @@ const IMPORT_CASE = gql`
       caseType: $caseType
       description: $description
       isOfficial: $isOfficial
+      isShared: $isShared
       officialFromDate: $officialFromDate
       officialToDate: $officialToDate
     ) {

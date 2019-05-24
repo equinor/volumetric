@@ -8,6 +8,7 @@ export const FULL_CASE_FRAGMENT = gql`
     caseType
     description
     isOfficial
+    isShared
     isCurrentlyOfficial
     createdDate
     regions
@@ -35,6 +36,7 @@ export const SHORT_CASE_FRAGMENT = gql`
     caseType
     description
     isOfficial
+    isShared
     isCurrentlyOfficial
     createdDate
     createdUser
