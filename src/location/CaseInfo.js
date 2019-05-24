@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ALMOST_BLACK } from '../common/variables';
+import { getVisibility } from '../common/visibility';
 
 const DL = styled.dl`
   display: flex;
@@ -21,17 +22,32 @@ const DD = styled.dd`
   margin-right: 25px;
 `;
 
-export default ({ currentCase }) => {
+export default ({
+  currentCase: {
+    caseType,
+    description,
+    id,
+    isCurrentlyOfficial,
+    isOfficial,
+    isShared,
+  },
+}) => {
   return (
     <DL>
       <DT>Case Type</DT>
-      <DD>{currentCase.caseType}</DD>
+      <DD>{caseType}</DD>
       <DT>Case Description</DT>
-      <DD>{currentCase.description}</DD>
+      <DD>{description}</DD>
       <DT>Case id</DT>
-      <DD>{currentCase.id}</DD>
-      <DT>Official</DT>
-      {currentCase.isOfficial ? <DD>Yes</DD> : <DD>No</DD>}
+      <DD>{id}</DD>
+      <DT>Visibility</DT>
+      <DD>{getVisibility(isOfficial, isShared)}</DD>
+      {isOfficial && (
+        <>
+          <DT>Current official case</DT>
+          <DD>{isCurrentlyOfficial ? 'Yes' : 'No'}</DD>
+        </>
+      )}
     </DL>
   );
 };

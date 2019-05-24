@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 import { H4 } from '../common/Headers';
 import styled from 'styled-components';
 import ToggleButtonGroup from '../common/ToggleButtonGroup';
@@ -6,8 +6,8 @@ import filterMetricsForPhase from '../utils/filterMetricsForPhase';
 import { Query } from 'react-apollo';
 import { GET_METRICS } from './LocationQueries';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
-import { Filter } from './filters/Filters';
 import VisToggler from './VisToggler';
+import { LocationFilters } from './filters';
 
 const FilterPage = styled.div`
   display: flex;
@@ -52,51 +52,6 @@ const VisWithData = ({
   );
 };
 
-const LocationFilters = ({
-  handleFilterChange,
-  checkedRegions,
-  checkedZones,
-  checkedFacies,
-  checkedMetrics,
-  currentCase,
-  phase,
-}) => {
-  return (
-    <React.Fragment>
-      <Filter
-        name="Metrics"
-        filters={filterMetricsForPhase(currentCase.metrics, phase)}
-        handleFilterChange={handleFilterChange}
-        category="metrics"
-        checked={checkedMetrics}
-      />
-      <Filter
-        name="Regions"
-        filters={currentCase.regions}
-        handleFilterChange={handleFilterChange}
-        category="regions"
-        checked={checkedRegions}
-      />
-      <Filter
-        name="Zones"
-        filters={currentCase.zones}
-        handleFilterChange={handleFilterChange}
-        category="zones"
-        checked={checkedZones}
-      />
-      {currentCase.facies[0] !== null && (
-        <Filter
-          name="Facies"
-          filters={currentCase.facies}
-          handleFilterChange={handleFilterChange}
-          category="facies"
-          checked={checkedFacies}
-        />
-      )}
-    </React.Fragment>
-  );
-};
-
 const ContentWrapper = styled.div`
   flex-grow: 1;
   margin-left: 50px;
@@ -110,80 +65,112 @@ const PhaseButtonGroup = styled(ToggleButtonGroup)`
   max-width: 200px;
 `;
 
-export class CaseComponent extends React.Component {
-  state = {
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'LOCATION_FILTER_CHANGE': {
+      const { checked, value, category: key } = action;
+      return {
+        ...state,
+        [key]: checked
+          ? [...state[key], value]
+          : state[key].filter(item => item !== value),
+      };
+    }
+    case 'METRIC_FILTER_CHANGE': {
+      const key = 'metrics';
+      const { checked, value } = action;
+      let nextState = checked
+        ? {
+            [key]: this.state.currentCase.metrics.filter(metric =>
+              [...state[key], value].includes(metric),
+            ),
+          }
+        : { [key]: state[key].filter(item => item !== value) };
+      const isValidMetric =
+        nextState.metrics.includes(state.selectedMetric) ||
+        nextState.metrics.length === 0;
+      if (!isValidMetric) {
+        nextState.selectedMetric = nextState.metrics[0];
+      }
+      return {
+        ...state,
+        ...nextState,
+      };
+    }
+    case 'PHASE_FILTER_CHANGE':
+      return {
+        ...state,
+        phase: action.phase,
+      };
+    case 'SET_SELECTED_METRIC':
+      return {
+        ...state,
+        selectedMetric: action.selectedMetric,
+      };
+    default:
+      throw new Error(`Unknown action type ${action.type}`);
+  }
+};
+
+export const CaseComponent = props => {
+  const { caseVersion, phases, metrics, id, name } = props;
+  const initialState = {
     currentCase: {
-      ...this.props,
-      label: `${this.props.name} (${this.props.caseVersion})`,
-      value: this.props.id,
+      ...props,
+      label: `${name} (${caseVersion})`,
+      value: id,
     },
-    phase: this.props.phases[0],
+    phase: phases[0],
     regions: [],
     zones: [],
     facies: [],
     metrics: [],
-    selectedMetric: this.props.metrics[0],
+    selectedMetric: metrics[0],
   };
 
-  handleFilterChange = (category, event) => {
-    const { checked, value } = event.target;
-    this.setState(prevState => {
-      if (category === 'metrics') {
-        let nextState = checked
-          ? {
-              [category]: this.state.currentCase.metrics.filter(metric =>
-                [...prevState[category], value].includes(metric),
-              ),
-            }
-          : { [category]: prevState[category].filter(item => item !== value) };
-        const isValidMetric =
-          nextState.metrics.includes(prevState.selectedMetric) ||
-          nextState.metrics.length === 0;
-        if (!isValidMetric) {
-          nextState.selectedMetric = nextState.metrics[0];
-        }
-        return nextState;
-      }
-      return checked
-        ? { [category]: [...prevState[category], value] }
-        : { [category]: prevState[category].filter(item => item !== value) };
-    });
-  };
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-  render() {
-    return (
-      <>
-        <FilterPage>
-          <FilterWrapper>
-            <div>
-              <H4>Phase</H4>
-              <PhaseButtonGroup
-                buttons={this.state.currentCase.phases}
-                currentSelected={this.state.phase}
-                buttonStyle={{ padding: '5px 10px;', fontSize: '16px;' }}
-                onChange={phase => this.setState({ phase })}
-              />
-            </div>
-            <LocationFilters
-              currentCase={this.state.currentCase}
-              handleFilterChange={this.handleFilterChange}
-              checkedRegions={this.state.regions}
-              checkedZones={this.state.zones}
-              checkedFacies={this.state.facies}
-              checkedMetrics={this.state.metrics}
-              phase={this.state.phase}
-            />
-          </FilterWrapper>
-          <ContentWrapper>
-            <VisWithData
-              {...this.state}
-              setSelectedMetric={selectedMetric =>
-                this.setState({ selectedMetric })
+  return (
+    <>
+      <FilterPage>
+        <FilterWrapper>
+          <div>
+            <H4>Phase</H4>
+            <PhaseButtonGroup
+              buttons={state.currentCase.phases}
+              currentSelected={state.phase}
+              buttonStyle={{ padding: '5px 10px;', fontSize: '16px;' }}
+              onChange={phase =>
+                dispatch({ type: 'PHASE_FILTER_CHANGE', phase })
               }
             />
-          </ContentWrapper>
-        </FilterPage>
-      </>
-    );
-  }
-}
+          </div>
+          <LocationFilters
+            currentCase={state.currentCase}
+            handleFilterChange={(category, { target: { checked, value } }) =>
+              dispatch({
+                type: 'LOCATION_FILTER_CHANGE',
+                category,
+                checked,
+                value,
+              })
+            }
+            checkedRegions={state.regions}
+            checkedZones={state.zones}
+            checkedFacies={state.facies}
+            checkedMetrics={state.metrics}
+            phase={state.phase}
+          />
+        </FilterWrapper>
+        <ContentWrapper>
+          <VisWithData
+            {...state}
+            setSelectedMetric={selectedMetric =>
+              dispatch({ type: 'SET_SELECTED_METRIC', selectedMetric })
+            }
+          />
+        </ContentWrapper>
+      </FilterPage>
+    </>
+  );
+};

@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import Select from '../../common/Select';
 import { LIST_SEPARATOR_COLOR } from '../../common/variables';
 import ToggleButtonGroup from '../../common/ToggleButtonGroup';
+import { getVisibility } from '../../common/visibility';
 
 const InputWrapper = styled.div`
   display: flex;
@@ -36,16 +37,12 @@ const VisibilityButtonGroup = ({
   setVisibility,
   user,
 }) => {
-  let currentSelected = 'Private';
-  if (isOfficial) {
-    currentSelected = 'Official';
-  } else if (isShared) {
-    currentSelected = 'Shared';
-  }
   let visibilities = ['Private', 'Shared'];
   if (user.isFieldAdmin) {
     visibilities.push('Official');
   }
+
+  const currentSelected = getVisibility(isOfficial, isShared);
 
   return (
     <Label>
