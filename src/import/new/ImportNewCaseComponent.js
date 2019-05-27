@@ -44,10 +44,13 @@ function reducer(state, action) {
         default:
           throw new Error(`${action.visibility} is not allowed`);
       }
-    case 'FILE_HAS_CHANGED':
+    case 'RESET_HAS_CHANGED':
       return {
         ...state,
-        fileHasChanged: action.fileHasChanged,
+        hasChanged: {
+          filename: false,
+          version: false,
+        },
       };
     default:
       return {
@@ -56,7 +59,10 @@ function reducer(state, action) {
           ...state.formState,
           [action.key]: action.selectedOption,
         },
-        fileHasChanged: action.key === 'filename',
+        hasChanged: {
+          ...state.hasChanged,
+          [action.key]: true,
+        },
       };
   }
 }
@@ -78,7 +84,10 @@ const ImportNewCaseComponent = props => {
       officialToDate: new Date(),
       isLoading: false,
     },
-    fileHasChanged: false,
+    hasChanged: {
+      filename: false,
+      caseVersion: false,
+    },
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -103,10 +112,8 @@ const ImportNewCaseComponent = props => {
           return (
             <ImportForm
               formState={state.formState}
-              fileHasChanged={state.fileHasChanged}
-              setFileHasChanged={fileHasChanged =>
-                dispatch({ type: 'FILE_HAS_CHANGED', fileHasChanged })
-              }
+              hasChanged={state.hasChanged}
+              resetHasChanged={() => dispatch({ type: 'RESET_HAS_CHANGED' })}
               setVisibility={visibility =>
                 dispatch({ type: 'VISIBILITY', visibility })
               }
@@ -116,6 +123,7 @@ const ImportNewCaseComponent = props => {
                 dispatch({ key, selectedOption })
               }
               user={user}
+              currentField={currentField}
               caseTypes={caseTypes}
             />
           );

@@ -1,5 +1,4 @@
-import { H4 } from '../../common/Headers';
-import { Label, LabelText, MinimalLabel, TextInput } from '../common/Input';
+import { LabelText, MinimalLabel, TextInput } from '../common/Input';
 import DateRangePicker from '../common/DateRangePicker';
 import FileUpload from '../common/FileUpload';
 import { CancelLink, ImportButton } from './ImportActions';
@@ -19,7 +18,7 @@ const StyledSelect = styled(Select)`
   margin-top: 1px;
 `;
 
-const ErrorText = styled.div`
+export const ErrorText = styled.div`
   color: red;
 `;
 
@@ -65,8 +64,8 @@ export default ({
   mutationData,
   user,
   caseTypes,
-  fileHasChanged,
-  setFileHasChanged,
+  hasChanged,
+  resetHasChanged,
   setVisibility,
 }) => {
   return (
@@ -83,6 +82,18 @@ export default ({
           onChange={e => handleFormChange('caseVersion', e.target.value)}
           placeholder="Enter case version..."
           value={formState.caseVersion}
+          invalid={
+            mutationData &&
+            !hasChanged.caseVersion &&
+            mutationData.importCase.validationError &&
+            !mutationData.importCase.validationError.version.valid
+          }
+          errorMessage={
+            mutationData &&
+            !hasChanged.caseVersion &&
+            mutationData.importCase.validationError &&
+            mutationData.importCase.validationError.version.message
+          }
         />
         <TextInput
           label="Description"
@@ -110,10 +121,11 @@ export default ({
         <MinimalLabel>
           <LabelText>File</LabelText>
           {mutationData &&
-            !fileHasChanged &&
-            mutationData.importCase.validationError && (
+            !hasChanged.filename &&
+            mutationData.importCase.validationError &&
+            !mutationData.importCase.validationError.file.valid && (
               <ErrorText>
-                {mutationData.importCase.validationError.message}
+                {mutationData.importCase.validationError.file.message}
               </ErrorText>
             )}
           <FileUpload
@@ -149,7 +161,7 @@ export default ({
             )
           }
           importCase={() => {
-            setFileHasChanged(false);
+            resetHasChanged();
             importCase({ variables: formState });
           }}
         />

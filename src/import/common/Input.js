@@ -1,6 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { ALMOST_BLACK } from '../../common/variables';
+import { ErrorText } from '../new/ImportForm';
 
 const Input = styled.input`
   display: block;
@@ -9,11 +10,20 @@ const Input = styled.input`
   padding: 2px 8px;
 `;
 
+const INVALID_INPUT_STYLE = css`
+  box-shadow: 0 0 5px #ff8888;
+  padding: 3px 0 3px 3px;
+  margin: 5px 1px 3px 0;
+  border: 1px solid #ff8888;
+`;
+
 const TextInputStyled = styled(Input)`
   border-radius: 4px;
   border: 1px solid hsl(0, 0%, 80%);
   min-height: 32px;
   margin: 1px 0;
+
+  ${props => props.invalid && INVALID_INPUT_STYLE}
 `;
 
 const FileInputHidden = styled(Input)`
@@ -41,10 +51,11 @@ export const Label = styled(MinimalLabel)`
   margin: 15px 0;
 `;
 
-export const TextInput = ({ label, ...props }) => {
+export const TextInput = ({ label, errorMessage, ...props }) => {
   return (
     <Label>
       <LabelText>{label}</LabelText>
+      {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
       <TextInputStyled type="text" {...props} />
     </Label>
   );

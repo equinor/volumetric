@@ -33,8 +33,15 @@ const IMPORT_CASE = gql`
     ) {
       ok
       validationError {
-        id
-        message
+        file {
+          valid
+          message
+        }
+        version {
+          valid
+          message
+        }
+        allValid
       }
       task {
         ...Task
@@ -44,12 +51,12 @@ const IMPORT_CASE = gql`
   ${TASK_FRAGMENT}
 `;
 
-export default ({ history, user, ...props }) => {
+export default ({ history, user, currentField, ...props }) => {
   return (
     <Mutation
       mutation={IMPORT_CASE}
       onCompleted={data => {
-        if (!data.importCase.validationError) {
+        if (data.importCase.validationError.allValid) {
           history.push('/cases/import');
         }
       }}
@@ -61,9 +68,12 @@ export default ({ history, user, ...props }) => {
           },
         },
       ) => {
-        if (validationError) return;
+        if (!validationError.allValid) return;
         try {
-          const variables = { user: user.shortName.toLowerCase() };
+          const variables = {
+            field: currentField,
+            user: user.shortName.toLowerCase(),
+          };
           const { tasks } = cache.readQuery({ query: GET_IMPORTS, variables });
           cache.writeQuery({
             query: GET_IMPORTS,
@@ -71,6 +81,7 @@ export default ({ history, user, ...props }) => {
             variables,
           });
         } catch (e) {
+          console.error(e);
           console.debug('No cache for tasks');
         }
       }}
