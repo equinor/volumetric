@@ -83,7 +83,6 @@ const ImportNewCaseComponent = props => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  console.log(state);
   return (
     <ImportWrapper>
       <H3>Import metrics</H3>

@@ -6,14 +6,7 @@ import { gql } from 'apollo-boost';
 import { useUserSettings } from '../../auth/AuthContext';
 
 const GET_CASE_TYPES = gql`
-  query Fields {
-    fields(orderBy: "name") {
-      name
-      cases(orderBy: "name") {
-        id
-        name
-      }
-    }
+  query CaseTypes {
     caseTypes
   }
 `;

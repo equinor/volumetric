@@ -88,7 +88,7 @@ const NoMatch = ({ location }) => (
 function App() {
   const { user } = useUserSettings();
   return (
-    <React.Fragment>
+    <>
       <GlobalStyle />
       <AppHeader>
         <UserInfo>
@@ -152,7 +152,7 @@ function App() {
         )}
         <Route component={NoMatch} />
       </Switch>
-    </React.Fragment>
+    </>
   );
 }
 
