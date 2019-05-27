@@ -1,10 +1,11 @@
 import contextlib
 import os
+from logging.config import dictConfig
 
 import click
 from flask import Flask
-from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
+from flask_migrate import Migrate
 from graphene.test import Client
 
 from config import Config
@@ -24,6 +25,26 @@ if hasattr(Config, 'REMOTE_DEBUG') and Config.REMOTE_DEBUG:
     from utils.debug.remote import enable_remote_debugging
 
     enable_remote_debugging()
+
+dictConfig({
+    'version': 1,
+    'formatters': {
+        'default': {
+            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        }
+    },
+    'handlers': {
+        'wsgi': {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'formatter': 'default'
+        }
+    },
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
 
 app = create_app()
 migrate = Migrate(app, db)

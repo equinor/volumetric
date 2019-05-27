@@ -11,7 +11,7 @@ from utils.case_import.queue import create_import_data_job
 from utils.graphql.fileformat import FileFormat
 from utils.ordering import OrderedList, ordered_strings, ordered_case
 from .tasks import Task
-from .validation_error import ValidationError
+from .validation_error import ValidationField
 
 
 @ordered_case
@@ -128,6 +128,12 @@ class DeleteCase(graphene.Mutation):
 file_format_enum = graphene.Enum.from_enum(FileFormat)
 
 
+class CaseValidationError(graphene.ObjectType):
+    file = graphene.Field(ValidationField)
+    version = graphene.Field(ValidationField)
+    all_valid = graphene.Boolean()
+
+
 class ImportCase(graphene.Mutation):
     class Arguments:
         filename = graphene.String(required=True)
@@ -143,7 +149,7 @@ class ImportCase(graphene.Mutation):
         official_to_date = graphene.DateTime()
 
     ok = graphene.Boolean()
-    validation_error = graphene.Field(ValidationError)  # TODO: use graphql errors?
+    validation_error = graphene.Field(CaseValidationError)  # TODO: use graphql errors?
     task = graphene.Field(Task)
 
     def mutate(self, info, filename, file_format, field, case, **kwargs):
@@ -160,10 +166,20 @@ class ImportCase(graphene.Mutation):
         else:
             kwargs['is_shared'] = True
 
-        filepath = os.path.join(current_app.instance_path, current_app.config.get('UPLOAD_FOLDER'), filename)
-        is_valid, message = validate_import(filepath, file_format=file_format)
+        version_is_valid = db.session.query(
+            CaseModel.id).filter(CaseModel.field_name == field, CaseModel.name == case,
+                                 CaseModel.case_version == kwargs['case_version']).scalar() is None
 
-        if is_valid:
+        version_validation = ValidationField(
+            valid=version_is_valid, message='This version already exists' if not version_is_valid else '')
+
+        filepath = os.path.join(current_app.instance_path, current_app.config.get('UPLOAD_FOLDER'), filename)
+        file_is_valid, message = validate_import(filepath, file_format=file_format)
+        file_validation = ValidationField(valid=file_is_valid, message=message)
+        validation_error = CaseValidationError(
+            file=file_validation, version=version_validation, all_valid=file_is_valid and version_is_valid)
+
+        if file_is_valid and version_is_valid:
             task = create_import_data_job(
                 filepath,
                 field_name=field,
@@ -171,10 +187,8 @@ class ImportCase(graphene.Mutation):
                 file_format=file_format,
                 created_user=info.context.user.shortname,
                 **kwargs)
-            validation_error = None
         else:
             task = None
-            validation_error = ValidationError(id=1, message=message)
 
         ok = True
         return ImportCase(ok=ok, task=task, validation_error=validation_error)

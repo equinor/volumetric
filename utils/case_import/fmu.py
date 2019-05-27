@@ -177,4 +177,5 @@ def validate_fmu_case(filename):
 
     line_dict = lines_as_ordered_dicts[0]
     has_required_headers = all(header in line_dict for header in REQUIRED_HEADERS)
-    return has_required_headers, f'The imported file does not have the required columns {",".join(REQUIRED_HEADERS)}'
+    message = f'The imported file does not have the required columns {",".join(REQUIRED_HEADERS)}' if not has_required_headers else ''
+    return has_required_headers, message
