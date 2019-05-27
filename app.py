@@ -5,6 +5,8 @@ import click
 from flask import Flask
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
+from graphene.test import Client
+
 from config import Config
 from models import db, Volumetrics, Case, Location, Field, Realization
 from utils.authentication import User
@@ -27,7 +29,8 @@ app = create_app()
 migrate = Migrate(app, db)
 marshmallow = Marshmallow(app)
 
-from api import create_api
+from api import create_api, schema
+
 create_api(app)
 
 
@@ -77,11 +80,26 @@ def make_import_request(filename, field_name, case_name, file_format='FMU', case
     print(response)
 
 
+def add_fields(fields):
+    client = Client(schema)
+    for field in fields:
+        client.execute(
+            """
+        mutation AddField {{
+            addField(name: "{field_name}") {{
+                ok
+            }}
+        }}
+        """.format(field_name=field),
+            context=Context(user=User(name='An On', shortname='anon', roles=['VolumetricAdmin'])))
+
+
 @app.cli.command()
 @click.pass_context
 def import_test(ctx):
     app.config['UPLOAD_FOLDER'] = 'import'
     ctx.invoke(empty_database)
+    add_fields(['Tordis', 'Maureen', 'FMU Field'])
     make_import_request(
         field_name='Tordis',
         case_name='sf01rms_faciesseed',
