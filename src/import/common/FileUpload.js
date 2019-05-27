@@ -72,7 +72,7 @@ class FileUpload extends React.Component {
       <FileSelectorWrapper>
         <AuthConsumer>
           {({ token }) => (
-            <React.Fragment>
+            <>
               <FileInput
                 {...this.props}
                 type="file"
@@ -82,7 +82,7 @@ class FileUpload extends React.Component {
               {this.state.errorText !== null && (
                 <ErrorText>Error: {this.state.errorText}</ErrorText>
               )}
-            </React.Fragment>
+            </>
           )}
         </AuthConsumer>
         {this.props.isLoading && <SmallSpinner isLoading={true} />}

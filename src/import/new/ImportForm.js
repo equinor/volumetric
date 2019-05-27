@@ -1,5 +1,5 @@
 import { H4 } from '../../common/Headers';
-import { Label, TextInput } from '../common/Input';
+import { Label, LabelText, MinimalLabel, TextInput } from '../common/Input';
 import DateRangePicker from '../common/DateRangePicker';
 import FileUpload from '../common/FileUpload';
 import { CancelLink, ImportButton } from './ImportActions';
@@ -24,6 +24,7 @@ const ErrorText = styled.div`
 `;
 
 const Footer = styled.div`
+  margin-top: 30px;
   border-top: 1px solid ${LIST_SEPARATOR_COLOR};
   display: flex;
   justify-content: space-between;
@@ -45,14 +46,15 @@ const VisibilityButtonGroup = ({
   const currentSelected = getVisibility(isOfficial, isShared);
 
   return (
-    <Label>
-      Visibility
+    <MinimalLabel>
+      <LabelText>Visibility</LabelText>
       <ToggleButtonGroup
         buttons={visibilities}
         currentSelected={currentSelected}
         onChange={setVisibility}
+        buttonStyle={{ padding: '5px 20px' }}
       />
-    </Label>
+    </MinimalLabel>
   );
 };
 
@@ -68,7 +70,7 @@ export default ({
   setVisibility,
 }) => {
   return (
-    <React.Fragment>
+    <>
       <InputWrapper>
         <TextInput
           label="Name"
@@ -82,8 +84,14 @@ export default ({
           placeholder="Enter case version..."
           value={formState.caseVersion}
         />
-        <Label>
-          Type
+        <TextInput
+          label="Description"
+          onChange={e => handleFormChange('description', e.target.value)}
+          placeholder="Enter case description..."
+          value={formState.description}
+        />
+        <MinimalLabel style={{ maxWidth: '200px' }}>
+          <LabelText>Type</LabelText>
           <StyledSelect
             onChange={selectedOption =>
               handleFormChange('caseType', selectedOption.value)
@@ -98,13 +106,24 @@ export default ({
             }}
             placeholder="Select case type..."
           />
-        </Label>
-        <TextInput
-          label="Description"
-          onChange={e => handleFormChange('description', e.target.value)}
-          placeholder="Enter case description..."
-          value={formState.description}
-        />
+        </MinimalLabel>
+        <MinimalLabel>
+          <LabelText>File</LabelText>
+          {mutationData &&
+            !fileHasChanged &&
+            mutationData.importCase.validationError && (
+              <ErrorText>
+                {mutationData.importCase.validationError.message}
+              </ErrorText>
+            )}
+          <FileUpload
+            style={{ width: '100%' }}
+            filename={formState.filename}
+            onChange={filename => handleFormChange('filename', filename)}
+            isLoading={formState.isLoading}
+            handleFormChange={handleFormChange}
+          />
+        </MinimalLabel>
         <div>
           <VisibilityButtonGroup
             user={user}
@@ -116,23 +135,6 @@ export default ({
         {formState.isOfficial && (
           <DateRangePicker {...formState} onChange={handleFormChange} />
         )}
-      </InputWrapper>
-      <H4>File</H4>
-      {mutationData &&
-        !fileHasChanged &&
-        mutationData.importCase.validationError && (
-          <ErrorText>
-            {mutationData.importCase.validationError.message}
-          </ErrorText>
-        )}
-      <InputWrapper>
-        <FileUpload
-          style={{ width: '100%' }}
-          filename={formState.filename}
-          onChange={filename => handleFormChange('filename', filename)}
-          isLoading={formState.isLoading}
-          handleFormChange={handleFormChange}
-        />
       </InputWrapper>
       <Footer>
         <CancelLink to="/cases/import">Cancel</CancelLink>
@@ -152,6 +154,6 @@ export default ({
           }}
         />
       </Footer>
-    </React.Fragment>
+    </>
   );
 };

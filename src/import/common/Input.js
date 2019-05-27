@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { ALMOST_BLACK } from '../../common/variables';
 
 const Input = styled.input`
   display: block;
@@ -24,7 +25,17 @@ const FileInputHidden = styled(Input)`
   z-index: -1;
 `;
 
-export const Label = styled.label`
+export const LabelText = styled.span`
+  font-family: Equinor-Medium, serif;
+  color: ${ALMOST_BLACK};
+`;
+
+export const MinimalLabel = styled.label`
+  margin: 15px 0;
+  display: inline-block;
+`;
+
+export const Label = styled(MinimalLabel)`
   display: flex;
   flex-direction: column;
   margin: 15px 0;
@@ -33,13 +44,13 @@ export const Label = styled.label`
 export const TextInput = ({ label, ...props }) => {
   return (
     <Label>
-      {label}
+      <LabelText>{label}</LabelText>
       <TextInputStyled type="text" {...props} />
     </Label>
   );
 };
 
-const FileInputLabel = styled(Label)`
+const FileInputLabel = styled.label`
   border-radius: 4px;
   border: 1px solid hsl(0, 0%, 80%);
   min-height: 34px;
@@ -49,8 +60,9 @@ const FileInputLabel = styled(Label)`
   align-items: center;
   cursor: pointer;
   background-color: white;
-  min-width: 300px;
+  min-width: 200px;
   margin-right: 10px;
+  box-sizing: border-box;
 
   :focus-within {
     outline: 1px dotted #212121;

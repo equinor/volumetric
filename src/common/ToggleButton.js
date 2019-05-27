@@ -9,7 +9,7 @@ export const ToggleButtonStyled = styled(RadioButtonStyled).attrs({
   selectedColor: SELECTED_COLOR,
   defaultColor: DEFAULT_COLOR,
 })`
-  padding: 5px 10px;
+  padding: ${props => (props.padding ? props.padding : '5px 10px')};
   min-width: 40px;
   ${props => props.first && !props.last && 'border-radius: 4px 0px 0px 4px'};
   ${props => props.last && !props.first && 'border-radius: 0px 4px 4px 0px'};
