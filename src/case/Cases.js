@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mutation, Query } from 'react-apollo';
-import { FULL_CASE_FRAGMENT, GET_CASES, GET_FIELDS } from '../common/Queries';
+import { FULL_CASE_FRAGMENT, GET_CASES } from '../common/Queries';
 import { SmallSpinner, StyledSpinner } from '../common/Spinner';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { ALMOST_BLACK, DANGER_COLOR } from '../common/variables';
@@ -38,7 +38,7 @@ const CaseTable = styled(Table)`
   margin-bottom: 70px;
 `;
 
-function CasesList({ cases, user, isOfficials }) {
+function CasesList({ cases, user, currentField, isOfficials }) {
   if (cases.length === 0) {
     return <div style={{ marginLeft: '5px' }}>No cases</div>;
   }
@@ -83,7 +83,12 @@ function CasesList({ cases, user, isOfficials }) {
                   <Mutation
                     mutation={DELETE_CASE}
                     variables={{ id }}
-                    refetchQueries={() => [{ query: GET_FIELDS }]}
+                    refetchQueries={() => [
+                      {
+                        query: GET_CASES,
+                        variables: { field: currentField },
+                      },
+                    ]}
                     awaitRefetchQueries={true}
                   >
                     {(deleteCase, { data, loading, error }) => {
@@ -163,12 +168,14 @@ function Cases() {
             <CasesList
               cases={cases.filter(_case => _case.isOfficial === true)}
               user={user}
+              currentField={currentField}
               isOfficials
             />
             <SubListHeader>Shared cases</SubListHeader>
             <CasesList
               cases={cases.filter(_case => !_case.isOfficial && _case.isShared)}
               user={user}
+              currentField={currentField}
             />
             <SubListHeader>My cases</SubListHeader>
             <CasesList
@@ -176,6 +183,7 @@ function Cases() {
                 _case => !_case.isOfficial && !_case.isShared,
               )}
               user={user}
+              currentField={currentField}
             />
           </ListPageWithActions>
         );
