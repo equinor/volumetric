@@ -26,6 +26,7 @@
     "react-router-dom": "^5.0.0",
     "react-scripts": "^2.1.8",
     "react-select": "^2.4.2",
+    "react-toastify": "^5.2.1",
     "react-vis": "^1.11.6",
     "serve": "^10.1.2",
     "styled-components": "^4.2.0"

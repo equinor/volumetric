@@ -5,6 +5,7 @@ import FieldRole from './field/FieldRole';
 import { ImportMetrics, ImportNewCase } from './import';
 import Cases from './case/Cases';
 import UsersContainer from './users/UsersContainer';
+import ManageFields from './field/ManageFields';
 import { H1, H3 } from './common/Headers';
 
 import { LocationContainer } from './location/';
@@ -12,6 +13,9 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { Switch } from 'react-router';
 import Docs from './docs/Docs';
 import { ALMOST_BLACK, SELECTED_COLOR } from './common/variables';
+import { toast } from 'react-toastify';
+
+toast.configure();
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -113,6 +117,11 @@ function App() {
                 Manage users
               </HeaderLink>
             )}
+            {user.isAdmin && (
+              <HeaderLink right to="/fields">
+                Manage fields
+              </HeaderLink>
+            )}
             <HeaderLink right to="/docs">
               Docs
             </HeaderLink>
@@ -148,6 +157,13 @@ function App() {
             exact
             path="/users"
             render={routerProps => <UsersContainer {...routerProps} />}
+          />
+        )}
+        {user.isAdmin && (
+          <Route
+            exact
+            path="/fields"
+            render={routerProps => <ManageFields {...routerProps} />}
           />
         )}
         <Route component={NoMatch} />
