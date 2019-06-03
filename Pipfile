@@ -27,7 +27,7 @@ gunicorn = "*"
 
 [dev-packages]
 pydevd = "*"
-yapf = "*"
+yapf = "==0.26.0"
 behave = "*"
 colorclass = "*"
 terminaltables = "*"
