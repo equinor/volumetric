@@ -1,7 +1,8 @@
 import graphene
 from graphql import GraphQLError
+from sqlalchemy import exc
 
-from models import db, Field as FieldModel
+from models import db, Field as FieldModel, Role as RoleModel
 from utils.ordering import ordered_case, OrderedList
 from .case import Case
 from .validation_error import ValidationError
@@ -14,11 +15,6 @@ class Field(graphene.ObjectType):
     @ordered_case
     def resolve_cases(self, info):
         return self.cases
-
-
-def validate_field_creation(name):
-    if not FieldModel.query.filter(FieldModel.name == name).first():
-        return True
 
 
 class AddField(graphene.Mutation):
@@ -34,11 +30,14 @@ class AddField(graphene.Mutation):
         if not user.isAdmin:
             raise GraphQLError('Unauthorized')
 
-        if not validate_field_creation(name):
+        try:
+            field = FieldModel(name=name)
+            role = RoleModel(user=user.shortname, role="fieldadmin", field=name)
+            db.session.add(field)
+            db.session.commit()
+            db.session.add(role)
+            db.session.commit()
+        except exc.IntegrityError:
             return AddField(field=Field(name=name), error=ValidationError(id=1, message='The field already exists'))
-
-        field = FieldModel(name=name)
-        db.session.add(field)
-        db.session.commit()
 
         return AddField(field=Field(name=name), error=ValidationError(id=0, message=''))
