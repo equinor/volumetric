@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Mutation, Query } from 'react-apollo';
 import { FULL_CASE_FRAGMENT, GET_CASES } from '../common/Queries';
 import { SmallSpinner, StyledSpinner } from '../common/Spinner';
@@ -52,6 +53,7 @@ function CasesList({ cases, user, currentField, isOfficials }) {
           <TH>Type</TH>
           <TH>Imported</TH>
           {isOfficials && <TH>Currently official</TH>}
+          <TH>View</TH>
           <TH>Delete</TH>
         </Row>
       </thead>
@@ -79,6 +81,16 @@ function CasesList({ cases, user, currentField, isOfficials }) {
                 {isOfficials && (
                   <OverflowTD>{isCurrentlyOfficial ? 'Yes' : 'No'}</OverflowTD>
                 )}
+                <OverflowTD>
+                  <Link
+                    to={{
+                      pathname: '/',
+                      state: { linkedCase: id },
+                    }}
+                  >
+                    View
+                  </Link>
+                </OverflowTD>
                 <OverflowTD>
                   <Mutation
                     mutation={DELETE_CASE}

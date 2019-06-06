@@ -4,7 +4,7 @@ import CaseContainer from './CaseContainer';
 import CaseInfo from './CaseInfo';
 import { NoDataDiv } from './LocationContainer';
 
-const LocationComponent = ({ cases }) => {
+const LocationComponent = ({ cases, linkedCase }) => {
   if (cases.length === 0) {
     return (
       <NoDataDiv>
@@ -12,7 +12,16 @@ const LocationComponent = ({ cases }) => {
       </NoDataDiv>
     );
   }
-  const [currentCase, setCurrentCase] = useState(cases[0]);
+
+  let defaultCase;
+
+  if (linkedCase) {
+    defaultCase = cases.find(otherCase => otherCase.id === linkedCase);
+  } else {
+    defaultCase = cases[0];
+  }
+
+  const [currentCase, setCurrentCase] = useState(defaultCase);
 
   const handleCaseChange = value => {
     const currentCase = cases.find(otherCase => otherCase.id === value.value);

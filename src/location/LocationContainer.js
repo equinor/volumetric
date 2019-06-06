@@ -15,8 +15,9 @@ export const NoDataDiv = styled.div`
   align-items: center;
 `;
 
-function LocationContainer() {
+function LocationContainer(props) {
   const { currentField, user } = useUserSettings();
+  const linkedCase = (props.location.state || {}).linkedCase || undefined;
 
   if (currentField === 'No field') {
     return (
@@ -46,7 +47,13 @@ function LocationContainer() {
         if (loading) return <StyledSpinner isLoading={true} />;
         if (error)
           return error.networkError ? NetworkError(error) : GraphqlError(error);
-        return <LocationComponent cases={data.cases} key={currentField} />;
+        return (
+          <LocationComponent
+            cases={data.cases}
+            key={currentField}
+            linkedCase={linkedCase}
+          />
+        );
       }}
     </Query>
   );
