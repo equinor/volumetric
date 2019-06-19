@@ -1,10 +1,8 @@
-import os
-
 import graphene
-from flask import current_app
 from graphql import GraphQLError
 
 from models import db, Location as LocationModel, CaseTypeEnum, Case as CaseModel
+from services.azure_file_service import AzureFilesService
 from utils.authentication import is_creator, is_fieldadmin, is_reader
 from utils.case_import.import_data import validate_import
 from utils.case_import.queue import create_import_data_job
@@ -137,6 +135,7 @@ class CaseValidationError(graphene.ObjectType):
 class ImportCase(graphene.Mutation):
     class Arguments:
         filename = graphene.String(required=True)
+        filehash = graphene.String(required=True)
         file_format = file_format_enum(required=True)
         field = graphene.String(required=True)
         case = graphene.String(required=True)
@@ -152,7 +151,7 @@ class ImportCase(graphene.Mutation):
     validation_error = graphene.Field(CaseValidationError)  # TODO: use graphql errors?
     task = graphene.Field(Task)
 
-    def mutate(self, info, filename, file_format, field, case, **kwargs):
+    def mutate(self, info, filename, filehash, file_format, field, case, **kwargs):
         user = info.context.user
         if not is_creator(user, field):
             raise GraphQLError('You need to be a creator to import cases')
@@ -166,6 +165,8 @@ class ImportCase(graphene.Mutation):
         else:
             kwargs['is_shared'] = True
 
+        file = AzureFilesService.download_azure_file(filehash)
+
         version_is_valid = db.session.query(
             CaseModel.id).filter(CaseModel.field_name == field, CaseModel.name == case,
                                  CaseModel.case_version == kwargs['case_version']).scalar() is None
@@ -173,15 +174,14 @@ class ImportCase(graphene.Mutation):
         version_validation = ValidationField(
             valid=version_is_valid, message='This version already exists' if not version_is_valid else '')
 
-        filepath = os.path.join(current_app.instance_path, current_app.config.get('UPLOAD_FOLDER'), filename)
-        file_is_valid, message = validate_import(filepath, file_format=file_format)
+        file_is_valid, message = validate_import(file, file_format=file_format)
         file_validation = ValidationField(valid=file_is_valid, message=message)
         validation_error = CaseValidationError(
             file=file_validation, version=version_validation, all_valid=file_is_valid and version_is_valid)
 
         if file_is_valid and version_is_valid:
             task = create_import_data_job(
-                filepath,
+                file,
                 field_name=field,
                 case_name=case,
                 file_format=file_format,

@@ -2,10 +2,10 @@ from flask import request, abort
 from flask_graphql import GraphQLView
 from jwt import InvalidTokenError
 
-from .graphql import schema
-from .rest.cases import case_endpoint
 from utils.authentication import get_validated_user
 from .file_upload import file_upload
+from .graphql import schema
+from .rest.cases import case_endpoint
 
 
 def auth_required(view):

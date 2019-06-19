@@ -17,5 +17,8 @@ class Config(object):
     REDIS_URL = os.environ.get('REDIS_HOST', 'localhost')
     REDIS_PORT = 6379
     JSON_SORT_KEYS = False
-    UPLOAD_FOLDER = 'uploads'
+    UPLOAD_FOLDER = '/tmp'
     JOB_TIMEOUT = '1h'
+    AZURE_FILES_ACCOUNT = os.environ.get('AZURE_FILES_ACCOUNT', 'none')
+    AZURE_FILES_KEY = os.environ.get('AZURE_FILES_KEY', 'none')
+    ENVIRONMENT = os.environ.get('ENVIRONMENT', 'local')

@@ -169,8 +169,8 @@ def import_fmu_case(filename, field_name, case_name, **kwargs):
 REQUIRED_HEADERS = ['region', 'zone']
 
 
-def validate_fmu_case(filename):
-    lines_as_ordered_dicts = _read_fmu_file(filename)
+def validate_fmu_case(file):
+    lines_as_ordered_dicts = _read_fmu_file(file)
 
     if len(lines_as_ordered_dicts) == 0:
         return False, f'The file has no valid lines'

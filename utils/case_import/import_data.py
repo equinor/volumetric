@@ -1,7 +1,7 @@
+from flask import current_app
 from graphql import GraphQLError
 from rq import get_current_job
 
-from flask import current_app
 from models import db, Task
 from utils.graphql.fileformat import FileFormat
 from utils.timer import timeit
@@ -19,10 +19,10 @@ def get_validate_func(file_format):
         return None
 
 
-def validate_import(filename, file_format):
+def validate_import(file, file_format):
     validate_func = get_validate_func(file_format)
     try:
-        return validate_func(filename) if validate_func else (False, 'Unsupported import file format')
+        return validate_func(file) if validate_func else (False, 'Unsupported import file format')
     except Exception:
         current_app.logger.exception('Failed to read import file')
         return False, 'Could not read file'

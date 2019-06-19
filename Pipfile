@@ -24,6 +24,7 @@ rq = "*"
 marshmallow-sqlalchemy = "*"
 simplejson = "*"
 gunicorn = "*"
+azure-storage-file = "*"
 
 [dev-packages]
 pydevd = "*"

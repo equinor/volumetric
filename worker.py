@@ -2,7 +2,6 @@ from flask import Flask
 from redis import Redis
 from rq import Connection, Worker
 from rq.timeouts import JobTimeoutException
-from rq.handlers import move_to_failed_queue
 from sqlalchemy.exc import DataError, IntegrityError
 
 from config import Config
@@ -34,7 +33,7 @@ def rq_error_handler(job, exc_type, exc_value, traceback):
 def run_worker():
     redis_connection = Redis(app.config['REDIS_URL'])
     with Connection(redis_connection):
-        worker = Worker(['default'], exception_handlers=[rq_error_handler, move_to_failed_queue])
+        worker = Worker(['default'], exception_handlers=[rq_error_handler])
         worker.work()
 
 

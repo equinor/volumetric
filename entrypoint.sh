@@ -58,13 +58,14 @@ if [ ${first_arg} = 'worker' ]; then
 fi
 
 if [ ${first_arg} = 'manage' ]; then
+    export ENVIRONMENT='CI'
     shift  # shift the input arguments to the left, replacing the first argument with the second etc
     flask "$@"
     exit $?
 fi
 
 if [ ${first_arg} = 'tests' ]; then
-    export ENVIRONMENT='test'
+    export ENVIRONMENT='CI'
     behave
     exit $?
 fi
