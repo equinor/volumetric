@@ -28,14 +28,16 @@ services:
         UID: $DOCKER_USER
         GID: $DOCKER_GROUP
     image: git.equinor.com:4567/volumetric/api
+    env_file:
+      - secrets.env
     volumes:
       - ./../api:/code
-      - ./uploads:/code/instance/uploads
     depends_on:
       - db
       - redis
       - worker
     environment:
+      - ENVIRONMENT=local
       - REDIS_HOST=redis
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
@@ -59,13 +61,15 @@ services:
         UID: $DOCKER_USER
         GID: $DOCKER_GROUP
     image: git.equinor.com:4567/volumetric/api
+    env_file:
+      - secrets.env
     command: ["worker"]
     depends_on:
       - db
     volumes:
       - ./../api:/code
-      - ./uploads:/code/instance/uploads:ro
     environment:
+      - ENVIRONMENT=local
       - DATABASE_HOST=db
       - REDIS_HOST=redis
       - DATABASE_PORT=5432

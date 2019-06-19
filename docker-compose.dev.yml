@@ -29,6 +29,7 @@ services:
     env_file:
       - secrets.env
     environment:
+      - ENVIRONMENT=development
       - REDIS_HOST=redis
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
@@ -37,8 +38,6 @@ services:
       - AZURE_APP_CLIENT_ID=c049f236-7e38-41ba-be77-287bc1c8543c
       - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
     restart: unless-stopped
-    volumes:
-      - ./uploads:/code/instance/uploads
 
   redis:
     image: redis:5.0-alpine
@@ -50,6 +49,7 @@ services:
     env_file:
       - secrets.env
     environment:
+      - ENVIRONMENT=development
       - REDIS_HOST=redis
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
@@ -59,8 +59,6 @@ services:
       - AZURE_APP_CLIENT_ID=c049f236-7e38-41ba-be77-287bc1c8543c
       - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
     restart: unless-stopped
-    volumes:
-      - ./uploads:/code/instance/uploads:ro
 
   db:
     image: postgres:10.2-alpine
