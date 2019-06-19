@@ -55,7 +55,7 @@ class FileUpload extends React.Component {
       })
       .then(response => {
         response.json().then(body => {
-          onChange(body.filename);
+          onChange(body);
         });
       })
       .catch(error => {

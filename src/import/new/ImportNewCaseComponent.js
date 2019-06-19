@@ -73,6 +73,7 @@ const ImportNewCaseComponent = props => {
   const initialState = {
     formState: {
       filename: null,
+      filehash: null,
       field: currentField,
       case: '',
       caseVersion: '',

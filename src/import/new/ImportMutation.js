@@ -8,6 +8,7 @@ import { GraphqlError, NetworkError } from '../../common/ErrorHandling';
 const IMPORT_CASE = gql`
   mutation ImportCase(
     $filename: String!
+    $filehash: String!
     $field: String!
     $case: String!
     $caseVersion: String!
@@ -20,6 +21,7 @@ const IMPORT_CASE = gql`
   ) {
     importCase(
       filename: $filename
+      filehash: $filehash
       fileFormat: FMU
       field: $field
       case: $case

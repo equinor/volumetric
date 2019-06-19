@@ -57,6 +57,11 @@ const VisibilityButtonGroup = ({
   );
 };
 
+function handleFileChange(file, handleFormChange) {
+  handleFormChange('filename', file.filename);
+  handleFormChange('filehash', file.hash);
+}
+
 export default ({
   formState,
   handleFormChange,
@@ -71,6 +76,24 @@ export default ({
   return (
     <>
       <InputWrapper>
+        <MinimalLabel>
+          <LabelText>File</LabelText>
+          {mutationData &&
+            !hasChanged.filename &&
+            mutationData.importCase.validationError &&
+            !mutationData.importCase.validationError.file.valid && (
+              <ErrorText>
+                {mutationData.importCase.validationError.file.message}
+              </ErrorText>
+            )}
+          <FileUpload
+            style={{ width: '100%' }}
+            filename={formState.filename}
+            onChange={file => handleFileChange(file, handleFormChange)}
+            isLoading={formState.isLoading}
+            handleFormChange={handleFormChange}
+          />
+        </MinimalLabel>
         <TextInput
           label="Name"
           onChange={e => handleFormChange('case', e.target.value)}
@@ -116,24 +139,6 @@ export default ({
               label: formState.caseType,
             }}
             placeholder="Select case type..."
-          />
-        </MinimalLabel>
-        <MinimalLabel>
-          <LabelText>File</LabelText>
-          {mutationData &&
-            !hasChanged.filename &&
-            mutationData.importCase.validationError &&
-            !mutationData.importCase.validationError.file.valid && (
-              <ErrorText>
-                {mutationData.importCase.validationError.file.message}
-              </ErrorText>
-            )}
-          <FileUpload
-            style={{ width: '100%' }}
-            filename={formState.filename}
-            onChange={filename => handleFormChange('filename', filename)}
-            isLoading={formState.isLoading}
-            handleFormChange={handleFormChange}
           />
         </MinimalLabel>
         <div>
