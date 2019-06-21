@@ -1,3 +1,3 @@
-import Cases from './Cases';
+import CaseContainer from './CaseContainer';
 
-export { Cases };
+export { CaseContainer };

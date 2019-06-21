@@ -1,7 +1,7 @@
 import React from 'react';
 import FilterList from './FilterList';
-import Select from '../../common/Select';
-import { H4 } from '../../common/Headers';
+import Select from '../Select';
+import { H4 } from '../Headers';
 
 const DatasetSelectorItem = ({ name, selectedOption, onChange, options }) => {
   return (

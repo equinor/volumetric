@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckboxWithLabel } from '../../common/Input';
+import { CheckboxWithLabel } from '../Input';
 
 class FilterItem extends React.Component {
   render() {

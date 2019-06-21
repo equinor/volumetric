@@ -3,17 +3,19 @@ import { NavLink, Route } from 'react-router-dom';
 import { useUserSettings } from './auth/AuthContext';
 import FieldRole from './field/FieldRole';
 import { ImportMetrics, ImportNewCase } from './import';
-import Cases from './case/Cases';
+import Cases from './cases/Cases';
 import UsersContainer from './users/UsersContainer';
 import ManageFields from './field/ManageFields';
 import { H1, H3 } from './common/Headers';
 
-import { LocationContainer } from './location/';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Switch } from 'react-router';
 import Docs from './docs/Docs';
-import { ALMOST_BLACK, SELECTED_COLOR } from './common/variables';
+import { ALMOST_BLACK, PRIMARY_COLOR } from './common/variables';
 import { toast } from 'react-toastify';
+import { CaseFilerPage } from './home';
+import { CaseContainer } from './case';
+import { CompareContainer } from './compare';
 
 toast.configure();
 
@@ -64,7 +66,7 @@ const HeaderLinks = styled.div`
   margin-left: auto;
 
   .active {
-    border-bottom: 2px solid ${SELECTED_COLOR};
+    border-bottom: 2px solid ${PRIMARY_COLOR};
   }
 `;
 
@@ -73,7 +75,7 @@ const UserInfo = styled.div`
   color: inherit;
   font-size: 14px;
   font-weight: 500;
-  font-family: Equinor-Medium;
+  font-family: Equinor-Medium, serif;
 `;
 
 const InnerHeader = styled.div`
@@ -129,7 +131,9 @@ function App() {
         </InnerHeader>
       </AppHeader>
       <Switch>
-        <Route exact path="/" component={LocationContainer} />
+        <Route exact path="/" component={CaseFilerPage} />
+        <Route exact path="/compare" component={CompareContainer} />
+        <Route exact path="/case/:caseId" component={CaseContainer} />
         <Route path="/docs" component={Docs} />
         {user.isCreator && (
           <Route

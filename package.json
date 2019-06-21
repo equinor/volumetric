@@ -13,6 +13,7 @@
     "graphql": "^14.2.0",
     "npm": "^6.9.0",
     "prop-types": "^15.7.2",
+    "query-string": "^6.8.1",
     "rc-dropdown": "^2.4.1",
     "rc-menu": "^7.4.22",
     "react": "^16.8.5",

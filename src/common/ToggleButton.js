@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { RadioButtonStyled } from './RadioButton';
-import { DEFAULT_COLOR, SELECTED_COLOR, HOVER_COLOR } from './variables';
+import { DEFAULT_COLOR, PRIMARY_COLOR, HOVER_COLOR } from './variables';
 import PropTypes from 'prop-types';
 
 export const ToggleButtonStyled = styled(RadioButtonStyled).attrs({
   hoverColor: HOVER_COLOR,
-  selectedColor: SELECTED_COLOR,
+  selectedColor: PRIMARY_COLOR,
   defaultColor: DEFAULT_COLOR,
 })`
   padding: ${props => (props.padding ? props.padding : '5px 10px')};

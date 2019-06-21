@@ -43,9 +43,18 @@ export const SHORT_CASE_FRAGMENT = gql`
   }
 `;
 
+export const GET_FULL_CASES = gql`
+  query FullCases($field: String!, $caseIds: [Int]) {
+    cases(fieldName: $field, caseIds: $caseIds, orderBy: "name") {
+      ...FullCase
+    }
+  }
+  ${FULL_CASE_FRAGMENT}
+`;
+
 export const GET_CASES = gql`
-  query Cases($field: String!) {
-    cases(fieldName: $field, orderBy: "name") {
+  query Cases($field: String!, $caseIds: [Int]) {
+    cases(fieldName: $field, caseIds: $caseIds, orderBy: "name") {
       ...ShortCase
     }
   }

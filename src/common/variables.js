@@ -1,7 +1,8 @@
-export const SELECTED_COLOR = 'rgb(18, 147, 154)';
+export const PRIMARY_COLOR = 'rgb(18, 147, 154)';
 export const DEFAULT_COLOR = 'white';
 export const HOVER_COLOR = 'gray';
 export const ALMOST_BLACK = '#363636';
+export const UNIMPORTANT_TEXT = '#818181';
 
 export const API_URL = '/api';
 export const SUCCESS_COLOR = '#1aaa55';

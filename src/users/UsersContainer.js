@@ -8,7 +8,7 @@ import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { gql } from 'apollo-boost';
 import { TextInput } from '../import/common/Input';
 import Select from '../common/Select';
-import { DANGER_COLOR, SELECTED_COLOR } from '../common/variables';
+import { DANGER_COLOR, PRIMARY_COLOR } from '../common/variables';
 import { H4 } from '../common/Headers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons/faPen';
@@ -23,7 +23,7 @@ import { useUserSettings } from '../auth/AuthContext';
 const EditButton = styled(FontAwesomeIcon)`
   margin-left: 20px;
   cursor: pointer;
-  color: ${SELECTED_COLOR};
+  color: ${PRIMARY_COLOR};
 `;
 
 const NewMemberContainer = styled.div`

@@ -20,7 +20,7 @@ export function ListPageWithActions({ title, links, children }) {
   return (
     <div>
       <ImportHeader>
-        <WrappedH3>{title}</WrappedH3>
+        {title && <WrappedH3>{title}</WrappedH3>}
         <LinksStyled>{links()}</LinksStyled>
       </ImportHeader>
       {children}

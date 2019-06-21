@@ -82,14 +82,7 @@ function CasesList({ cases, user, currentField, isOfficials }) {
                   <OverflowTD>{isCurrentlyOfficial ? 'Yes' : 'No'}</OverflowTD>
                 )}
                 <OverflowTD>
-                  <Link
-                    to={{
-                      pathname: '/',
-                      state: { linkedCase: id },
-                    }}
-                  >
-                    View
-                  </Link>
+                  <Link to={`/case/${id}`}>View</Link>
                 </OverflowTD>
                 <OverflowTD>
                   <Mutation

@@ -7,9 +7,9 @@ import { Query } from 'react-apollo';
 import { GET_METRICS } from './LocationQueries';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import VisToggler from './VisToggler';
-import { Filter, LocationFilters } from './filters';
+import { Filter, LocationFilters } from '../common/filters';
 
-const FilterPage = styled.div`
+export const FilterPage = styled.div`
   display: flex;
   flex-flow: row;
 `;
@@ -57,7 +57,7 @@ const ContentWrapper = styled.div`
   margin-left: 50px;
 `;
 
-const FilterWrapper = styled.div`
+export const FilterWrapper = styled.div`
   min-width: 200px;
 `;
 

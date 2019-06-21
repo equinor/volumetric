@@ -5,7 +5,7 @@ import { Dictionary } from './dictionary';
 import { Contact } from './contact';
 import { ApiDoc } from './ApiDoc';
 import { useUserSettings } from '../auth/AuthContext';
-import { ALMOST_BLACK, SELECTED_COLOR } from '../common/variables';
+import { ALMOST_BLACK, PRIMARY_COLOR } from '../common/variables';
 
 const DocsStyled = styled.div`
   display: flex;
@@ -19,7 +19,7 @@ const UL = styled.ul`
 
 const LI = styled.li`
   .active {
-    color: ${SELECTED_COLOR};
+    color: ${PRIMARY_COLOR};
   }
   padding: 0;
   margin: 0;
