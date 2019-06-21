@@ -33,7 +33,6 @@ services:
     volumes:
       - ./../api:/code
     depends_on:
-      - db
       - redis
       - worker
     environment:
@@ -64,8 +63,6 @@ services:
     env_file:
       - secrets.env
     command: ["worker"]
-    depends_on:
-      - db
     volumes:
       - ./../api:/code
     environment:
@@ -87,8 +84,6 @@ services:
       - "5432:5432"
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
-      - ./postgresql.conf:/etc/postgresql/postgresql.conf
-      - ./../api/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
     environment:
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
