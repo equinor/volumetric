@@ -182,6 +182,8 @@ class ImportCase(graphene.Mutation):
         if file_is_valid and version_is_valid:
             task = create_import_data_job(
                 file,
+                filename,
+                filehash,
                 field_name=field,
                 case_name=case,
                 file_format=file_format,

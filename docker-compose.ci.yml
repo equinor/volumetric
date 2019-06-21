@@ -16,7 +16,7 @@ services:
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-      - ENVIRONMENT=test
+      - ENVIRONMENT=CI
     depends_on:
       - db
 

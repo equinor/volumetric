@@ -13,4 +13,6 @@ class Task(db.Model):
     complete = Column(Boolean, default=False)
     failed = Column(Boolean, default=False)
     message = Column(String)
+    filename = Column(String)
+    filehash = Column(String)
     field_name = Column(String, ForeignKey('field.name', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)

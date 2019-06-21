@@ -15,6 +15,8 @@ class Task(graphene.ObjectType):
     complete = graphene.Boolean()
     failed = graphene.Boolean()
     message = graphene.String()
+    filename = graphene.String()
+    filehash = graphene.String()
 
 
 def resolve_tasks(self, info, user, field, hours=None):
