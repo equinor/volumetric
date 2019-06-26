@@ -1,5 +1,6 @@
 import graphene
 from graphql import GraphQLError
+from sqlalchemy import and_
 
 from models import db, Location as LocationModel, CaseTypeEnum, Case as CaseModel
 from services.azure_file_service import AzureFilesService
@@ -13,9 +14,14 @@ from .validation_error import ValidationField
 
 
 @ordered_case
-def resolve_cases(self, info, field_name):
+def resolve_cases(self, info, field_name, case_ids=None):
     user = info.context.user
-    cases = CaseModel.query.filter(CaseModel.field_name == field_name).all()
+    cases_query = CaseModel.query
+    if case_ids is not None:
+        cases_query = cases_query.filter(and_(CaseModel.id.in_(case_ids), CaseModel.field_name == field_name))
+    else:
+        cases_query = cases_query.filter(CaseModel.field_name == field_name)
+    cases = cases_query.all()
     # Return all fields if user is Admin
     if user.isAdmin:
         return cases

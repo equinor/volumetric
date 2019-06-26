@@ -67,27 +67,31 @@ class LocationType(graphene.ObjectType):
     volumetrics = graphene.List(VolumetricType)
 
 
-def resolve_volumetrics(self, info, case_id, phase, **kwargs):
+def resolve_volumetrics(self, info, case_ids, phase, **kwargs):
     user = info.context.user
-    case = CaseModel.query.filter(CaseModel.id == case_id).first()
+    volumetrics = []
+    for case_id in case_ids:
+        case = CaseModel.query.filter(CaseModel.id == case_id).first()
 
-    # Deny if user dont have access to field
-    if not is_reader(user, case.field.name):
-        raise GraphQLError('You are not authorized to view this case.')
+        # Deny if user dont have access to field
+        if not is_reader(user, case.field.name):
+            raise GraphQLError('You are not authorized to view this case.')
 
-    # Return only personal or official data if user is not administrator
-    if not user.isAdmin and not (case.is_shared or case.created_user == user.shortname):
-        raise GraphQLError('You are not authorized to view this case.')
+        # Return only personal or official data if user is not administrator
+        if not user.isAdmin and not (case.is_shared or case.created_user == user.shortname):
+            raise GraphQLError('You are not authorized to view this case.')
 
-    filtered_kwargs = {key: value for key, value in kwargs.items() if None not in value}
+        filtered_kwargs = {key: value for key, value in kwargs.items() if None not in value}
 
-    summed_volumetrics = DatabaseService.get_summed_volumetrics(case_id, filtered_kwargs, phase)
-    summed_volumetrics = sorted(summed_volumetrics, key=lambda volumetric: volumetric.realization)
+        summed_volumetrics = DatabaseService.get_summed_volumetrics(case_id, filtered_kwargs, phase)
+        summed_volumetrics = sorted(summed_volumetrics, key=lambda volumetric: volumetric.realization)
 
-    return VolumetricsType(
-        case_id=case_id,
-        zone_names=kwargs.get('zone_names'),
-        region_names=kwargs.get('region_names'),
-        facies_names=kwargs.get('facies_names'),
-        summed_volumetrics=summed_volumetrics,
-    )
+        volumetrics.append(
+            VolumetricsType(
+                case_id=case_id,
+                zone_names=kwargs.get('zone_names'),
+                region_names=kwargs.get('region_names'),
+                facies_names=kwargs.get('facies_names'),
+                summed_volumetrics=summed_volumetrics,
+            ))
+    return volumetrics

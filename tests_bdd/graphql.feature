@@ -60,7 +60,7 @@ Feature: GraphQL API
     When I make a graphql query
     """
     {
-      volumetrics(caseId: 1, regionNames: "Region 1", zoneNames: "Zone 1", faciesNames: "Type Of Rock 1", phase: GAS) {
+      volumetrics(caseIds: [1], regionNames: "Region 1", zoneNames: "Zone 1", faciesNames: "Type Of Rock 1", phase: GAS) {
         caseId
         zoneNames
         faciesNames
@@ -78,7 +78,7 @@ Feature: GraphQL API
     """
     {
       "data": {
-        "volumetrics": {
+        "volumetrics": [{
           "caseId": 1,
           "zoneNames": ["Zone 1"],
           "faciesNames": ["Type Of Rock 1"],
@@ -89,7 +89,7 @@ Feature: GraphQL API
           "means": {
             "bulk": 0.1
           }
-        }
+        }]
       }
     }
     """
@@ -99,7 +99,7 @@ Feature: GraphQL API
     When I make a graphql query
     """
     {
-      volumetrics(caseId: 1, regionNames: ["Region 1", "Region 2"], phase: GAS) {
+      volumetrics(caseIds: [1], regionNames: ["Region 1", "Region 2"], phase: GAS) {
         zoneNames
         faciesNames
         regionNames
@@ -120,7 +120,7 @@ Feature: GraphQL API
     """
     {
       "data": {
-        "volumetrics": {
+        "volumetrics": [{
           "zoneNames": null,
           "faciesNames": null,
           "regionNames": ["Region 1", "Region 2"],
@@ -136,7 +136,7 @@ Feature: GraphQL API
               "bulk": 37.5
             }
           ]
-        }
+        }]
       }
     }
     """

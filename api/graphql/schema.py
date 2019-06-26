@@ -13,18 +13,19 @@ from .volumetrics import VolumetricsType, resolve_volumetrics
 class Query(graphene.ObjectType):
     tasks = graphene.List(
         Task, user=graphene.String(), field=graphene.String(), hours=graphene.Int(), resolver=resolve_tasks)
-    cases = OrderedList(CaseType, field_name=graphene.String(), resolver=resolve_cases)
+    cases = OrderedList(
+        CaseType, field_name=graphene.String(), case_ids=graphene.List(graphene.Int), resolver=resolve_cases)
     case_types = graphene.List(CaseTypeGrapheneEnum, resolver=resolve_case_types)
     case = graphene.Field(Case, case_id=graphene.Int(), resolver=resolve_case)
     role_by_user = graphene.List(Role, user=graphene.String(), resolver=resolve_role_by_user)
     roles_by_field = graphene.List(Role, field=graphene.String(), resolver=resolve_role_by_field)
-    volumetrics = graphene.Field(
+    volumetrics = graphene.List(
         VolumetricsType,
         facies_names=graphene.List(graphene.String),
         region_names=graphene.List(graphene.String),
         zone_names=graphene.List(graphene.String),
         phase=graphene.Argument(PhaseEnumGraphene),
-        case_id=graphene.Int(),
+        case_ids=graphene.List(graphene.Int),
         resolver=resolve_volumetrics)
 
 
