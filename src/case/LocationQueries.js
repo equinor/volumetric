@@ -16,19 +16,20 @@ const METRICS_FRAGMENT = gql`
 
 export const GET_METRICS = gql`
   query Metrics(
-    $caseId: Int!
+    $caseIds: [Int]!
     $faciesNames: [String]
     $regionNames: [String]
     $zoneNames: [String]
     $phase: PhaseEnum!
   ) {
     volumetrics(
-      caseId: $caseId
+      caseIds: $caseIds
       faciesNames: $faciesNames
       regionNames: $regionNames
       zoneNames: $zoneNames
       phase: $phase
     ) {
+      caseId
       summedVolumetrics {
         realization
         ...AllMetrics

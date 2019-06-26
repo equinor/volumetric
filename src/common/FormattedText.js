@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 const FormattedTextStyle = styled.div`
   padding: 3px 0 3px 6px;
-  border-left: 2px solid ${ALMOST_BLACK};
+  border-left: 3px solid ${props => props.borderColor || ALMOST_BLACK};
   cursor: pointer;
 `;
 
@@ -32,11 +32,15 @@ export function prettyRole(role) {
   }
 }
 
-export const FormattedText = ({ value, label }) => {
+export const FormattedText = props => {
+  const { value, label } = props;
   const [formatLabel, setFormatLabel] = useState(true);
 
   return (
-    <FormattedTextStyle onClick={() => setFormatLabel(!formatLabel)}>
+    <FormattedTextStyle
+      onClick={() => setFormatLabel(!formatLabel)}
+      borderColor={props.borderColor}
+    >
       <FormattedTextLabel>{label}</FormattedTextLabel>
       {formatLabel ? labelFormater(value) : value}m<sup>3</sup>
     </FormattedTextStyle>

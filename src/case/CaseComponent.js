@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import { H4 } from '../common/Headers';
 import styled from 'styled-components';
 import ToggleButtonGroup from '../common/ToggleButtonGroup';
@@ -8,6 +8,7 @@ import { GET_METRICS } from './LocationQueries';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import VisToggler from './VisToggler';
 import { Filter, LocationFilters } from '../common/filters';
+import { useMetricFilters } from '../common/useMetricFilters';
 
 export const FilterPage = styled.div`
   display: flex;
@@ -15,23 +16,30 @@ export const FilterPage = styled.div`
 `;
 
 const VisWithData = ({
-  currentCase,
-  facies,
-  regions,
-  zones,
-  phase,
   metrics,
-  selectedMetric,
+  caseId,
+  selectedMetrics: {
+    facies: selectedFacies,
+    regions: selectedRegions,
+    zones: selectedZones,
+    metrics: selectedMetrics,
+    phase: selectedPhase,
+    selectedMetric,
+  },
   setSelectedMetric,
 }) => {
-  const variables = { caseId: currentCase.id, phase: phase.toUpperCase() };
-  if (facies && facies.length > 0) variables['faciesNames'] = facies;
-  if (regions && regions.length > 0) variables['regionNames'] = regions;
-  if (zones && zones.length > 0) variables['zoneNames'] = zones;
-  if (metrics.length === 0) {
-    metrics = currentCase.metrics;
-  }
-  metrics = filterMetricsForPhase(metrics, phase);
+  const variables = { caseIds: [caseId], phase: selectedPhase.toUpperCase() };
+  if (selectedFacies && selectedFacies.length > 0)
+    variables['faciesNames'] = selectedFacies;
+  if (selectedRegions && selectedRegions.length > 0)
+    variables['regionNames'] = selectedRegions;
+  if (selectedZones && selectedZones.length > 0)
+    variables['zoneNames'] = selectedZones;
+
+  const filterMetrics = filterMetricsForPhase(
+    selectedMetrics.length > 0 ? selectedMetrics : metrics,
+    selectedPhase,
+  );
 
   return (
     <Query query={GET_METRICS} variables={variables}>
@@ -40,9 +48,9 @@ const VisWithData = ({
           return error.networkError ? NetworkError(error) : GraphqlError(error);
         return (
           <VisToggler
-            data={data.volumetrics}
+            volumetrics={!loading && data.volumetrics[0]}
             isLoading={loading}
-            filterMetrics={metrics}
+            filterMetrics={filterMetrics}
             selectedMetric={selectedMetric}
             setSelectedMetric={setSelectedMetric}
           />
@@ -65,70 +73,10 @@ const PhaseButtonGroup = styled(ToggleButtonGroup)`
   max-width: 200px;
 `;
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'LOCATION_FILTER_CHANGE': {
-      const { checked, value, category: key } = action;
-      return {
-        ...state,
-        [key]: checked
-          ? [...state[key], value]
-          : state[key].filter(item => item !== value),
-      };
-    }
-    case 'METRIC_FILTER_CHANGE': {
-      const key = 'metrics';
-      const { checked, value } = action;
-      let nextState = checked
-        ? {
-            [key]: state.currentCase.metrics.filter(metric =>
-              [...state[key], value].includes(metric),
-            ),
-          }
-        : { [key]: state[key].filter(item => item !== value) };
-      const isValidMetric =
-        nextState.metrics.includes(state.selectedMetric) ||
-        nextState.metrics.length === 0;
-      if (!isValidMetric) {
-        nextState.selectedMetric = nextState.metrics[0];
-      }
-      return {
-        ...state,
-        ...nextState,
-      };
-    }
-    case 'PHASE_FILTER_CHANGE':
-      return {
-        ...state,
-        phase: action.phase,
-      };
-    case 'SET_SELECTED_METRIC':
-      return {
-        ...state,
-        selectedMetric: action.selectedMetric,
-      };
-    default:
-      throw new Error(`Unknown action type ${action.type}`);
-  }
-};
-
 export const CaseComponent = props => {
-  const { caseVersion, phases, metrics, id, name } = props;
-  const initialState = {
-    currentCase: {
-      ...props,
-      label: `${name} (${caseVersion})`,
-      value: id,
-    },
-    phase: phases[0],
-    regions: [],
-    zones: [],
-    facies: [],
-    metrics: [],
-    selectedMetric: metrics[0],
-  };
+  const { id, phases, metrics, facies, regions, zones } = props;
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useMetricFilters(phases, metrics);
 
   return (
     <>
@@ -137,7 +85,7 @@ export const CaseComponent = props => {
           <div>
             <H4>Phase</H4>
             <PhaseButtonGroup
-              buttons={state.currentCase.phases}
+              buttons={phases}
               currentSelected={state.phase}
               buttonStyle={{ padding: '5px 10px;', fontSize: '16px;' }}
               onChange={phase =>
@@ -147,10 +95,7 @@ export const CaseComponent = props => {
           </div>
           <Filter
             name="Metrics"
-            filters={filterMetricsForPhase(
-              state.currentCase.metrics,
-              state.phase,
-            )}
+            filters={filterMetricsForPhase(metrics, state.phase)}
             handleFilterChange={(_, { target: { checked, value } }) => {
               dispatch({
                 type: 'METRIC_FILTER_CHANGE',
@@ -162,7 +107,7 @@ export const CaseComponent = props => {
             checked={state.metrics}
           />
           <LocationFilters
-            currentCase={state.currentCase}
+            currentCase={{ regions, facies, zones }}
             handleFilterChange={(category, { target: { checked, value } }) => {
               dispatch({
                 type: 'LOCATION_FILTER_CHANGE',
@@ -178,7 +123,9 @@ export const CaseComponent = props => {
         </FilterWrapper>
         <ContentWrapper>
           <VisWithData
-            {...state}
+            selectedMetrics={state}
+            metrics={metrics}
+            caseId={id}
             setSelectedMetric={selectedMetric =>
               dispatch({ type: 'SET_SELECTED_METRIC', selectedMetric })
             }

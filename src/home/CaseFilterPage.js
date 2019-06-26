@@ -46,6 +46,8 @@ function CaseFilterPage(props) {
                 <PageLink
                   color={PRIMARY_COLOR}
                   to={`/compare?${getCompareCasesQueryParams(compareCases)}`}
+                  disabled={compareCases.length === 0}
+                  onClick={e => compareCases.length === 0 && e.preventDefault()}
                 >
                   Compare
                 </PageLink>

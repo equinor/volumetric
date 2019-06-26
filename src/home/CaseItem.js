@@ -1,12 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import { getVisibility } from '../common/visibility';
-import { ALMOST_BLACK, UNIMPORTANT_TEXT } from '../common/variables';
+import {
+  ALMOST_BLACK,
+  PRIMARY_COLOR,
+  UNIMPORTANT_TEXT,
+} from '../common/variables';
 import { CheckboxWithLabel } from '../common/Input';
 import { Link } from 'react-router-dom';
 
 const CaseItemStyled = styled.div`
-  border-bottom: 1px dashed ${ALMOST_BLACK};
+  border-bottom: 1px solid ${ALMOST_BLACK};
   padding: 15px;
 `;
 
@@ -16,9 +20,10 @@ const Visibility = styled.div`
 `;
 
 const CaseName = styled.div`
-  font-family: Equinor-Medium, serif;
-  min-width: 100px;
-  color: ${ALMOST_BLACK};
+  color: ${PRIMARY_COLOR};
+  ::before {
+    content: 'Case: ';
+  }
 `;
 
 const CaseVersion = styled.div`
@@ -38,11 +43,16 @@ const CheckboxStyled = styled.div`
 `;
 
 const FlexLink = styled(Link)`
+  font-family: Equinor-Medium, serif;
   display: inline-flex;
   flex-direction: row;
 
-  color: ${ALMOST_BLACK};
+  color: ${PRIMARY_COLOR};
   text-decoration: none;
+  min-width: 150px;
+  :hover {
+    text-decoration: underline;
+  }
 `;
 
 export function CaseItem({ _case, toggleCompareCase, checked }) {
@@ -52,8 +62,8 @@ export function CaseItem({ _case, toggleCompareCase, checked }) {
       <Row>
         <FlexLink to={`case/${_case.id}`}>
           <CaseName>{name}</CaseName>
-          <CaseVersion>{caseVersion}</CaseVersion>
         </FlexLink>
+        <CaseVersion>{caseVersion}</CaseVersion>
         <Visibility>{getVisibility(isOfficial, isShared)}</Visibility>
       </Row>
       <Row>

@@ -24,13 +24,21 @@ const NoData = styled.div`
   padding-right: 24vh;
 `;
 
-const Plot = ({ data, filterMetrics, selectedMetric, setSelectedMetric }) => {
-  const singleRealization = data.summedVolumetrics.length === 1;
+export const Plot = ({
+  volumetrics,
+  cases,
+  filterMetrics,
+  selectedMetric,
+  setSelectedMetric,
+}) => {
+  const metrics = volumetrics[0].summedVolumetrics;
+  const singleRealization = metrics.length === 1;
   return singleRealization ? (
-    <BarChart metrics={data.summedVolumetrics} filterMetrics={filterMetrics} />
+    <BarChart metrics={metrics} filterMetrics={filterMetrics} />
   ) : (
     <Histogram
-      {...data}
+      cases={cases}
+      volumetrics={volumetrics}
       filterMetrics={filterMetrics}
       selectedMetric={selectedMetric}
       setSelectedMetric={setSelectedMetric}
@@ -55,14 +63,15 @@ class VisToggler extends React.Component {
 
   render() {
     const {
-      data,
+      volumetrics,
       isLoading,
       filterMetrics,
       selectedMetric,
       setSelectedMetric,
     } = this.props;
+    const metrics = volumetrics.summedVolumetrics;
 
-    if (!isLoading && data.summedVolumetrics.length === 0) {
+    if (!isLoading && metrics.length === 0) {
       return <NoData>No data...</NoData>;
     }
 
@@ -80,17 +89,14 @@ class VisToggler extends React.Component {
             {this.state.showVis === 'table' && (
               <AsyncRender
                 render={() => (
-                  <Table
-                    metrics={data.summedVolumetrics}
-                    filterMetrics={filterMetrics}
-                  />
+                  <Table metrics={metrics} filterMetrics={filterMetrics} />
                 )}
               />
             )}
 
             {this.state.showVis === 'plot' && (
               <Plot
-                data={data}
+                volumetrics={[volumetrics]}
                 filterMetrics={filterMetrics}
                 selectedMetric={selectedMetric}
                 setSelectedMetric={setSelectedMetric}

@@ -26,7 +26,7 @@ const CaseContainer = props => {
         return (
           <div>
             <CaseInfo currentCase={data.case} />
-            <CaseComponent {...data.case} key={data.case.id} />
+            <CaseComponent {...data.case} />
           </div>
         );
       }}
