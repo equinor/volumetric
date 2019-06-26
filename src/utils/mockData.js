@@ -1,5 +1,6 @@
-export const volumetrics = {
-  data: {
+export const volumetrics = [
+  {
+    caseId: 1,
     means: {
       bulk: 5576563.41,
       hcpv: 911379.4,
@@ -171,4 +172,12 @@ export const volumetrics = {
       },
     ],
   },
-};
+];
+
+export const cases = [
+  {
+    id: 1,
+    caseVersion: 'Version',
+    name: 'Casename',
+  },
+];

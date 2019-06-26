@@ -10,7 +10,7 @@ const StatisticsDisplayStyled = styled.div`
   justify-content: space-between;
 `;
 
-const CaseName = styled.div`
+export const CaseVersion = styled.div`
   padding: 3px 0 3px 6px;
   border-left: 3px solid ${props => props.borderColor || ALMOST_BLACK};
   min-width: 125px;
@@ -26,9 +26,9 @@ export default ({ cases, volumetrics, selectedMetric }) => {
   return volumetrics.map(({ caseId, p10, p50, p90, means }, index) => (
     <StatisticsDisplayStyled key={caseId}>
       {cases && (
-        <CaseName borderColor={colorPalette[index]}>
+        <CaseVersion borderColor={colorPalette[index]}>
           {cases.find(_case => _case.id === caseId).caseVersion}
-        </CaseName>
+        </CaseVersion>
       )}
       <FormattedText
         value={p10[selectedMetric]}

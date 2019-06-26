@@ -31,18 +31,31 @@ export const Plot = ({
   selectedMetric,
   setSelectedMetric,
 }) => {
-  const metrics = volumetrics[0].summedVolumetrics;
-  const singleRealization = metrics.length === 1;
-  return singleRealization ? (
-    <BarChart metrics={metrics} filterMetrics={filterMetrics} />
-  ) : (
-    <Histogram
-      cases={cases}
-      volumetrics={volumetrics}
-      filterMetrics={filterMetrics}
-      selectedMetric={selectedMetric}
-      setSelectedMetric={setSelectedMetric}
-    />
+  const singleRealizationMetrics = volumetrics.filter(
+    ({ summedVolumetrics }) => summedVolumetrics.length === 1,
+  );
+  const multiRealizationMetrics = volumetrics.filter(
+    ({ summedVolumetrics }) => summedVolumetrics.length !== 1,
+  );
+  return (
+    <div>
+      {singleRealizationMetrics.length > 0 && (
+        <BarChart
+          volumetrics={singleRealizationMetrics}
+          filterMetrics={filterMetrics}
+          cases={cases}
+        />
+      )}
+      {multiRealizationMetrics.length > 0 && (
+        <Histogram
+          cases={cases}
+          volumetrics={multiRealizationMetrics}
+          filterMetrics={filterMetrics}
+          selectedMetric={selectedMetric}
+          setSelectedMetric={setSelectedMetric}
+        />
+      )}
+    </div>
   );
 };
 

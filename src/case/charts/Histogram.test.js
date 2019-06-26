@@ -1,7 +1,7 @@
 import React from 'react';
 import Histogram from './Histogram';
 import { GET_SELECTED_METRIC } from './common/MetricSelector';
-import { volumetrics } from '../../utils/mockData';
+import { cases, volumetrics } from '../../utils/mockData';
 import { MockedProvider } from 'react-apollo/test-utils';
 import wait from 'waait';
 
@@ -28,7 +28,8 @@ it('renders without crashing', async () => {
   ReactDOM.render(
     <MockedProvider mocks={mocks} addTypename={false}>
       <Histogram
-        {...volumetrics.data}
+        volumetrics={volumetrics}
+        cases={cases}
         selectedMetric={'bulk'}
         filterMetrics={['bulk', 'net', 'porv', 'hcpv', 'stoiip']}
       />

@@ -1,15 +1,12 @@
 import React from 'react';
-import { H4 } from '../common/Headers';
 import styled from 'styled-components';
-import ToggleButtonGroup from '../common/ToggleButtonGroup';
 import filterMetricsForPhase from '../utils/filterMetricsForPhase';
 import { Query } from 'react-apollo';
 import { GET_METRICS } from '../case/LocationQueries';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
-import { Filter, LocationFilters } from '../common/filters';
 import { useMetricFilters } from '../common/useMetricFilters';
 import { MetricFilters } from '../common/filters/MetricFilters';
-import VisToggler, { Plot } from '../case/VisToggler';
+import { Plot } from '../case/VisToggler';
 import { StyledSpinner } from '../common/Spinner';
 
 export const FilterPage = styled.div`
