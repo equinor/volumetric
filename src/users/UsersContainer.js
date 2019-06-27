@@ -103,7 +103,11 @@ function DeleteButton({ field, user }) {
         return (
           <DeleteButtonStyled
             onClick={() => {
-              deleteRole();
+              if (
+                window.confirm('Are you sure you want to delete this role?')
+              ) {
+                deleteRole();
+              }
             }}
           >
             <Icon icon={ICONS.cross} color={DANGER_COLOR} size={12} />
