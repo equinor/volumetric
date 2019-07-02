@@ -170,7 +170,9 @@ export default props => {
         selectedMetric={selectedMetric}
         setSelectedMetric={setSelectedMetric}
         renderHeader={() => (
-          <PlotHeader>{`Multi Realization Case (${numberOfRealizations})`}</PlotHeader>
+          <PlotHeader>{`Multi Realization Case ${
+            volumetrics.length === 1 ? `(${numberOfRealizations})` : ''
+          }`}</PlotHeader>
         )}
         renderVis={selectedMetric => (
           <HistogramChart

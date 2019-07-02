@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 // https://www.robinwieruch.de/local-storage-react/
 
 export const useStateWithLocalStorage = localStorageKey => {

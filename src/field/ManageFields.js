@@ -10,6 +10,8 @@ import { H4 } from '../common/Headers';
 import { SubmitButton } from '../common/Buttons';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { GET_ROLES } from '../common/Queries';
+import { useUserSettings } from '../auth/AuthContext';
 
 const ErrorText = styled.div`
   margin-top: 10px;
@@ -30,13 +32,18 @@ const CREATE_FIELD = gql`
       field {
         name
       }
+      roles {
+        field
+        role
+      }
     }
   }
 `;
 
-function AddField() {
+function AddField({ history }) {
   const [selectedField, setField] = useState('');
   const [validateError, setError] = useState('');
+  const { user, setCurrentField } = useUserSettings();
   const notify = field =>
     toast(`New field ${field} created`, { hideProgressBar: true });
 
@@ -44,12 +51,27 @@ function AddField() {
     <Mutation
       mutation={CREATE_FIELD}
       variables={{ name: selectedField }}
+      update={(cache, { data: { addField } }) => {
+        const query = {
+          query: GET_ROLES,
+          variables: {
+            user: user.shortName.toLowerCase(),
+          },
+        };
+        cache.writeQuery({
+          ...query,
+          data: {
+            roleByUser: [...addField.roles],
+          },
+        });
+      }}
       onCompleted={data => {
         if (data.addField.error.id !== '0') {
           setError(data.addField.error.message);
         } else {
           notify(data.addField.field.name);
           setError('');
+          setCurrentField(data.addField.field.name);
         }
       }}
     >
@@ -89,10 +111,10 @@ function AddField() {
   );
 }
 
-function FieldManagement() {
+function FieldManagement(props) {
   return (
     <ListPageWithActions title="Manage fields" links={() => <></>}>
-      <AddField />
+      <AddField {...props} />
     </ListPageWithActions>
   );
 }

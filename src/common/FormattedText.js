@@ -7,6 +7,7 @@ const FormattedTextStyle = styled.div`
   padding: 3px 0 3px 6px;
   border-left: 3px solid ${props => props.borderColor || ALMOST_BLACK};
   cursor: pointer;
+  min-width: 122px;
 `;
 
 const FormattedTextLabel = styled.span`
