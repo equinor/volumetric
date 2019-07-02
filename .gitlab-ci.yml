@@ -36,8 +36,8 @@ publish_image:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
   script:
-    - docker tag $BUILD_IMAGE $PUBLISH_IMAGE:$CI_COMMIT_REF_NAME
-    - docker push $PUBLISH_IMAGE:$CI_COMMIT_REF_NAME
+    - docker tag $BUILD_IMAGE $PUBLISH_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker push $PUBLISH_IMAGE:$CI_COMMIT_REF_SLUG
 
 deploy_develop:
   stage: deploy
