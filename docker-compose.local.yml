@@ -78,8 +78,6 @@ services:
 
   db:
     image: postgres:10.2-alpine
-#    command: postgres -c 'log_statement=mod'
-    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
     ports:
       - "5432:5432"
     volumes:
