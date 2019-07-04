@@ -1,0 +1,39 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+alembic = "*"
+graphene = "*"
+graphene-sqlalchemy = "*"
+psycopg2 = "*"
+Flask = "*"
+Flask-GraphQL = "*"
+Flask-Migrate = "*"
+Flask-SQLAlchemy = "*"
+SQLAlchemy = "*"
+Flask-RESTful = "*"
+numpy = "*"
+natsort = "*"
+cryptography = "*"
+pyjwt = "*"
+requests = "*"
+flask-marshmallow = "*"
+rq = "*"
+marshmallow-sqlalchemy = "*"
+simplejson = "*"
+gunicorn = "*"
+azure-storage-file = "*"
+
+[dev-packages]
+pydevd = "*"
+yapf = "==0.26.0"
+behave = "*"
+colorclass = "*"
+terminaltables = "*"
+snapshottest = "*"
+deepdiff = "*"
+
+[requires]
+python_version = "3.6"

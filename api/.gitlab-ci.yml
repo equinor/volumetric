@@ -1,0 +1,116 @@
+#Validate .gitlab-ci.yml at https://git.statoil.no/ci/lint
+stages:
+  - build
+  - tests
+  - publish
+  - document
+  - deploy
+
+variables:
+  BUILD_IMAGE: $CI_REGISTRY/volumetric/api:$CI_PIPELINE_ID
+  PUBLISH_IMAGE: $CI_REGISTRY/volumetric/api
+  PROJECT_PATH: /data/vlmtrc
+
+build_api:
+  stage: build
+  script:
+    - docker build --pull -t $BUILD_IMAGE .
+
+format:
+  stage: tests
+  variables:
+    COMPOSE_PROJECT_NAME: api$CI_JOB_ID
+  script:
+    - docker run --rm $BUILD_IMAGE yapf --version
+    - docker run --rm $BUILD_IMAGE yapf --diff --recursive -p .
+
+features:
+  stage: tests
+  variables:
+    COMPOSE_PROJECT_NAME: api$CI_JOB_ID
+  before_script:
+    - docker network create vlmtrc-ci-net-$CI_JOB_ID
+  script:
+    - docker-compose -f docker-compose.ci.yml run --rm api tests
+  after_script:
+    - docker-compose -f docker-compose.ci.yml down
+    - docker network rm vlmtrc-ci-net-$CI_JOB_ID
+
+security-check:
+  stage: tests
+  variables:
+    COMPOSE_PROJECT_NAME: api$CI_JOB_ID
+  script:
+    - docker run --rm $BUILD_IMAGE pipenv check
+
+publish_image:
+  stage: publish
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - docker tag $BUILD_IMAGE $PUBLISH_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker push $PUBLISH_IMAGE:$CI_COMMIT_REF_SLUG
+
+create_erd:
+  stage: document
+  variables:
+    COMPOSE_PROJECT_NAME: api$CI_JOB_ID
+  before_script:
+    - docker network create vlmtrc-ci-net-$CI_JOB_ID
+    - docker-compose -f docker-compose.ci.yml run --rm api manage db upgrade -x data=true
+    - mkdir -p data/build
+  script:
+    - docker run --rm -v "$PWD/data/build:/share" --net vlmtrc-ci-net-$CI_JOB_ID --name schemacrawler --user $(id -u) --entrypoint /opt/schemacrawler/schemacrawler.sh schemacrawler/schemacrawler -server=postgresql -host=db -user=volumetric -password=$POSTGRES_PASSWORD -database=volumetric -infolevel=standard -routines -command=schema -outputformat=png -o /share/schema.png
+  after_script:
+    - docker-compose -f docker-compose.ci.yml down
+    - docker network rm vlmtrc-ci-net-$CI_JOB_ID
+  artifacts:
+    paths:
+      - data/build/
+    expire_in: 5 week
+
+deploy_develop:
+  stage: deploy
+  tags:
+    - dev
+  only:
+    - master
+  environment:
+    name: development
+    url: https://dev.volumetric.equinor.com
+  variables:
+    ENVIRONMENT: "dev"
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - cd $PROJECT_PATH/main
+    - git pull
+    - ./bin/activate volumetric pull
+    - ./bin/activate volumetric build proxy
+    - ./bin/activate volumetric down
+    - ./bin/activate volumetric up -d --scale worker=3
+
+deploy_test:
+  stage: deploy
+  tags:
+    - test
+  only:
+    - /^v.*$/
+  except:
+    - branches
+  environment:
+    name: test
+    url: https://test.volumetric.equinor.com
+  variables:
+    ENVIRONMENT: "test"
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - sed -i "/^API_TAG=.*/c\API_TAG=$CI_COMMIT_REF_NAME" $PROJECT_PATH/main/.env
+    - sed -i "/^ENVIRONMENT=.*/c\ENVIRONMENT=$ENVIRONMENT" $PROJECT_PATH/main/.env
+  script:
+    - cd $PROJECT_PATH/main
+    - git pull
+    - ./bin/activate volumetric pull
+    - ./bin/activate volumetric build proxy
+    - ./bin/activate volumetric down
+    - ./bin/activate volumetric up -d --scale worker=3
