@@ -17,7 +17,7 @@ services:
       args:
         UID: $DOCKER_USER
         GID: $DOCKER_GROUP
-    image: git.equinor.com:4567/volumetric/web
+    image: git.equinor.com:4567/volumetric/volumetric/web
     volumes:
       - ./../web:/code
 
@@ -27,7 +27,7 @@ services:
       args:
         UID: $DOCKER_USER
         GID: $DOCKER_GROUP
-    image: git.equinor.com:4567/volumetric/api
+    image: git.equinor.com:4567/volumetric/volumetric/api
     env_file:
       - secrets.env
     volumes:
@@ -59,7 +59,7 @@ services:
       args:
         UID: $DOCKER_USER
         GID: $DOCKER_GROUP
-    image: git.equinor.com:4567/volumetric/api
+    image: git.equinor.com:4567/volumetric/volumetric/api
     env_file:
       - secrets.env
     command: ["worker"]

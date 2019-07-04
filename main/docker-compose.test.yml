@@ -8,23 +8,21 @@ services:
       - 443:443
     restart: unless-stopped
     volumes:
-    - ./proxy/x.volumetric.equinor.com.key:/etc/nginx/ssl/x.volumetric.equinor.com.key
+    - $SECRETS_PATH/proxy/x.volumetric.equinor.com.key:/etc/nginx/ssl/x.volumetric.equinor.com.key
 
   web:
-    image: git.equinor.com:4567/volumetric/web:$WEB_TAG
+    image: git.equinor.com:4567/volumetric/volumetric/web:$WEB_TAG
     command: serve --single build --listen 3000
-    env_file:
-      - secrets.env
     restart: unless-stopped
 
   api:
-    image: git.equinor.com:4567/volumetric/api:$API_TAG
+    image: git.equinor.com:4567/volumetric/volumetric/api:$API_TAG
     depends_on:
       - db
       - redis
       - worker
     env_file:
-      - secrets.env
+      - $SECRETS_PATH/secrets.env
     environment:
       - ENVIRONMENT=test
       - REDIS_HOST=redis
@@ -41,10 +39,10 @@ services:
     restart: unless-stopped
 
   worker:
-    image: git.equinor.com:4567/volumetric/api:$API_TAG
+    image: git.equinor.com:4567/volumetric/volumetric/api:$API_TAG
     command: ["worker"]
     env_file:
-    - secrets.env
+    - $SECRETS_PATH/secrets.env
     environment:
     - ENVIRONMENT=test
     - REDIS_HOST=redis
@@ -64,7 +62,7 @@ services:
       - ./postgresql.conf:/etc/postgresql/postgresql.conf
       - ./data/postgres:/var/lib/postgresql/data
     env_file:
-      - secrets.env
+      - $SECRETS_PATH/secrets.env
     environment:
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric

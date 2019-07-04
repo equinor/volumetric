@@ -11,22 +11,20 @@ services:
       - api
     restart: unless-stopped
     volumes:
-      - ./proxy/x.volumetric.equinor.com.key:/etc/nginx/ssl/x.volumetric.equinor.com.key
+      - $SECRETS_PATH/proxy/x.volumetric.equinor.com.key:/etc/nginx/ssl/x.volumetric.equinor.com.key
 
   web:
-    image: git.equinor.com:4567/volumetric/web:master
+    image: git.equinor.com:4567/volumetric/volumetric/web:master
     command: serve --single build --listen 3000
-    env_file:
-      - secrets.env
     restart: unless-stopped
 
   api:
-    image: git.equinor.com:4567/volumetric/api:master
+    image: git.equinor.com:4567/volumetric/volumetric/api:master
     depends_on:
       - redis
       - worker
     env_file:
-      - secrets.env
+      - $SECRETS_PATH/secrets.env
     environment:
       - ENVIRONMENT=development
       - REDIS_HOST=redis
@@ -43,10 +41,10 @@ services:
     restart: unless-stopped
 
   worker:
-    image: git.equinor.com:4567/volumetric/api:master
+    image: git.equinor.com:4567/volumetric/volumetric/api:master
     command: ["worker"]
     env_file:
-      - secrets.env
+      - $SECRETS_PATH/secrets.env
     environment:
       - ENVIRONMENT=development
       - REDIS_HOST=redis

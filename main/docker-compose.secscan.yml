@@ -12,7 +12,7 @@ services:
       - sec-scan
 
   web:
-    image: git.equinor.com:4567/volumetric/web:master
+    image: git.equinor.com:4567/volumetric/volumetric/web:master
     command: serve --single build --listen 3000
     env_file:
       - secrets.env
@@ -20,7 +20,7 @@ services:
       - sec-scan
 
   api:
-    image: $BUILD_IMAGE
+    image: $BUILD_IMAGE_API
     depends_on:
       - db
       - redis
@@ -47,7 +47,7 @@ services:
       - sec-scan
 
   worker:
-    image: $BUILD_IMAGE
+    image: $BUILD_IMAGE_API
     command: ["worker"]
     env_file:
       - secrets.env

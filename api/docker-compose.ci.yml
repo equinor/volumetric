@@ -7,7 +7,7 @@ networks:
 
 services:
   api:
-    image: $BUILD_IMAGE
+    image: $BUILD_IMAGE_API
     networks:
       - ci
     environment:

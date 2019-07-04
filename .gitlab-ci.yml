@@ -1,0 +1,164 @@
+#Validate .gitlab-ci.yml at https://git.statoil.no/ci/lint
+stages:
+  - build
+  - tests
+  - publish
+  - document
+  - deploy
+
+variables:
+  BUILD_IMAGE_API: $CI_REGISTRY/volumetric/volumetric/api:$CI_PIPELINE_ID
+  PUBLISH_IMAGE_API: $CI_REGISTRY/volumetric/volumetric/api
+  PUBLISH_IMAGE_WEB: $CI_REGISTRY/volumetric/volumetric/web
+  BUILD_IMAGE_WEB: $CI_REGISTRY/volumetric/volumetric/web:$CI_PIPELINE_ID
+  SECRETS_PATH: /data/vlmtrc/main
+
+build-web:
+  stage: build
+  script:
+    - docker build -t $BUILD_IMAGE_WEB ./web
+
+test-web:
+  stage: tests
+  script:
+    - WEB_IMAGE=$BUILD_IMAGE_WEB docker-compose -f web/docker-compose.ci.yml run --rm -e CI=true web yarn test
+
+audit-web:
+  stage: tests
+  script:
+    - WEB_IMAGE=$BUILD_IMAGE_WEB docker-compose -f web/docker-compose.ci.yml run --rm web yarn audit
+  allow_failure: true
+
+format-web:
+  stage: tests
+  script:
+    - WEB_IMAGE=$BUILD_IMAGE_WEB docker-compose -f web/docker-compose.ci.yml run --rm web prettier --single-quote --trailing-comma all --list-different "{,*/**/}*.js" "!build/**/*.js" "!node_modules/**/*.js"
+
+publish_web:
+  stage: publish
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - docker tag $BUILD_IMAGE_WEB $PUBLISH_IMAGE_WEB:$CI_COMMIT_REF_SLUG
+    - docker push $PUBLISH_IMAGE_WEB:$CI_COMMIT_REF_SLUG
+  only:
+    - branches
+
+publish_web_tags:
+  stage: publish
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - docker tag $BUILD_IMAGE_WEB $PUBLISH_IMAGE_WEB:$CI_COMMIT_REF_NAME
+    - docker push $PUBLISH_IMAGE_WEB:$CI_COMMIT_REF_NAME
+  only:
+    - tags
+
+build-api:
+  stage: build
+  script:
+    - docker build --pull -t $BUILD_IMAGE_API ./api
+
+format-api:
+  stage: tests
+  variables:
+    COMPOSE_PROJECT_NAME: api$CI_JOB_ID
+  script:
+    - docker run --rm $BUILD_IMAGE_API yapf --version
+    - docker run --rm $BUILD_IMAGE_API yapf --diff --recursive -p .
+
+features-api:
+  stage: tests
+  variables:
+    COMPOSE_PROJECT_NAME: api$CI_JOB_ID
+  before_script:
+    - docker network create vlmtrc-ci-net-$CI_JOB_ID
+  script:
+    - docker-compose -f api/docker-compose.ci.yml run --rm api tests
+  after_script:
+    - docker-compose -f api/docker-compose.ci.yml down
+    - docker network rm vlmtrc-ci-net-$CI_JOB_ID
+
+audit-api:
+  stage: tests
+  variables:
+    COMPOSE_PROJECT_NAME: api$CI_JOB_ID
+  script:
+    - docker run --rm $BUILD_IMAGE_API pipenv check
+
+publish-api:
+  stage: publish
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - docker tag $BUILD_IMAGE_API $PUBLISH_IMAGE_API:$CI_COMMIT_REF_SLUG
+    - docker push $PUBLISH_IMAGE_API:$CI_COMMIT_REF_SLUG
+  only:
+    - branches
+
+publish-api-tags:
+  stage: publish
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - docker tag $BUILD_IMAGE_API $PUBLISH_IMAGE_API:$CI_COMMIT_REF_NAME
+    - docker push $PUBLISH_IMAGE_API:$CI_COMMIT_REF_NAME
+  only:
+    - tags
+
+create-erd:
+  stage: document
+  variables:
+    COMPOSE_PROJECT_NAME: api$CI_JOB_ID
+  before_script:
+    - docker network create vlmtrc-ci-net-$CI_JOB_ID
+    - docker-compose -f api/docker-compose.ci.yml run --rm api manage db upgrade -x data=true
+    - mkdir -p data/build
+  script:
+    - docker run --rm -v "$PWD/data/build:/share" --net vlmtrc-ci-net-$CI_JOB_ID --name schemacrawler --user $(id -u) --entrypoint /opt/schemacrawler/schemacrawler.sh schemacrawler/schemacrawler -server=postgresql -host=db -user=volumetric -password=$POSTGRES_PASSWORD -database=volumetric -infolevel=standard -routines -command=schema -outputformat=png -o /share/schema.png
+  after_script:
+    - docker-compose -f api/docker-compose.ci.yml down
+    - docker network rm vlmtrc-ci-net-$CI_JOB_ID
+  artifacts:
+    paths:
+      - data/build/
+    expire_in: 5 week
+
+deploy-develop:
+  stage: deploy
+  tags:
+    - dev
+  only:
+    - master
+  environment:
+    name: development
+    url: https://dev.volumetric.equinor.com
+  variables:
+    ENVIRONMENT: "dev"
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - ./main/bin/activate volumetric pull
+    - ./main/bin/activate volumetric build proxy
+    - ./main/bin/activate volumetric down
+    - ./main/bin/activate volumetric up -d --scale worker=3
+
+deploy-test:
+  stage: deploy
+  tags:
+    - test
+  only:
+    - /^v.*$/
+  except:
+    - branches
+  environment:
+    name: test
+    url: https://test.volumetric.equinor.com
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - echo "WEB_TAG=$CI_COMMIT_REF_NAME\nAPI_TAG=$CI_COMMIT_REF_NAME\nENVIRONMENT=$ENVIRONMENT" > .env
+  script:
+    - ./main/bin/activate volumetric pull
+    - ./main/bin/activate volumetric build proxy
+    - ./main/bin/activate volumetric down
+    - ./main/bin/activate volumetric up -d --scale worker=3
