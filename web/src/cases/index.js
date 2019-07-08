@@ -1,3 +1,3 @@
-import Cases from './Cases';
+import CasesPage from './CasesPage';
 
-export { Cases };
+export { CasesPage };

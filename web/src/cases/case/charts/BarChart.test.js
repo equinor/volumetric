@@ -1,6 +1,6 @@
 import React from 'react';
 import BarChart from './BarChart';
-import { cases, volumetrics } from '../../utils/mockData';
+import { cases, volumetrics } from '../../../utils/mockData';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');

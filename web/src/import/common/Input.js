@@ -23,7 +23,7 @@ const TextInputStyled = styled(Input)`
   min-height: 32px;
   margin: 1px 0;
 
-  ${props => props.invalid && INVALID_INPUT_STYLE}
+  ${props => props.invalid && INVALID_INPUT_STYLE};
 `;
 
 const FileInputHidden = styled(Input)`

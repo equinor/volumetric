@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { H4 } from '../../../common/Headers';
+import { H4 } from '../../../../common/Headers';
 
 export const PlotStyled = styled.div`
   flex-grow: 1;

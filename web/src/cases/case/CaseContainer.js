@@ -1,12 +1,12 @@
 import React from 'react';
 import { Query } from 'react-apollo';
-import { GraphqlError, NetworkError } from '../common/ErrorHandling';
-import { GET_CASE } from '../common/Queries';
+import { GraphqlError, NetworkError } from '../../common/ErrorHandling';
+import { GET_CASE } from '../../common/Queries';
 import { CaseComponent } from './CaseComponent';
-import { StyledSpinner } from '../common/Spinner';
+import { StyledSpinner } from '../../common/Spinner';
 import CaseInfo from './CaseInfo';
-import { useUserSettings } from '../auth/AuthContext';
-import { NoDataDiv, NoField } from '../common/NoData';
+import { useUserSettings } from '../../auth/AuthContext';
+import { NoDataDiv, NoField } from '../../common/NoData';
 
 const CaseContainer = props => {
   const { currentField, user } = useUserSettings();

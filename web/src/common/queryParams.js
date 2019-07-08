@@ -2,11 +2,9 @@ import { parse, stringify } from 'query-string';
 
 const COMPARE_PARAM_NAME = 'c';
 
-export const getCompareCases = history => {
+export const getCompareCases = location => {
   const compareCases =
-    parse(history.location.search, { parseNumbers: true })[
-      COMPARE_PARAM_NAME
-    ] || [];
+    parse(location.search, { parseNumbers: true })[COMPARE_PARAM_NAME] || [];
   if (!compareCases) {
     return [];
   } else if (Number.isInteger(compareCases)) {

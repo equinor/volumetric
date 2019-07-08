@@ -15,5 +15,5 @@ export const PageLink = styled(Link)`
       props.disabled ? UNIMPORTANT_TEXT : props.color || DARKER_SUCCESS_COLOR};
   border-radius: 4px;
   margin-left: 20px;
-  ${props => props.disabled && 'pointer-events: none;'}
+  ${props => props.disabled && 'pointer-events: none;'};
 `;

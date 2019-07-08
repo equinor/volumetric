@@ -1,6 +1,6 @@
 import React from 'react';
-import { ToggleButtonStyled } from '../../../common/ToggleButton';
-import RadioButton from '../../../common/RadioButton';
+import { ToggleButtonStyled } from '../../../../common/ToggleButton';
+import RadioButton from '../../../../common/RadioButton';
 import styled from 'styled-components';
 
 const MetricSelectorStyled = styled.div`

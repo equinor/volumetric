@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import { gql } from 'apollo-boost/lib/index';
 
 const METRICS_FRAGMENT = gql`
   fragment AllMetrics on Metrics {

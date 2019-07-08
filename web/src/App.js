@@ -2,20 +2,17 @@ import React from 'react';
 import { NavLink, Route } from 'react-router-dom';
 import { useUserSettings } from './auth/AuthContext';
 import FieldRole from './field/FieldRole';
-import { ImportMetrics, ImportNewCase } from './import';
-import Cases from './cases/Cases';
+import { ImportMetrics } from './import';
 import UsersContainer from './users/UsersContainer';
 import ManageFields from './field/ManageFields';
 import { H1, H3 } from './common/Headers';
 
 import styled, { createGlobalStyle } from 'styled-components';
-import { Switch } from 'react-router';
+import { Redirect, Switch } from 'react-router';
 import Docs from './docs/Docs';
 import { ALMOST_BLACK, PRIMARY_COLOR } from './common/variables';
 import { toast } from 'react-toastify';
-import { CaseFilerPage } from './home';
-import { CaseContainer } from './case';
-import { CompareContainer } from './compare';
+import { CasesPage } from './cases';
 
 toast.configure();
 
@@ -106,17 +103,17 @@ function App() {
             <HeaderLink to="/">Volumetric</HeaderLink>
           </AppTitle>
           <HeaderLinks>
-            <HeaderLink right exact to="/">
-              Home
+            <HeaderLink right to="/cases">
+              Cases
             </HeaderLink>
             {user.isCreator && (
-              <HeaderLink right to="/cases">
-                Manage cases
+              <HeaderLink right to="/imports">
+                Imports
               </HeaderLink>
             )}
-            {user.isFieldAdmin && (
+            {(user.isFieldAdmin || user.isAdmin) && (
               <HeaderLink right to="/users">
-                Manage users
+                Users
               </HeaderLink>
             )}
             {user.isAdmin && (
@@ -131,32 +128,16 @@ function App() {
         </InnerHeader>
       </AppHeader>
       <Switch>
-        <Route exact path="/" component={CaseFilerPage} />
-        <Route exact path="/compare" component={CompareContainer} />
-        <Route exact path="/case/:caseId" component={CaseContainer} />
+        <Redirect exact from="/" to="/cases" />
+        <Route path="/cases" component={CasesPage} />
         <Route path="/docs" component={Docs} />
         {user.isCreator && (
           <Route
-            exact
-            path="/cases/import"
+            path="/imports"
             render={routerProps => <ImportMetrics {...routerProps} />}
           />
         )}
-        {user.isCreator && (
-          <Route
-            exact
-            path="/cases/import/new"
-            render={routerProps => <ImportNewCase {...routerProps} />}
-          />
-        )}
-        {user.isCreator && (
-          <Route
-            exact
-            path="/cases"
-            render={routerProps => <Cases {...routerProps} />}
-          />
-        )}
-        {user.isFieldAdmin && (
+        {(user.isFieldAdmin || user.isAdmin) && (
           <Route
             exact
             path="/users"

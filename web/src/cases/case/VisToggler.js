@@ -3,9 +3,9 @@ import Histogram from './charts/Histogram';
 import styled from 'styled-components';
 import Table from './Table';
 
-import ToggleButtonGroup from '../common/ToggleButtonGroup';
-import { StyledSpinner } from '../common/Spinner';
-import AsyncRender from '../common/AsyncRender';
+import ToggleButtonGroup from '../../common/ToggleButtonGroup';
+import { StyledSpinner } from '../../common/Spinner';
+import AsyncRender from '../../common/AsyncRender';
 import BarChart from './charts/BarChart';
 
 const VisSelector = styled(ToggleButtonGroup)`

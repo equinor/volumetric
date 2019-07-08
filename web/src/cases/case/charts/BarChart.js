@@ -8,10 +8,10 @@ import {
   XAxis,
   YAxis,
 } from 'react-vis';
-import { labelFormater } from '../../utils/text';
+import { labelFormater } from '../../../utils/text';
 import CenteredAxisLabel from './common/CenteredAxisLabel';
 import { PlotHeader, PlotStyled } from './common/PlotStyle';
-import { getColorPalette } from '../../utils/colors';
+import { getColorPalette } from '../../../utils/colors';
 import { CaseVersion } from './common/StatisticsDisplay';
 
 export default ({ volumetrics, cases, filterMetrics }) => {

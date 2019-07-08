@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ALMOST_BLACK } from '../common/variables';
-import { getVisibility } from '../common/visibility';
+import { ALMOST_BLACK } from '../../common/variables';
+import { getVisibility } from '../../common/visibility';
 
 const DL = styled.dl`
   display: flex;

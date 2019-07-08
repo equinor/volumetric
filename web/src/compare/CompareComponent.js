@@ -2,11 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import filterMetricsForPhase from '../utils/filterMetricsForPhase';
 import { Query } from 'react-apollo';
-import { GET_METRICS } from '../case/LocationQueries';
+import { GET_METRICS } from '../cases/case/LocationQueries';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { useMetricFilters } from '../common/useMetricFilters';
 import { MetricFilters } from '../common/filters/MetricFilters';
-import { Plot } from '../case/VisToggler';
+import { Plot } from '../cases/case/VisToggler';
 import { StyledSpinner } from '../common/Spinner';
 
 export const FilterPage = styled.div`

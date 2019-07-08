@@ -1,7 +1,7 @@
 import React from 'react';
 import Histogram from './Histogram';
 import { GET_SELECTED_METRIC } from './common/MetricSelector';
-import { cases, volumetrics } from '../../utils/mockData';
+import { cases, volumetrics } from '../../../utils/mockData';
 import { MockedProvider } from 'react-apollo/test-utils';
 import wait from 'waait';
 

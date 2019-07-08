@@ -16,17 +16,14 @@ import {
 } from '../common/queryParams';
 
 function CaseFilterPage(props) {
+  const { history, location, match } = props;
   const { currentField, user } = useUserSettings();
-  const compareCases = getCompareCases(props.history);
+  const compareCases = getCompareCases(location);
   const toggleCompareCase = caseId => {
     const newCompareCases = compareCases.includes(caseId)
       ? compareCases.filter(otherCaseId => otherCaseId !== caseId)
       : [...compareCases, caseId];
-    props.history.push(
-      `${props.location.pathname}?${getCompareCasesQueryParams(
-        newCompareCases,
-      )}`,
-    );
+    history.push(`${match.url}?${getCompareCasesQueryParams(newCompareCases)}`);
   };
 
   if (currentField === 'No field') {
@@ -45,7 +42,9 @@ function CaseFilterPage(props) {
               <>
                 <PageLink
                   color={PRIMARY_COLOR}
-                  to={`/compare?${getCompareCasesQueryParams(compareCases)}`}
+                  to={`${match.url}/compare?${getCompareCasesQueryParams(
+                    compareCases,
+                  )}`}
                   disabled={compareCases.length === 0}
                   onClick={e => compareCases.length === 0 && e.preventDefault()}
                 >

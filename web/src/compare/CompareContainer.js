@@ -8,7 +8,7 @@ import { NoField } from '../common/NoData';
 import { getCompareCases } from '../common/queryParams';
 import { CompareComponent } from './CompareComponent';
 
-const CompareContainer = props => {
+const CompareContainer = ({ location }) => {
   const { currentField, user } = useUserSettings();
   if (currentField === 'No field') {
     return <NoField user={user} />;
@@ -18,7 +18,7 @@ const CompareContainer = props => {
       query={GET_FULL_CASES}
       variables={{
         field: currentField,
-        caseIds: getCompareCases(props.history),
+        caseIds: getCompareCases(location),
       }}
     >
       {({ data, loading, error }) => {

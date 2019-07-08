@@ -8,6 +8,7 @@ import Select from '../../common/Select';
 import { LIST_SEPARATOR_COLOR } from '../../common/variables';
 import ToggleButtonGroup from '../../common/ToggleButtonGroup';
 import { getVisibility } from '../../common/visibility';
+import { capitalize } from '../../utils/text';
 
 const InputWrapper = styled.div`
   display: flex;
@@ -96,7 +97,7 @@ export default ({
         </MinimalLabel>
         <TextInput
           label="Name"
-          onChange={e => handleFormChange('case', e.target.value)}
+          onChange={e => handleFormChange('case', capitalize(e.target.value))}
           placeholder="Enter case name..."
           value={formState.case}
         />

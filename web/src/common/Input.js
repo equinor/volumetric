@@ -63,7 +63,7 @@ export const Checkbox = ({ className, checked, ...props }) => (
 
 Checkbox.propTypes = {
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
   checked: PropTypes.bool.isRequired,
 };
 

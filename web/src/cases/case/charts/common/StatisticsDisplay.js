@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FormattedText } from '../../../common/FormattedText';
-import { getColorPalette } from '../../../utils/colors';
-import { ALMOST_BLACK } from '../../../common/variables';
+import { FormattedText } from '../../../../common/FormattedText';
+import { getColorPalette } from '../../../../utils/colors';
+import { ALMOST_BLACK } from '../../../../common/variables';
 
 const StatisticsDisplayStyled = styled.div`
   display: flex;

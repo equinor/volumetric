@@ -1,11 +1,11 @@
 import React from 'react';
 import { FlexibleXYPlot, VerticalBarSeries, XAxis, YAxis } from 'react-vis';
-import { labelFormater } from '../../utils/text';
+import { labelFormater } from '../../../utils/text';
 import CenteredAxisLabel from './common/CenteredAxisLabel';
 import { PlotHeader, PlotStyled } from './common/PlotStyle';
 import MetricSelector from './common/MetricSelector';
 import StatisticsDisplay from './common/StatisticsDisplay';
-import { getColorPalette } from '../../utils/colors';
+import { getColorPalette } from '../../../utils/colors';
 
 const getMinMax = array => ({
   min: Math.min(...array),

@@ -1,14 +1,14 @@
 import React from 'react';
-import { H4 } from '../common/Headers';
+import { H4 } from '../../common/Headers';
 import styled from 'styled-components';
-import ToggleButtonGroup from '../common/ToggleButtonGroup';
-import filterMetricsForPhase from '../utils/filterMetricsForPhase';
+import ToggleButtonGroup from '../../common/ToggleButtonGroup';
+import filterMetricsForPhase from '../../utils/filterMetricsForPhase';
 import { Query } from 'react-apollo';
 import { GET_METRICS } from './LocationQueries';
-import { GraphqlError, NetworkError } from '../common/ErrorHandling';
+import { GraphqlError, NetworkError } from '../../common/ErrorHandling';
 import VisToggler from './VisToggler';
-import { Filter, LocationFilters } from '../common/filters';
-import { useMetricFilters } from '../common/useMetricFilters';
+import { Filter, LocationFilters } from '../../common/filters';
+import { useMetricFilters } from '../../common/useMetricFilters';
 
 export const FilterPage = styled.div`
   display: flex;

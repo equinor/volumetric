@@ -11,6 +11,7 @@ export const DARKER_SUCCESS_COLOR = '#13a34a';
 export const WORKING_COLOR = '#fc9403';
 export const DANGER_COLOR = '#db3b21';
 
+export const WARNING_COLOR = '#bf4265';
 export const LIST_SEPARATOR_COLOR = '#f0f0f0';
 
 /*
