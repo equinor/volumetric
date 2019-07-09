@@ -20,7 +20,10 @@ const Contact = () => {
         channel. It is also possible to ask for help there.
       </p>
       <p>
-        <Bold>Slack: </Bold>The channel #volumetric
+        <Bold>Slack: </Bold>The channel{' '}
+        <a href="https://equinor.slack.com/messages/volumetric" target="_blank">
+          #volumetric
+        </a>
       </p>
     </div>
   );
