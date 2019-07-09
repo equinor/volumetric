@@ -1,2 +1,6 @@
 data/
 instance/
+.gitignore
+.git
+docker-compose.ci.yml
+README.md

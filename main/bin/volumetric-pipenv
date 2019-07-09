@@ -2,5 +2,5 @@
 
 docker run --rm -it \
     -v "$PROJECT_MAIN_HOME/../api:/code" \
-    git.equinor.com:4567/volumetric/api \
+    git.equinor.com:4567/volumetric/volumetric/api \
     pipenv $@
