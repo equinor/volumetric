@@ -1,0 +1,73 @@
+#!/bin/sh
+
+echo "Running pre-commit hook"
+
+#
+# Web
+#
+
+command_exists () {
+  command -v "$1" >/dev/null 2>&1
+}
+
+has_hook_script () {
+  [ -f web/package.json ] && cat web/package.json | grep -q "\"$1\"[[:space:]]*:"
+}
+
+cd "."
+
+# Check if precommit script is defined, skip if not
+has_hook_script precommit || exit 0
+
+# Add common path where Node can be found
+# Brew standard installation path /usr/local/bin
+# Node standard installation path /usr/local
+export PATH="$PATH:/usr/local/bin:/usr/local"
+
+# Check that yarn exists
+command_exists yarn || {
+  echo >&2 "can't find yarn in PATH, skipping precommit script in package.json"
+  exit 0
+}
+
+# Export Git hook params
+export GIT_PARAMS="$*"
+
+# Run yarn script
+echo "yarn run -s precommit (node `node -v`)"
+echo
+
+yarn --cwd ./web run -s precommit || {
+  echo
+  echo "husky > pre-commit hook failed (add --no-verify to bypass)"
+  exit 1
+}
+
+#
+# Api
+#
+
+if [ "$(docker images -q git.equinor.com:4567/volumetric/volumetric/api:latest 2> /dev/null)" = "" ]; then
+    echo
+    echo "WARNING: Could not find docker image, skipping pre-commit hook"
+    echo
+    exit 0
+fi
+
+
+# capture the changed files that have been staged
+changed_files=$(git diff --staged --name-only | grep '\.py')
+echo "Location $PWD"
+echo "Changed files: ${changed_files}"
+for file in ${changed_files}
+do
+    if [ -f $file ]; then
+        echo "Modifying ${file}"
+        file_in_docker=${file#*/}
+        docker run --rm -v "$PWD/api:/code" git.equinor.com:4567/volumetric/volumetric/api yapf ${file_in_docker} -i || {
+            echo "yapf failed"
+            exit 1
+        }
+        git add ${file}
+    fi
+done

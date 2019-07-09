@@ -1,11 +1,5 @@
 # Volumetric API
 
-## How to use
-
-Copy the file "secrets.env.template" to "secrets.env" and set the variables in the file.
-
-Then run `docker-compose up -d`
-
 ## Pip operations
 To add new packages, run;
 `volumetric-pipenv install mypackage`
@@ -48,13 +42,3 @@ Make sure to enable remote debugging in config.py
 Make sure you have the right certificates in your docker image. 
 
 On docker build, there has to be a `ca-bundle.trust.crt` that contains StatoilLightCA.crt and StatoilRootCA.crt.
-
-## Setup
-
-### Pre-commit hook:
-
-Activate and build the api docker image
-
-Add the pre-commit hook:
-
-`ln -s $PWD/pre-commit $PWD/.git/hooks/pre-commit`
