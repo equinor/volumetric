@@ -77,7 +77,7 @@ const getHistogramData = (volumetrics, bucketCount = 10) => {
   // return a single bucket when all values are equal
   if (min === max) {
     return {
-      histogramData: [{ x: 1, y: 100 }],
+      bars: [[{ x: 1, y: 100 }]],
       bucketFormatter: () => labelFormater(min),
     };
   }
