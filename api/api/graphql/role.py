@@ -28,8 +28,7 @@ class AssignRole(graphene.Mutation):
         role = graphene.String()
         field = graphene.String()
 
-    ok = graphene.Boolean()
-    role = graphene.Field(Role)
+    Output = Role
 
     def mutate(self, info, user, role, field):
         auth_user = info.context.user
@@ -49,7 +48,7 @@ class AssignRole(graphene.Mutation):
 
         db.session.add(role_model)
         db.session.commit()
-        return AssignRole(ok=True, role=Role(user=user, field=field, role=role))
+        return Role(user=user, field=field, role=role)
 
 
 class DeleteRole(graphene.Mutation):
@@ -57,8 +56,7 @@ class DeleteRole(graphene.Mutation):
         user = graphene.String()
         field = graphene.String()
 
-    ok = graphene.Boolean()
-    role = graphene.Field(Role)
+    Output = Role
 
     def mutate(self, info, user, field):
         auth_user = info.context.user
@@ -72,7 +70,7 @@ class DeleteRole(graphene.Mutation):
 
         db.session.delete(role_model)
         db.session.commit()
-        return DeleteRole(ok=True, role=Role(user=user, field=field))
+        return Role(user=user, field=field)
 
 
 def resolve_role_by_user(self, info, user):

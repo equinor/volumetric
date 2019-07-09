@@ -9,6 +9,7 @@ import { Mutation } from 'react-apollo';
 import { useUserSettings } from '../auth/AuthContext';
 import { gql } from 'apollo-boost';
 import { toast } from 'react-toastify';
+import { errorToast } from '../common/toasts';
 
 const CasesStyled = styled.div`
   width: 100%;
@@ -46,12 +47,7 @@ const Cases = props => {
           },
         });
       }}
-      onError={() =>
-        toast(`Failed to delete case.`, {
-          hideProgressBar: true,
-          type: toast.TYPE.ERROR,
-        })
-      }
+      onError={() => errorToast('Failed to delete case.')}
     >
       {deleteCase => {
         return (

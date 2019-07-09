@@ -19,6 +19,8 @@ import {
   SubmitButton,
 } from '../common/Buttons';
 import { useUserSettings } from '../auth/AuthContext';
+import { GET_ROLES } from '../common/Queries';
+import { errorToast } from '../common/toasts';
 
 const EditButton = styled(FontAwesomeIcon)`
   margin-left: 20px;
@@ -29,12 +31,11 @@ const EditButton = styled(FontAwesomeIcon)`
 const NewMemberContainer = styled.div`
   max-width: 400px;
 `;
-
-const SelectOptions = [
-  { value: 'reader', label: 'Reader' },
-  { value: 'creator', label: 'Creator' },
-  { value: 'fieldadmin', label: 'Field Admin' },
-];
+const roles = ['reader', 'creator', 'fieldadmin'];
+const SelectOptions = roles.map(role => ({
+  value: role,
+  label: prettyRole(role),
+}));
 
 const GET_ROLES_IN_FIELD = gql`
   query RolesByField($field: String) {
@@ -49,11 +50,9 @@ const GET_ROLES_IN_FIELD = gql`
 const ASSIGN_ROLE = gql`
   mutation AssignRole($field: String, $role: String, $user: String) {
     assignRole(field: $field, role: $role, user: $user) {
-      role {
-        field
-        role
-        user
-      }
+      field
+      role
+      user
     }
   }
 `;
@@ -61,45 +60,36 @@ const ASSIGN_ROLE = gql`
 const DELETE_ROLE = gql`
   mutation DeleteRole($field: String, $user: String) {
     deleteRole(field: $field, user: $user) {
-      role {
-        field
-        user
-      }
+      field
+      user
     }
   }
 `;
 
 function DeleteButton({ field, user }) {
+  const updateDeleteRole = cache => {
+    const { rolesByField: roles } = cache.readQuery({
+      query: GET_ROLES_IN_FIELD,
+      variables: { field: field },
+    });
+
+    const filteredRoles = roles.filter(role => role.user !== user);
+    cache.writeQuery({
+      query: GET_ROLES_IN_FIELD,
+      variables: { field: field },
+      data: { rolesByField: [...filteredRoles] },
+    });
+  };
+
   return (
     <Mutation
       mutation={DELETE_ROLE}
-      variables={{ field: field, user: user }}
-      update={cache => {
-        let roles = cache.readQuery({
-          query: GET_ROLES_IN_FIELD,
-          variables: { field: field },
-        });
-        const index = roles.rolesByField.findIndex(role => role.user === user);
-        roles.rolesByField.splice(index, 1);
-        cache.writeQuery({
-          query: GET_ROLES_IN_FIELD,
-          variables: { field: field },
-          data: { rolesByField: [...roles.rolesByField] },
-        });
-      }}
+      variables={{ field, user }}
+      update={updateDeleteRole}
+      optimisticResponse={{ deleteRole: { field, user } }}
+      onError={() => errorToast('Failed to delete user.')}
     >
-      {(deleteRole, { loading, error }) => {
-        if (loading) {
-          return <SmallSpinner isLoading={loading} />;
-        }
-        if (error) {
-          return error.networkError ? (
-            <NetworkError {...error} />
-          ) : (
-            <GraphqlError {...error} />
-          );
-        }
-
+      {deleteRole => {
         return (
           <DeleteButtonStyled
             onClick={() => {
@@ -122,37 +112,38 @@ function AddUser({ field }) {
   const [selectedRole, setRole] = useState('');
   const [selectedUser, setUser] = useState('');
 
+  const updateAssignRole = (cache, { data: { assignRole } }) => {
+    const { rolesByField: roles } = cache.readQuery({
+      query: GET_ROLES_IN_FIELD,
+      variables: { field: field },
+    });
+    cache.writeQuery({
+      query: GET_ROLES_IN_FIELD,
+      variables: { field: field },
+      data: { rolesByField: [assignRole, ...roles] },
+    });
+  };
+
   return (
     <Mutation
       mutation={ASSIGN_ROLE}
-      update={(cache, { data: { assignRole } }) => {
-        const roles = cache.readQuery({
-          query: GET_ROLES_IN_FIELD,
-          variables: { field: field },
-        });
-        cache.writeQuery({
-          query: GET_ROLES_IN_FIELD,
-          variables: { field: field },
-          data: { rolesByField: [assignRole.role, ...roles.rolesByField] },
-        });
-      }}
+      update={updateAssignRole}
       variables={{
         field: field,
         role: selectedRole.value,
         user: selectedUser,
       }}
+      optimisticResponse={{
+        assignRole: {
+          __typename: 'Role',
+          field: field,
+          role: selectedRole.value,
+          user: selectedUser,
+        },
+      }}
+      onError={() => errorToast('Failed to add user.')}
     >
-      {(assignRole, { loading, error }) => {
-        if (loading) {
-          return <SmallSpinner isLoading={loading} />;
-        }
-        if (error) {
-          return error.networkError ? (
-            <NetworkError {...error} />
-          ) : (
-            <GraphqlError {...error} />
-          );
-        }
+      {assignRole => {
         return (
           <NewMemberContainer>
             <H4>New Member</H4>
@@ -186,51 +177,58 @@ function AddUser({ field }) {
 
 function UserRow({ user, field }) {
   const [editable, toggleEdit] = useState(false);
-  const [selectedRole, setRole] = useState(user.role);
+  const { setCurrentRole, user: currentUser } = useUserSettings();
+
+  const updateAssignRole = (cache, { data: { assignRole } }) => {
+    const { rolesByField } = cache.readQuery({
+      query: GET_ROLES_IN_FIELD,
+      variables: { field: field },
+    });
+    const role = rolesByField.find(role => role.user === assignRole.user);
+    role.role = assignRole.role;
+    cache.writeQuery({
+      query: GET_ROLES_IN_FIELD,
+      variables: { field: field },
+      data: { rolesByField: [...rolesByField] },
+    });
+    //  Update roleByUser in case user updates self
+    const currentUserName = currentUser.shortName.toLowerCase();
+    if (currentUserName === assignRole.user) {
+      const query = { query: GET_ROLES, variables: { user: currentUserName } };
+      const { roleByUser } = cache.readQuery(query);
+      roleByUser.find(role => role.field === field).role = assignRole.role;
+      cache.writeQuery({
+        ...query,
+        data: {
+          roleByUser: roleByUser,
+        },
+      });
+      setCurrentRole(assignRole.role);
+    }
+  };
 
   return (
     <Mutation
       mutation={ASSIGN_ROLE}
-      update={(cache, { data: { assignRole } }) => {
-        let roles = cache.readQuery({
-          query: GET_ROLES_IN_FIELD,
-          variables: { field: field },
-        });
-        const index = roles.rolesByField.findIndex(
-          role => role.user === user.user,
-        );
-        roles.rolesByField[index] = assignRole.role;
-        cache.writeQuery({
-          query: GET_ROLES_IN_FIELD,
-          variables: { field: field },
-          data: { rolesByField: [...roles.rolesByField] },
-        });
-      }}
+      update={updateAssignRole}
+      onError={() => errorToast('Failed to assign role.')}
     >
-      {(assignRole, { loading, error }) => {
-        if (loading) {
-          return (
-            <Row>
-              <TD>
-                <SmallSpinner isLoading={loading} />
-              </TD>
-            </Row>
-          );
-        }
-        if (error) {
-          return error.networkError ? (
-            <NetworkError {...error} />
-          ) : (
-            <GraphqlError {...error} />
-          );
-        }
-
-        function selectedNewRole(value) {
-          setRole(value.value);
-          toggleEdit(false);
-          assignRole({
-            variables: { field: field, role: value.value, user: user.user },
-          });
+      {assignRole => {
+        function selectedNewRole({ value: role }) {
+          const newRole = { field, role, user: user.user };
+          if (user.role !== role) {
+            assignRole({
+              variables: newRole,
+              optimisticResponse: {
+                assignRole: {
+                  __typename: 'Role',
+                  ...newRole,
+                },
+              },
+            });
+          } else {
+            toggleEdit(false);
+          }
         }
 
         return (
@@ -241,8 +239,8 @@ function UserRow({ user, field }) {
                 {editable ? (
                   <Select
                     options={SelectOptions}
-                    value={selectedRole}
-                    placeholder={prettyRole(selectedRole)}
+                    value={user.role}
+                    placeholder={prettyRole(user.role)}
                     onChange={value => selectedNewRole(value)}
                   />
                 ) : (
@@ -250,7 +248,7 @@ function UserRow({ user, field }) {
                     {prettyRole(user.role)}
                     <EditButton
                       icon={faPen}
-                      onClick={() => toggleEdit(editable ? false : true)}
+                      onClick={() => toggleEdit(!editable)}
                     />
                   </>
                 )}
@@ -280,7 +278,13 @@ function ExistingUsers({ roles, field }) {
         </thead>
         <tbody>
           {roles.map(user => {
-            return <UserRow user={user} field={field} key={user.user} />;
+            return (
+              <UserRow
+                user={user}
+                field={field}
+                key={`${user.user}${user.role}`}
+              />
+            );
           })}
         </tbody>
       </Table>

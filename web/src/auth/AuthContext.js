@@ -50,6 +50,7 @@ export const AuthProvider = ({ user, token, roles, children }) => {
     currentField: currentField,
     token,
     setCurrentField,
+    setCurrentRole,
   };
 
   return (

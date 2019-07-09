@@ -13,7 +13,7 @@ import Docs from './docs/Docs';
 import { ALMOST_BLACK, PRIMARY_COLOR } from './common/variables';
 import { toast } from 'react-toastify';
 import { CasesPage } from './cases';
-
+import { prettyRole } from './common/FormattedText';
 toast.configure();
 
 const GlobalStyle = createGlobalStyle`
@@ -95,7 +95,7 @@ function App() {
       <GlobalStyle />
       <AppHeader>
         <UserInfo>
-          {user.name}
+          {`${user.name} (${prettyRole(user.currentRole)})`}
           <FieldRole />
         </UserInfo>
         <InnerHeader>

@@ -29,6 +29,7 @@ export function prettyRole(role) {
     case 'fieldadmin':
       return 'Field Admin';
     default:
+      console.error('Tried to get name of unknown role');
       return 'None';
   }
 }
