@@ -25,6 +25,9 @@ if [ ! -z $DATABASE_HOST ] && [ ${first_arg} != 'yapf' ] && [ ${first_arg} != 'p
     service_is_ready "DATABASE" ${DATABASE_HOST} ${DATABASE_PORT}
 fi
 
+if [ ${first_arg} == 'worker' ] || [ $WORKER == 1 ]; then
+    python worker.py
+fi
 
 if [ ${first_arg} = 'api' ]; then
     flask db upgrade -x data=true
@@ -51,10 +54,6 @@ if [ ${first_arg} = 'api' ]; then
             app:app
     fi
 	exit $?
-fi
-
-if [ ${first_arg} = 'worker' ]; then
-    python worker.py
 fi
 
 if [ ${first_arg} = 'manage' ]; then

@@ -21,4 +21,4 @@ RUN yarn build
 
 EXPOSE 3000
 
-CMD ["yarn", "start"]
+CMD ["serve", "--single", "build", "--listen", "3000"]

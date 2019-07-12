@@ -1,0 +1,89 @@
+apiVersion: radix.equinor.com/v1
+kind: RadixApplication
+metadata:
+  name: volumetric
+spec:
+  environments:
+    - name: dev
+      build:
+        from: master
+    - name: feature
+      build:
+        from: feature
+  components:
+    - name: proxy
+      src: ./proxy
+      ports:
+        - name: http
+          port: 80
+      public: true
+    - name: web
+      src: ./web
+      ports:
+        - name: http
+          port: 3000
+      public: false
+      environmentConfig:
+        - environment: dev
+          monitoring: false
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "10m"
+            limits:
+              memory: "54Mi"
+              cpu: "20m"
+          replicas: 1
+    - name: api
+      src: ./api
+      ports:
+        - name: http
+          port: 8080
+      public: false
+      environmentConfig:
+        - environment: dev
+          variables:
+            REDIS_HOST: redis
+            DATABASE_PORT: 5432
+            POSTGRES_DB: volumetric
+            AZURE_APP_CLIENT_ID: c049f236-7e38-41ba-be77-287bc1c8543c
+            AZURE_KEYS_URI: https://login.microsoftonline.com/common/discovery/v2.0/keys
+            AZURE_FILES_ACCOUNT: volumetric
+      secrets:
+        - AZURE_FILES_KEY
+        - FLASK_SECRET_KEY
+        - POSTGRES_PASSWORD
+        - POSTGRES_USER
+        - ENVIRONMENT
+        - DATABASE_HOST
+    - name: worker
+      src: ./api
+      ports:
+        - name: http
+          port: 8080
+      environmentConfig:
+        - environment: dev
+          replicas: 1
+          variables:
+            REDIS_HOST: redis
+            DATABASE_PORT: 5432
+            POSTGRES_DB: volumetric
+            AZURE_APP_CLIENT_ID: c049f236-7e38-41ba-be77-287bc1c8543c
+            AZURE_KEYS_URI: https://login.microsoftonline.com/common/discovery/v2.0/keys
+            AZURE_FILES_ACCOUNT: volumetric
+            WORKER: 1
+      secrets:
+        - AZURE_FILES_KEY
+        - FLASK_SECRET_KEY
+        - POSTGRES_PASSWORD
+        - POSTGRES_USER
+        - ENVIRONMENT
+        - DATABASE_HOST
+    - name: redis
+      src: ./redis
+      ports:
+        - name: http
+          port: 6379
+  dnsAppAlias:
+    environment: dev
+    component: proxy

@@ -1,0 +1,33 @@
+secrets.env
+.env
+api/test_data
+
+# IDE
+.idea/
+data/
+.vscode
+
+# python
+__pycache__/
+pycharm-debug-py3k.egg
+pycharm-debug.egg
+
+# dependencies
+node_modules
+.venv/
+venv/
+
+# testing
+coverage
+api/instance
+
+# production
+/build
+
+yarn-debug.log*
+yarn-error.log*
+
+data
+*.key
+uploads/
+

@@ -1,0 +1,41 @@
+version: '3.4'
+
+services:
+  web:
+    build:
+      context: web
+      args:
+        UID: $DOCKER_USER
+        GID: $DOCKER_GROUP
+    volumes:
+      - ./web:/code
+    command: yarn start
+
+  api:
+    build:
+      context: api
+      args:
+        UID: $DOCKER_USER
+        GID: $DOCKER_GROUP
+    volumes:
+      - ./api:/code
+
+  worker:
+    build:
+      context: api
+      args:
+        UID: $DOCKER_USER
+        GID: $DOCKER_GROUP
+    volumes:
+      - ./api:/code
+
+  db:
+    image: postgres:10.2-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=volumetric
+      - POSTGRES_DB=volumetric
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
