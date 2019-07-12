@@ -22,6 +22,7 @@ export const AuthProvider = ({ user, token, roles, children }) => {
   const [localStorageField, setLocalStorageField] = useStateWithLocalStorage(
     'currentField',
   );
+
   const hasRoles = roles.length > 0;
   const hasAccessToCurrentField =
     localStorageField && roles.some(role => role.field === localStorageField);
@@ -39,22 +40,24 @@ export const AuthProvider = ({ user, token, roles, children }) => {
     setCurrentRole(findRole(roles, field));
   };
 
-  const initialState = {
-    user: {
-      ...user,
-      roles,
-      currentRole: currentRole,
-      isFieldAdmin: currentRole === 'fieldadmin',
-      isCreator: currentRole === 'creator' || currentRole === 'fieldadmin',
-    },
-    currentField: currentField,
-    token,
-    setCurrentField,
-    setCurrentRole,
-  };
-
   return (
-    <AuthContext.Provider value={initialState}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        user: {
+          ...user,
+          roles,
+          currentRole: currentRole,
+          isFieldAdmin: currentRole === 'fieldadmin',
+          isCreator: currentRole === 'creator' || currentRole === 'fieldadmin',
+        },
+        currentField: currentField,
+        token,
+        setCurrentField,
+        setCurrentRole,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 };
 

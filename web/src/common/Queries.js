@@ -4,6 +4,7 @@ export const FULL_CASE_FRAGMENT = gql`
   fragment FullCase on Case {
     id
     name
+    fieldName
     caseVersion
     caseType
     description

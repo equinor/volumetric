@@ -37,9 +37,6 @@ def resolve_case(self, info, case_id):
     user = info.context.user
     case = CaseModel.query.filter(CaseModel.id == case_id).first()
 
-    if user.isAdmin:
-        return case
-
     # Deny if user dont have access to field
     if not is_reader(user, case.field.name):
         raise GraphQLError('You are not authorized to view this case.')

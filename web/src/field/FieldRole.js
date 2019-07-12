@@ -27,8 +27,17 @@ const DownArrow = styled(FontAwesomeIcon)`
   margin-left: 5px;
 `;
 
-const FieldRole = () => {
+const FieldRole = ({ history }) => {
   const { user, currentField, setCurrentField } = useUserSettings();
+
+  const changeCurrentField = field => {
+    const location_array = window.location.pathname.split('/');
+    if (location_array.length === 3 && location_array[1] === 'cases') {
+      history.push('/');
+    }
+    setCurrentField(field);
+  };
+
   let menu;
   if (user.roles.length > 0) {
     const fields = user.roles.map(field => (
@@ -36,7 +45,9 @@ const FieldRole = () => {
         {field.field} ({prettyRole(field.role)})
       </MenuItem>
     ));
-    menu = <Menu onSelect={({ key }) => setCurrentField(key)}>{fields}</Menu>;
+    menu = (
+      <Menu onSelect={({ key }) => changeCurrentField(key)}>{fields}</Menu>
+    );
   } else {
     menu = (
       <Menu defaultActiveFirst={true}>

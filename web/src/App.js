@@ -14,6 +14,7 @@ import { ALMOST_BLACK, PRIMARY_COLOR } from './common/variables';
 import { toast } from 'react-toastify';
 import { CasesPage } from './cases';
 import { prettyRole } from './common/FormattedText';
+
 toast.configure();
 
 const GlobalStyle = createGlobalStyle`
@@ -88,45 +89,54 @@ const NoMatch = ({ location }) => (
   </div>
 );
 
+const Header = ({ user, ...props }) => {
+  return (
+    <AppHeader>
+      <UserInfo>
+        {`${user.name} (${prettyRole(user.currentRole)})`}
+        <FieldRole {...props} />
+      </UserInfo>
+      <InnerHeader>
+        <AppTitle>
+          <HeaderLink to="/">Volumetric</HeaderLink>
+        </AppTitle>
+        <HeaderLinks>
+          <HeaderLink right to="/cases">
+            Cases
+          </HeaderLink>
+          {user.isCreator && (
+            <HeaderLink right to="/imports">
+              Imports
+            </HeaderLink>
+          )}
+          {(user.isFieldAdmin || user.isAdmin) && (
+            <HeaderLink right to="/users">
+              Users
+            </HeaderLink>
+          )}
+          {user.isAdmin && (
+            <HeaderLink right to="/fields">
+              Manage fields
+            </HeaderLink>
+          )}
+          <HeaderLink right to="/docs">
+            Docs
+          </HeaderLink>
+        </HeaderLinks>
+      </InnerHeader>
+    </AppHeader>
+  );
+};
+
 function App() {
   const { user } = useUserSettings();
   return (
     <>
       <GlobalStyle />
-      <AppHeader>
-        <UserInfo>
-          {`${user.name} (${prettyRole(user.currentRole)})`}
-          <FieldRole />
-        </UserInfo>
-        <InnerHeader>
-          <AppTitle>
-            <HeaderLink to="/">Volumetric</HeaderLink>
-          </AppTitle>
-          <HeaderLinks>
-            <HeaderLink right to="/cases">
-              Cases
-            </HeaderLink>
-            {user.isCreator && (
-              <HeaderLink right to="/imports">
-                Imports
-              </HeaderLink>
-            )}
-            {(user.isFieldAdmin || user.isAdmin) && (
-              <HeaderLink right to="/users">
-                Users
-              </HeaderLink>
-            )}
-            {user.isAdmin && (
-              <HeaderLink right to="/fields">
-                Manage fields
-              </HeaderLink>
-            )}
-            <HeaderLink right to="/docs">
-              Docs
-            </HeaderLink>
-          </HeaderLinks>
-        </InnerHeader>
-      </AppHeader>
+      <Route
+        path="/"
+        render={routerProps => <Header {...routerProps} user={user} />}
+      />
       <Switch>
         <Redirect exact from="/" to="/cases" />
         <Route path="/cases" component={CasesPage} />
