@@ -91,7 +91,8 @@ function AddField({ history }) {
             <H4>New Field</H4>
             {validateError && <ErrorText>{validateError}</ErrorText>}
             <form
-              onSubmit={() => {
+              onSubmit={e => {
+                e.preventDefault();
                 createField();
                 setField('');
               }}

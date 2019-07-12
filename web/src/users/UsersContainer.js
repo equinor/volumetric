@@ -147,27 +147,32 @@ function AddUser({ field }) {
         return (
           <NewMemberContainer>
             <H4>New Member</H4>
-            <TextInput
-              onChange={e => setUser(e.target.value)}
-              placeholder="Enter users shortname..."
-              value={selectedUser}
-            />
-            <Select
-              options={SelectOptions}
-              value={selectedRole}
-              placeholder={`Select Role`}
-              onChange={value => setRole(value)}
-            />
-            <SubmitButton
-              onClick={() => {
+            <form
+              onSubmit={e => {
+                e.preventDefault();
                 assignRole();
                 setRole('');
                 setUser('');
               }}
-              disabled={!(selectedRole && selectedUser)}
             >
-              Add user
-            </SubmitButton>
+              <TextInput
+                onChange={e => setUser(e.target.value)}
+                placeholder="Enter users shortname..."
+                value={selectedUser}
+              />
+              <Select
+                options={SelectOptions}
+                value={selectedRole}
+                placeholder={`Select Role`}
+                onChange={value => setRole(value)}
+              />
+              <SubmitButton
+                type="submit"
+                disabled={!(selectedRole && selectedUser)}
+              >
+                Add user
+              </SubmitButton>
+            </form>
           </NewMemberContainer>
         );
       }}

@@ -34,7 +34,7 @@ export const CancelLink = styled(Link)`
 
 export const ImportButton = ({ importCase, disabled }) => {
   return (
-    <SubmitButton disabled={disabled} onClick={importCase}>
+    <SubmitButton type="submit" disabled={disabled} onClick={importCase}>
       Submit
     </SubmitButton>
   );

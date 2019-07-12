@@ -8,6 +8,8 @@ function createToggleButton({
   selected,
   label,
   buttonStyle,
+  name,
+  index,
   first,
   last,
 }) {
@@ -19,6 +21,8 @@ function createToggleButton({
       value={value}
       selected={selected.toLowerCase() === value}
       buttonStyle={buttonStyle}
+      name={name}
+      index={index}
       first={first}
       last={last}
     >
@@ -42,7 +46,9 @@ const ToggleButtonGroup = props => {
       onChange,
       selected: currentSelected,
       label: button,
+      name: 'visibility',
       buttonStyle,
+      index,
       last: index === buttons.length - 1,
       first: index === 0,
     });
@@ -50,7 +56,7 @@ const ToggleButtonGroup = props => {
 
   return (
     <RadioButtonGroupStyled className={className}>
-      {radioButtons}
+      <fieldset style={{ border: '0' }}>{radioButtons}</fieldset>
     </RadioButtonGroupStyled>
   );
 };
