@@ -31,6 +31,7 @@ const CaseName = styled.div`
 const CaseVersion = styled.div`
   font-family: Equinor-Regular, serif;
   color: ${UNIMPORTANT_TEXT};
+  margin-left: 20px;
 `;
 
 const Row = styled.div`
