@@ -1,0 +1,64 @@
+apiVersion: radix.equinor.com/v1
+kind: RadixApplication
+metadata:
+  name: volumetrics
+spec:
+  environments:
+    - name: dev
+      build:
+        from: master
+    - name: feature
+      build:
+        from: feature
+  components:
+    - name: web
+      src: ./web
+      ports:
+        - name: http
+          port: 3000
+      public: true
+      environmentConfig:
+        - environment: dev
+          monitoring: false
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "10m"
+            limits:
+              memory: "54Mi"
+              cpu: "20m"
+          replicas: 1
+    - name: api
+      src: ./api
+      ports:
+        - name: http
+          port: 8080
+      public: true
+      secrets:
+        - ENVIRONMENT
+        - REDIS_HOST
+        - DATABASE_HOST
+        - DATABASE_PORT
+        - POSTGRES_USER
+        - POSTGRES_DB
+        - AZURE_APP_CLIENT_ID
+        - AZURE_KEYS_URI
+    - name: worker
+        src: ./api
+        environmentConfig:
+          - environment: dev
+            replicas: 3
+        secrets:
+          - ENVIRONMENT
+          - REDIS_HOST
+          - DATABASE_HOST
+          - DATABASE_PORT
+          - POSTGRES_USER
+          - POSTGRES_DB
+          - AZURE_APP_CLIENT_ID
+          - AZURE_KEYS_URI
+    - name: redis
+        src: ./redis
+  dnsAppAlias:
+    environment: dev
+    component: web

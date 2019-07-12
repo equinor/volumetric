@@ -2,9 +2,10 @@ version: '3.4'
 
 services:
   proxy:
-    build: proxy/local_development
+    build: proxy
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - web
       - api
@@ -12,26 +13,12 @@ services:
       - TZ=Europe/Oslo
 
   web:
-    build:
-      context: ../web
-      args:
-        UID: $DOCKER_USER
-        GID: $DOCKER_GROUP
     image: git.equinor.com:4567/volumetric/volumetric/web
-    volumes:
-      - ./../web:/code
+    restart: unless-stopped
+    command: serve --single build --listen 3000
 
   api:
-    build:
-      context: ../api
-      args:
-        UID: $DOCKER_USER
-        GID: $DOCKER_GROUP
     image: git.equinor.com:4567/volumetric/volumetric/api
-    env_file:
-      - secrets.env
-    volumes:
-      - ./../api:/code
     depends_on:
       - redis
       - worker
@@ -42,46 +29,33 @@ services:
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - FLASK_ENV=development
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
       - AZURE_APP_CLIENT_ID=c049f236-7e38-41ba-be77-287bc1c8543c
       - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
+      - AZURE_FILES_ACCOUNT=${POSTGRES_PASSWORD}
+      - AZURE_FILES_KEY=${AZURE_FILES_KEY}
 
   redis:
-    image: redis:5.0-alpine
-    #command: ["--loglevel", "verbose"]
+    build:
+      context: redis
     command: ["--tcp-backlog", "128"]
-    ports:
-      - "6379:6379"
 
   worker:
-    build:
-      context: ../api
-      args:
-        UID: $DOCKER_USER
-        GID: $DOCKER_GROUP
     image: git.equinor.com:4567/volumetric/volumetric/api
-    env_file:
-      - secrets.env
     command: ["worker"]
-    volumes:
-      - ./../api:/code
     environment:
       - ENVIRONMENT=local
-      - DATABASE_HOST=db
       - REDIS_HOST=redis
+      - DATABASE_HOST=db
       - DATABASE_PORT=5432
       - POSTGRES_USER=volumetric
       - POSTGRES_DB=volumetric
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - FLASK_ENV=development
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
       - AZURE_APP_CLIENT_ID=c049f236-7e38-41ba-be77-287bc1c8543c
       - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
-
-  db:
-    image: postgres:10.2-alpine
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=volumetric
-      - POSTGRES_DB=volumetric
+      - AZURE_FILES_ACCOUNT=${POSTGRES_PASSWORD}
+      - AZURE_FILES_KEY=${AZURE_FILES_KEY}

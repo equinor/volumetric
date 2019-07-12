@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+#ENVIRONMENT=${ENVIRONMENT:=""}
+
+if [[ "$ENVIRONMENT" == "local" ]]; then
+    docker-compose -p "volumetric_$ENVIRONMENT" \
+    $@
+
+else
+    docker-compose -p "volumetric_$ENVIRONMENT" \
+        -f "$PROJECT_MAIN_HOME/docker-compose.$ENVIRONMENT.yml" \
+        $@
+fi

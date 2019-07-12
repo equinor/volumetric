@@ -55,15 +55,3 @@ services:
     - AZURE_KEYS_URI=https://login.microsoftonline.com/common/discovery/v2.0/keys
     restart: unless-stopped
 
-  db:
-    image: postgres:10.2-alpine
-    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
-    volumes:
-      - ./postgresql.conf:/etc/postgresql/postgresql.conf
-      - ./data/postgres:/var/lib/postgresql/data
-    env_file:
-      - $SECRETS_PATH/secrets.env
-    environment:
-      - POSTGRES_USER=volumetric
-      - POSTGRES_DB=volumetric
-    restart: unless-stopped
