@@ -3,7 +3,7 @@ import { Mutation, Query } from 'react-apollo';
 import { ListPageWithActions } from '../common/Layouts';
 import { Row, Table, TD, TH } from '../common/Table';
 import styled from 'styled-components';
-import { SmallSpinner, StyledSpinner } from '../common/Spinner';
+import { StyledSpinner } from '../common/Spinner';
 import { GraphqlError, NetworkError } from '../common/ErrorHandling';
 import { gql } from 'apollo-boost';
 import { TextInput } from '../import/common/Input';

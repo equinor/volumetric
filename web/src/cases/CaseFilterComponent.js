@@ -8,7 +8,6 @@ import { GET_CASES, SHORT_CASE_FRAGMENT } from '../common/Queries';
 import { Mutation } from 'react-apollo';
 import { useUserSettings } from '../auth/AuthContext';
 import { gql } from 'apollo-boost';
-import { toast } from 'react-toastify';
 import { errorToast } from '../common/toasts';
 
 const CasesStyled = styled.div`
