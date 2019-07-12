@@ -21,7 +21,11 @@ const Contact = () => {
       </p>
       <p>
         <Bold>Slack: </Bold>The channel{' '}
-        <a href="https://equinor.slack.com/messages/volumetric" target="_blank">
+        <a
+          href="https://equinor.slack.com/messages/volumetric"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           #volumetric
         </a>
       </p>
