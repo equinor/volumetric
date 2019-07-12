@@ -18,6 +18,7 @@ venv/
 
 # testing
 coverage
+api/instance
 
 # production
 /build

@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-#ENVIRONMENT=${ENVIRONMENT:=""}
-
 if [[ "$ENVIRONMENT" == "local" ]]; then
     docker-compose -p "volumetric_$ENVIRONMENT" \
     $@
