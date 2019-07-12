@@ -9,7 +9,7 @@ import { getCompareCases } from '../common/queryParams';
 import { CompareComponent } from './CompareComponent';
 
 const CompareContainer = ({ location }) => {
-  const { currentField, user } = useUserSettings();
+  const { currentField, user, setCurrentField } = useUserSettings();
   if (currentField === 'No field') {
     return <NoField user={user} />;
   }
@@ -17,8 +17,13 @@ const CompareContainer = ({ location }) => {
     <Query
       query={GET_FULL_CASES}
       variables={{
-        field: currentField,
         caseIds: getCompareCases(location),
+      }}
+      onCompleted={data => {
+        const fieldName = data.cases[0].fieldName;
+        if (fieldName !== currentField) {
+          setCurrentField(fieldName);
+        }
       }}
     >
       {({ data, loading, error }) => {
