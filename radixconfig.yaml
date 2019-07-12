@@ -11,12 +11,17 @@ spec:
       build:
         from: feature
   components:
+    - name: proxy
+      src: ./proxy
+      ports:
+        - name: http
+          port: 80
+      public: true
     - name: web
       src: ./web
       ports:
         - name: http
           port: 3000
-      public: true
       environmentConfig:
         - environment: dev
           monitoring: false
@@ -33,7 +38,6 @@ spec:
       ports:
         - name: http
           port: 8080
-      public: true
       secrets:
         - ENVIRONMENT
         - REDIS_HOST
