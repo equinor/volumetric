@@ -6,6 +6,6 @@ if [[ "$ENVIRONMENT" == "local" ]]; then
 
 else
     docker-compose -p "volumetric_$ENVIRONMENT" \
-        -f "$PROJECT_MAIN_HOME/docker-compose.$ENVIRONMENT.yml" \
+        -f "$PROJECT_HOME/docker-compose.$ENVIRONMENT.yml" \
         $@
 fi
