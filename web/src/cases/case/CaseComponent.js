@@ -108,6 +108,13 @@ export const CaseComponent = props => {
           />
           <LocationFilters
             currentCase={{ regions, facies, zones }}
+            setFilterState={(category, values) =>
+              dispatch({
+                type: 'LOCATION_FILTER_SET',
+                category,
+                values,
+              })
+            }
             handleFilterChange={(category, { target: { checked, value } }) => {
               dispatch({
                 type: 'LOCATION_FILTER_CHANGE',

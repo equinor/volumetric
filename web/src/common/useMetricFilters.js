@@ -11,6 +11,13 @@ const reducer = (state, action) => {
           : state[key].filter(item => item !== value),
       };
     }
+    case 'LOCATION_FILTER_SET': {
+      const { category: key, values } = action;
+      return {
+        ...state,
+        [key]: values,
+      };
+    }
     case 'METRIC_FILTER_CHANGE': {
       const key = 'metrics';
       const { checked, value } = action;

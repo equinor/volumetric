@@ -9,7 +9,7 @@ import { useUserSettings } from '../../auth/AuthContext';
 import { NoDataDiv, NoField } from '../../common/NoData';
 
 const CaseContainer = props => {
-  const { currentField, user } = useUserSettings();
+  const { currentField, user, setCurrentField } = useUserSettings();
   if (currentField === 'No field') {
     return <NoField user={user} />;
   }
@@ -18,11 +18,21 @@ const CaseContainer = props => {
     return <NoDataDiv>Unknown case.</NoDataDiv>;
   }
   return (
-    <Query query={GET_CASE} variables={{ caseId }}>
+    <Query
+      query={GET_CASE}
+      variables={{ caseId }}
+      onCompleted={data =>
+        data.case.fieldName !== currentField &&
+        setCurrentField(data.case.fieldName)
+      }
+    >
       {({ data, loading, error }) => {
-        if (loading) return <StyledSpinner isLoading={true} />;
-        if (error)
+        if (loading) {
+          return <StyledSpinner isLoading={true} />;
+        }
+        if (error) {
           return error.networkError ? NetworkError(error) : GraphqlError(error);
+        }
         return (
           <div>
             <CaseInfo currentCase={data.case} />

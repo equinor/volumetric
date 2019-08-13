@@ -75,7 +75,12 @@ export default ({
   setVisibility,
 }) => {
   return (
-    <>
+    <form
+      onSubmit={() => {
+        resetHasChanged();
+        importCase({ variables: formState });
+      }}
+    >
       <InputWrapper>
         <MinimalLabel>
           <LabelText>File</LabelText>
@@ -166,12 +171,8 @@ export default ({
               formState.caseType
             )
           }
-          importCase={() => {
-            resetHasChanged();
-            importCase({ variables: formState });
-          }}
         />
       </Footer>
-    </>
+    </form>
   );
 };

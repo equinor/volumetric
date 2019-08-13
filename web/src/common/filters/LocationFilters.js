@@ -3,6 +3,7 @@ import { Filter } from './Filters';
 
 const LocationFilters = ({
   handleFilterChange,
+  setFilterState,
   checkedRegions,
   checkedZones,
   checkedFacies,
@@ -11,6 +12,8 @@ const LocationFilters = ({
   return (
     <React.Fragment>
       <Filter
+        showTotals
+        setFilterState={setFilterState}
         name="Regions"
         filters={currentCase.regions}
         handleFilterChange={handleFilterChange}
@@ -18,6 +21,8 @@ const LocationFilters = ({
         checked={checkedRegions}
       />
       <Filter
+        showTotals
+        setFilterState={setFilterState}
         name="Zones"
         filters={currentCase.zones}
         handleFilterChange={handleFilterChange}
@@ -26,6 +31,8 @@ const LocationFilters = ({
       />
       {currentCase.facies[0] !== null && (
         <Filter
+          showTotals
+          setFilterState={setFilterState}
           name="Facies"
           filters={currentCase.facies}
           handleFilterChange={handleFilterChange}

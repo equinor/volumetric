@@ -59,7 +59,7 @@ export default ({ history, user, currentField, ...props }) => {
       mutation={IMPORT_CASE}
       onCompleted={data => {
         if (data.importCase.validationError.allValid) {
-          history.push('/cases/import');
+          history.push('/imports');
         }
       }}
       update={(

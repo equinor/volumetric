@@ -14,20 +14,17 @@ from .validation_error import ValidationField
 
 
 @ordered_case
-def resolve_cases(self, info, field_name, case_ids=None):
+def resolve_cases(self, info, case_ids=None, field_name=None):
     user = info.context.user
-    cases_query = CaseModel.query
     if case_ids is not None:
-        cases_query = cases_query.filter(and_(CaseModel.id.in_(case_ids), CaseModel.field_name == field_name))
+        cases_query = CaseModel.query.filter(CaseModel.id.in_(case_ids))
     else:
-        cases_query = cases_query.filter(CaseModel.field_name == field_name)
-    cases = cases_query.all()
-    # Return all fields if user is Admin
-    if user.isAdmin:
-        return cases
+        cases_query = CaseModel.query.filter(CaseModel.field_name == field_name)
 
-    if not is_reader(user, field_name):
-        raise GraphQLError("You don't have access to this field.")
+    cases = cases_query.all()
+
+    if not all(is_reader(user, case.field_name) for case in cases):
+        raise GraphQLError("You don't have access to these cases.")
 
     # Return only official and personal cases if user is not an administrator
     return [case for case in cases if case.created_user == user.shortname or case.is_shared]
@@ -36,9 +33,6 @@ def resolve_cases(self, info, field_name, case_ids=None):
 def resolve_case(self, info, case_id):
     user = info.context.user
     case = CaseModel.query.filter(CaseModel.id == case_id).first()
-
-    if user.isAdmin:
-        return case
 
     # Deny if user dont have access to field
     if not is_reader(user, case.field.name):

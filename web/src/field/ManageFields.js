@@ -90,20 +90,22 @@ function AddField({ history }) {
           <NewFieldContainer>
             <H4>New Field</H4>
             {validateError && <ErrorText>{validateError}</ErrorText>}
-            <TextInput
-              onChange={e => setField(e.target.value)}
-              placeholder="Enter new field name..."
-              value={selectedField}
-            />
-            <SubmitButton
-              onClick={() => {
+            <form
+              onSubmit={e => {
+                e.preventDefault();
                 createField();
                 setField('');
               }}
-              disabled={!selectedField}
             >
-              Add field
-            </SubmitButton>
+              <TextInput
+                onChange={e => setField(e.target.value)}
+                placeholder="Enter new field name..."
+                value={selectedField}
+              />
+              <SubmitButton type="submit" disabled={!selectedField}>
+                Submit
+              </SubmitButton>
+            </form>
           </NewFieldContainer>
         );
       }}

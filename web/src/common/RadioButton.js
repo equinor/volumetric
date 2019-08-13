@@ -9,17 +9,9 @@ export const RadioButtonStyled = styled.label`
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
 
-  input {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-
   input[type='radio'] {
-    visibility: hidden;
+    opacity: 0;
+    position: absolute;
   }
 
   &:hover {

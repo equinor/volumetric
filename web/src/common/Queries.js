@@ -4,6 +4,7 @@ export const FULL_CASE_FRAGMENT = gql`
   fragment FullCase on Case {
     id
     name
+    fieldName
     caseVersion
     caseType
     description
@@ -44,8 +45,8 @@ export const SHORT_CASE_FRAGMENT = gql`
 `;
 
 export const GET_FULL_CASES = gql`
-  query FullCases($field: String!, $caseIds: [Int]) {
-    cases(fieldName: $field, caseIds: $caseIds, orderBy: "name") {
+  query FullCases($caseIds: [Int], $fieldName: String) {
+    cases(fieldName: $fieldName, caseIds: $caseIds, orderBy: "name") {
       ...FullCase
     }
   }

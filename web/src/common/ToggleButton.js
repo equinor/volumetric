@@ -21,7 +21,16 @@ export const ToggleButtonStyled = styled(RadioButtonStyled).attrs({
 ToggleButtonStyled.displayName = 'ToggleButtonStyled';
 
 const ToggleButton = props => {
-  const { onChange, value, selected, buttonStyle, first, last } = props;
+  const {
+    onChange,
+    value,
+    selected,
+    buttonStyle,
+    first,
+    last,
+    name,
+    index,
+  } = props;
 
   const handleChange = event => {
     onChange(event.target.value);
@@ -37,6 +46,8 @@ const ToggleButton = props => {
     >
       <input
         type="radio"
+        id={`${name}${index}`}
+        name={name}
         onChange={handleChange}
         value={value}
         checked={selected}
