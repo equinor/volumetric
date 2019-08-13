@@ -1,8 +1,0 @@
-version: '3.4'
-
-services:
-  web:
-    image: $WEB_IMAGE
-    ports:
-      - 80:80
-    command: npm start

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-export PROJECT_MAIN_BIN="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export PROJECT_MAIN_HOME=$(echo $PROJECT_MAIN_BIN | rev | cut -d"/" -f2- | rev)
+export PROJECT_BIN="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export PROJECT_HOME=$(echo $PROJECT_BIN | rev | cut -d"/" -f2- | rev)
 
-export PATH="$PROJECT_MAIN_BIN:$PATH"
-echo $PROJECT_MAIN_BIN added to \$PATH
+export PATH="$PROJECT_BIN:$PATH"
+echo $PROJECT_BIN added to \$PATH
 
 export WEB_CONTEXT_PATH=web/
 export API_CONTEXT_PATH=api/
