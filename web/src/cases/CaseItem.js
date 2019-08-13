@@ -87,6 +87,10 @@ const CaseAction = styled.button`
 
 const dateOptions = { day: 'numeric', year: 'numeric', month: 'long' };
 
+const isAllowedToDelete = (_case, user) => {
+  return user.isFieldAdmin || (user.isCreator && user.shortName.toLowerCase() === _case.createdUser.toLowerCase());
+};
+
 export function CaseItem({
   _case,
   toggleCompareCase,
@@ -121,7 +125,7 @@ export function CaseItem({
             <CaseAction as={Link} to={caseLink}>
               View
             </CaseAction>
-            {user.isCreator && (
+            {isAllowedToDelete(_case, user) && (
               <CaseAction
                 color={WARNING_COLOR}
                 onClick={() => {
