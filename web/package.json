@@ -17,7 +17,7 @@
     "rc-dropdown": "^2.4.1",
     "rc-menu": "^7.4.22",
     "react": "^16.8.5",
-    "react-adal": "^0.4.22",
+    "react-adal": "^0.5.1",
     "react-apollo": "2.4.1",
     "react-app-polyfill": "^1.0.1",
     "react-checkbox-group": "^4.0.1",
